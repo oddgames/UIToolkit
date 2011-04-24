@@ -1,0 +1,17 @@
+# Xcode and system files
+.DS_Store
+build
+Build
+Products
+*.pbxuser
+*.perspectivev3
+
+# Unity junk files
+Library/
+Xcode/
+
+/Temp/
+/UIToolkit.csproj
+/UIToolkit.sln
+/UIToolkit.pidb
+/UIToolkit.userprefs

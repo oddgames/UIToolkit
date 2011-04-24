@@ -1,0 +1,22 @@
+UIToolkit for Unity
+=======
+
+UIToolkit aims to make creating interactive menu systems and HUDs with a single draw call.  The library comes with a bunch of different UI widgets out of the box
+and it makes creating your own widgets extremely simple.  Some conveniences for dealing with HD resolutions (iPhone 3 vs iPhone 4 for example) are optionally provided and include:
+* automatic texture swapping to a double resolution texture for HD
+* automatic reconfiguration of UV coordinates and positions
+* automatic handling of double resolution UIFonts
+
+
+Included GUI Components
+=======
+
+**UISpriteButton**:
+**UIToggleButton**:
+**UIProgressBar**:
+**UISlider**:
+**UISwipeDetector**:
+**UIKnob**:
+**UIText**:
+**UIJoystick**:
+

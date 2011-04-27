@@ -9,42 +9,42 @@ public class KitchenSinkManager : MonoBehaviour
 	void Start()
 	{
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
-		UISpriteButton playButton = UI.instance.addSpriteButton( "playUp.png", new Vector2( 10f, 10f ) );
+		var playButton = UI.instance.addSpriteButton( "playUp.png", 10, 10 );
 		playButton.highlightedUVframe = UI.instance.uvRectForFilename( "playDown.png" );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		
-		/*
+		
 		// Scores button
-		UISpriteButton scores = UI.instance.addSpriteButton( new Rect( 10, 57, 108, 37 ), 3, new UIUVRect( 0, 74, 108, 37 ) );
-		scores.highlightedUVframe = new UIUVRect( 0, 111, 108, 37 );
-		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 ); // Expand our highlighted touch area 30 pixels all around
+		var scores = UI.instance.addSpriteButton( "scoresUp.png", 10, 75 );
+		scores.highlightedUVframe = UI.instance.uvRectForFilename( "scoresDown.png" );
+		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		scores.action = onTouchUpInsideScoresButton;
 		scores.color = new Color( 1, 1, 1, 0.5f );
 		
 		
 		// Options button
-		UISpriteButton optionsButton = UI.instance.addSpriteButton( new Rect( 10, 130, 108, 37 ), 2, new UIUVRect( 0, 148, 108, 37 ) ) as UISpriteButton;
-		optionsButton.highlightedUVframe = new UIUVRect( 0, 148 + 37, 108, 37 );
+		var optionsButton = UI.instance.addSpriteButton( "optionsUp.png", 10, 130 );
+		optionsButton.highlightedUVframe = UI.instance.uvRectForFilename( "optionsDown.png" );
 		optionsButton.action = onTouchUpInsideOptionsButton;
 		
 		
 		// Knob
-		UIKnob knob = new UIKnob( new Rect( 200, 160, 72, 72 ), 3, new UIUVRect( 109, 0, 72, 72 ), onKnobChanged );
-		knob.highlightedUVframe = new UIUVRect( 190, 0, 72, 72 );
+		var knob = new UIKnob( UI.instance.textureInfoForFilename( "knobUp.png" ), 270, 60 );
+		knob.highlightedUVframe = UI.instance.uvRectForFilename( "knobDown.png" );
 		knob.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		UI.instance.addTouchableSprite( knob );
+		knob.action = onKnobChanged;
 		knob.value = 0.3f;
 		
 		
 		// Horizontal Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
-		UISprite hSliderKnob = UI.instance.addSprite( new Rect( 20, 245, 30, 50 ), new UIUVRect( 120, 130, 30, 50 ), 1 );
-		UISlider hSlider = new UISlider( new Rect( 20, 250, 200, 40 ), 5, new UIUVRect( 120, 80, 200, 40 ), hSliderKnob, onHSliderChanged );
-		UI.instance.addTouchableSprite( hSlider );
+		var hSliderKnob = UI.instance.addSprite( "sliderKnob.png", 20, 210 );
+		var hSlider = new UISlider( UI.instance.textureInfoForFilename( "hSlider.png" ), 10, 220, hSliderKnob, UISliderLayout.Horizontal );
 		// Increase our hit area a bit while we are tracking along the slider
 		hSlider.highlightedTouchOffsets = new UIEdgeOffsets( 20, 30, 20, 30 );
 		hSlider.value = 0.2f;
 		
 		
+		/*
 		// Vertical Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
 		UISprite vSliderKnob = UI.instance.addSprite( new Rect( 412, 50, 35, 10 ), new UIUVRect( 345, 130, 35, 10 ), 1 );
 		UISlider vSlider = new UISlider( new Rect( 420, 50, 20, 200 ), 3, new UIUVRect( 320, 130, 20, 200 ), vSliderKnob, UISliderLayout.Vertical, onVSliderChanged );
@@ -205,7 +205,7 @@ public class KitchenSinkManager : MonoBehaviour
 	// Button callback
 	public void onTouchUpInsideScoresButton( UISpriteButton sender )
 	{
-		StartCoroutine( animateLocalScale( sender, new Vector3( 1.3f, 1.3f, 1 ), 0.5f ) );
+		StartCoroutine( animateLocalScale( sender, new Vector3( 1.3f, 1.3f, 1 ), 0.3f ) );
 	}
 	
 	

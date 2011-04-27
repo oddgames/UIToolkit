@@ -15,17 +15,23 @@ public class UISlider : UITouchableSprite
 	
 	private UISliderLayout layout = UISliderLayout.Horizontal;
 	public UISliderChanged action;
+	
+	
+	public UISlider( UITextureInfo textureInfo, int xPos, int yPos, UISprite sliderKnob, UISliderLayout layout ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 5, textureInfo.uvRect, sliderKnob, layout )
+	{
+		
+	}
+	
 
-
-	public UISlider( Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderLayout layout, UISliderChanged action ):base( frame, depth, uvFrame )
+	public UISlider( Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderLayout layout ):base( frame, depth, uvFrame )
 	{
 		this.layout = layout;
 		
-		// Save the sliderKnob and make it a child of the slider for organization purposes
+		// save the sliderKnob and make it a child of the slider for organization purposes
 		_sliderKnob = sliderKnob;
 		_sliderKnob.clientTransform.parent = this.clientTransform;
 
-		// Setup the min/max position values for the sliderKnob
+		// setup the min/max position values for the sliderKnob
 		if( layout == UISliderLayout.Horizontal )
 		{
 			_knobMinimumXY = frame.x;
@@ -37,13 +43,7 @@ public class UISlider : UITouchableSprite
 			_knobMaximumXY = -frame.y;
 		}
 		
-		this.action = action;
-	}
-	
-	
-	public UISlider( Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderChanged action ):this( frame, depth, uvFrame, sliderKnob, UISliderLayout.Horizontal, action )
-	{
-		
+		UI.instance.addTouchableSprite( this );
 	}
 
 
@@ -91,7 +91,7 @@ public class UISlider : UITouchableSprite
 		this.value = normalizedValue;
 
 		// If the delegate wants continuous updates, send one along
-		if( continuous )
+		if( continuous && action != null )
 			action( this, _value );
 	}
 
@@ -116,7 +116,8 @@ public class UISlider : UITouchableSprite
 		if( touchCount == 0 )
 			highlighted = false;
 		
-		action( this, _value );
+		if( action != null )
+			action( this, _value );
 	}
 
 }

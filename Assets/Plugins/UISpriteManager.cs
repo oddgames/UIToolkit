@@ -387,13 +387,13 @@ public class UISpriteManager : MonoBehaviour
 	#region Add/Remove sprite functions
 
 	// shortcut for adding a new sprite
-    public UISprite addSprite( string name, Vector2 position )
+    public UISprite addSprite( string name, int xPos, int yPos )
     {
-		return this.addSpriteButton( name, position, 1 );
+		return this.addSprite( name, xPos, yPos, 1 );
     }
 
 
-    public UISprite addSprite( string name, Vector2 position, int depth )
+    public UISprite addSprite( string name, int xPos, int yPos, int depth )
     {
 #if UNITY_EDITOR
 		// sanity check while in editor
@@ -401,7 +401,7 @@ public class UISpriteManager : MonoBehaviour
 			throw new Exception( "can't find texture details for texture packer sprite:" + name );
 #endif
 		var textureInfo = textureDetails[name];
-		var positionRect = new Rect( position.x, position.y, textureInfo.size.x, textureInfo.size.y );
+		var positionRect = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
 
 		return this.addSprite( positionRect, textureInfo.uvRect, depth );
     }

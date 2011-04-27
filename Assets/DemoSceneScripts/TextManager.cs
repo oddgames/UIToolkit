@@ -12,7 +12,7 @@ public class TextManager : MonoBehaviour
 
 	void Start()
 	{
-		var text = new UIText( "prototype", new Vector2( 0f, 0f ) );
+		var text = new UIText( "prototype" );
 		
 		var vec1 = UI.relativeVec2( .3f, UIxRelativeTo.Right, .1f, UIyRelativeTo.Top );
 		var vec2 = new Vector2( 10, 180 );

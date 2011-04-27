@@ -1,8 +1,32 @@
 {"frames": {
 
+"hSlider.png":
+{
+	"frame": {"x":0,"y":0,"w":256,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":39},
+	"sourceSize": {"w":256,"h":39}
+},
+"knobDown.png":
+{
+	"frame": {"x":256,"y":0,"w":78,"h":79},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":78,"h":79},
+	"sourceSize": {"w":78,"h":79}
+},
+"knobUp.png":
+{
+	"frame": {"x":334,"y":0,"w":78,"h":79},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":78,"h":79},
+	"sourceSize": {"w":78,"h":79}
+},
 "optionsDown.png":
 {
-	"frame": {"x":0,"y":0,"w":132,"h":54},
+	"frame": {"x":0,"y":79,"w":132,"h":54},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":132,"h":54},
@@ -10,7 +34,7 @@
 },
 "optionsUp.png":
 {
-	"frame": {"x":132,"y":0,"w":132,"h":54},
+	"frame": {"x":132,"y":79,"w":132,"h":54},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":132,"h":54},
@@ -18,7 +42,7 @@
 },
 "playDown.png":
 {
-	"frame": {"x":264,"y":0,"w":143,"h":49},
+	"frame": {"x":264,"y":79,"w":143,"h":49},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":143,"h":49},
@@ -26,7 +50,7 @@
 },
 "playUp.png":
 {
-	"frame": {"x":0,"y":54,"w":143,"h":49},
+	"frame": {"x":0,"y":133,"w":143,"h":49},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":143,"h":49},
@@ -34,7 +58,7 @@
 },
 "scoresDown.png":
 {
-	"frame": {"x":143,"y":54,"w":129,"h":50},
+	"frame": {"x":143,"y":133,"w":129,"h":50},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":50},
@@ -42,10 +66,18 @@
 },
 "scoresUp.png":
 {
-	"frame": {"x":272,"y":54,"w":129,"h":50},
+	"frame": {"x":272,"y":133,"w":129,"h":50},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":50},
 	"sourceSize": {"w":129,"h":50}
+},
+"sliderKnob.png":
+{
+	"frame": {"x":401,"y":133,"w":59,"h":59},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":59,"h":59},
+	"sourceSize": {"w":59,"h":59}
 }
 }}

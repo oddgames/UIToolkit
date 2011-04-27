@@ -13,15 +13,22 @@ public class UIKnob : UITouchableSprite
 	public UIUVRect highlightedUVframe;
 	
 	public UIKnobChanged action;
-
 	
-	public UIKnob( Rect frame, int depth, UIUVRect uvFrame, UIKnobChanged action ):base( frame, depth, uvFrame )
+	
+	public UIKnob( UITextureInfo textureInfo, int xPos, int yPos ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 1, textureInfo.uvRect )
+	{
+		
+	}
+	
+	
+	public UIKnob( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
 	{
 		// Set our origin in the center
 		this.gameObjectOriginInCenter = true;
 		
-		this.action = action;
 		_normalUVframe = uvFrame;
+		
+		UI.instance.addTouchableSprite( this );
 	}
 
 

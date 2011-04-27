@@ -2,6 +2,11 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
+#if UNITY_EDITOR
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
+
 
 public enum UIxRelativeTo { Left, Right };
 public enum UIyRelativeTo { Top, Bottom };
@@ -26,6 +31,10 @@ public class UI : UISpriteManager
 	
 	// Holds all our touchable sprites
 	private List<UITouchableSprite> _touchableSprites = new List<UITouchableSprite>();
+	
+#if UNITY_EDITOR
+	private Vector2? lastMousePosition;
+#endif
 
 	
 	#region Unity MonoBehaviour Functions
@@ -77,15 +86,17 @@ public class UI : UISpriteManager
 
 	protected void Update()
 	{
-		// Only do our touch processing if we have some touches
+		// only do our touch processing if we have some touches
 		if( Input.touchCount > 0 )
 		{
 			// Examine all current touches
 			for( int i = 0; i < Input.touchCount; i++ )
+			{
 				lookAtTouch( Input.GetTouch( i ) );
+			}
 		}
 
-		// Take care of updating our UVs, colors or bounds if necessary
+		// take care of updating our UVs, colors or bounds if necessary
 		if( meshIsDirty )
 		{
 			meshIsDirty = false;
@@ -107,13 +118,13 @@ public class UI : UISpriteManager
 	#region Add/Remove Element and Button functions
 	
 	// Shortcut for adding a GUISpriteButton
-	public UISpriteButton addSpriteButton( string name, Vector2 position )
+	public UISpriteButton addSpriteButton( string name, int xPos, int yPos )
 	{
-		return this.addSpriteButton( name, position, 1 );
+		return this.addSpriteButton( name, xPos, yPos, 1 );
 	}
 	
 	
-	public UISpriteButton addSpriteButton( string name, Vector2 position, int depth )
+	public UISpriteButton addSpriteButton( string name, int xPos, int yPos, int depth )
 	{
 #if UNITY_EDITOR
 		// sanity check while in editor
@@ -121,7 +132,7 @@ public class UI : UISpriteManager
 			throw new Exception( "can't find texture details for texture packer sprite:" + name );
 #endif
 		var textureInfo = textureDetails[name];
-		var positionRect = new Rect( position.x, position.y, textureInfo.size.x, textureInfo.size.y );
+		var positionRect = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
 		
 		return this.addSpriteButton( positionRect, depth, textureInfo.uvRect );
 	}
@@ -161,10 +172,10 @@ public class UI : UISpriteManager
 	
 	#region Touch management and analysis helpers
 	
-	// Examines a touch and sends off began, moved and ended events
+	// examines a touch and sends off began, moved and ended events
 	private void lookAtTouch( Touch touch )
 	{
-		// Tranform the touch position so the origin is in the top left
+		// tranform the touch position so the origin is in the top left
 		Vector2 fixedTouchPosition = new Vector2( touch.position.x, _screenResolution.y - touch.position.y );
 		UITouchableSprite button = getButtonForScreenPosition( fixedTouchPosition );
 
@@ -179,7 +190,7 @@ public class UI : UISpriteManager
 			}
 			else
 			{
-				// Deselect any selected sprites for this touch
+				// deselect any selected sprites for this touch
 				_spriteSelected[touch.fingerId] = null;
 			}
 		}
@@ -187,7 +198,7 @@ public class UI : UISpriteManager
 		{
 			if( button != null && _spriteSelected[touch.fingerId] == button )
 			{
-				// If we have a moving touch on a sprite keep sending touchMoved
+				// if we have a moving touch on a sprite keep sending touchMoved
 				if( touch.phase == TouchPhase.Moved )
 					_spriteSelected[touch.fingerId].onTouchMoved( touch, fixedTouchPosition );
 			}
@@ -217,7 +228,8 @@ public class UI : UISpriteManager
 			}
 		}
 	}
-	
+
+
 	
 	// Gets the closets touchableSprite to the camera that contains the touchPosition
 	private UITouchableSprite getButtonForScreenPosition( Vector2 touchPosition )

@@ -5,19 +5,15 @@ public class KitchenSinkManager : MonoBehaviour
 {
 	public GUIText swipeText;
 	
-	void Awake()
-	{
-	   useGUILayout = false;
-	}
-	
-	
+
 	void Start()
 	{
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
-		UISpriteButton playButton = UI.instance.addSpriteButton( new Rect( 10, 10, 108, 37 ), 3, new UIUVRect( 0, 0, 108, 37 ) );
-		playButton.highlightedUVframe = new UIUVRect( 0, 37, 108, 37 );
+		UISpriteButton playButton = UI.instance.addSpriteButton( "playUp.png", new Vector2( 10f, 10f ) );
+		playButton.highlightedUVframe = UI.instance.uvRectForFilename( "playDown.png" );
+		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		
-		
+		/*
 		// Scores button
 		UISpriteButton scores = UI.instance.addSpriteButton( new Rect( 10, 57, 108, 37 ), 3, new UIUVRect( 0, 74, 108, 37 ) );
 		scores.highlightedUVframe = new UIUVRect( 0, 111, 108, 37 );
@@ -89,6 +85,7 @@ public class KitchenSinkManager : MonoBehaviour
 		UISwipeDetector detector = new UISwipeDetector( new Rect( 0, 60f, Screen.width, Screen.height - 60f ), 10, new UIUVRect( 450, 50, 408, 306 ) );
 		detector.action = onSwipe;
 		UI.instance.addTouchableSprite( detector );
+		*/
 	}
 	
 	

@@ -32,10 +32,10 @@ public class UI : UISpriteManager
 	
 	protected override void Awake()
 	{
-		base.Awake();
-		
 		// Set instance to this so we can be accessed from anywhere
 		instance = this;
+		
+		base.Awake();
 
 		// Create the camera
 		_uiCameraHolder = new GameObject();
@@ -107,6 +107,26 @@ public class UI : UISpriteManager
 	#region Add/Remove Element and Button functions
 	
 	// Shortcut for adding a GUISpriteButton
+	public UISpriteButton addSpriteButton( string name, Vector2 position )
+	{
+		return this.addSpriteButton( name, position, 1 );
+	}
+	
+	
+	public UISpriteButton addSpriteButton( string name, Vector2 position, int depth )
+	{
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !textureDetails.ContainsKey( name ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + name );
+#endif
+		var textureInfo = textureDetails[name];
+		var positionRect = new Rect( position.x, position.y, textureInfo.size.x, textureInfo.size.y );
+		
+		return this.addSpriteButton( positionRect, depth, textureInfo.uvRect );
+	}
+	
+	
 	public UISpriteButton addSpriteButton( Rect frame, int depth, UIUVRect uvFrame )
 	{
 		UISpriteButton spriteButton = new UISpriteButton( frame, depth, uvFrame );
@@ -232,5 +252,7 @@ public class UI : UISpriteManager
 		
 		return vec;
 	}
-	
+
+
+
 }

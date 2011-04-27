@@ -1,0 +1,51 @@
+{"frames": {
+
+"optionsDown.png":
+{
+	"frame": {"x":0,"y":0,"w":132,"h":54},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":132,"h":54},
+	"sourceSize": {"w":132,"h":54}
+},
+"optionsUp.png":
+{
+	"frame": {"x":132,"y":0,"w":132,"h":54},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":132,"h":54},
+	"sourceSize": {"w":132,"h":54}
+},
+"playDown.png":
+{
+	"frame": {"x":264,"y":0,"w":143,"h":49},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":143,"h":49},
+	"sourceSize": {"w":143,"h":49}
+},
+"playUp.png":
+{
+	"frame": {"x":0,"y":54,"w":143,"h":49},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":143,"h":49},
+	"sourceSize": {"w":143,"h":49}
+},
+"scoresDown.png":
+{
+	"frame": {"x":143,"y":54,"w":129,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":50},
+	"sourceSize": {"w":129,"h":50}
+},
+"scoresUp.png":
+{
+	"frame": {"x":272,"y":54,"w":129,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":50},
+	"sourceSize": {"w":129,"h":50}
+}
+}}

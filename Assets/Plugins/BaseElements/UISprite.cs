@@ -60,9 +60,6 @@ public class UISprite : System.Object
 		width = frame.width;
 		height = frame.height;
 		
-		// double up our coordinates if we are HD
-		if( UI.instance.isHD )
-			uvFrame.doubleForHD();
 		_uvFrame = uvFrame;
     }
 
@@ -75,10 +72,6 @@ public class UISprite : System.Object
 			// Dont bother changing if the new value isn't different
 			if( _uvFrame != value )
 			{
-				// double up for HD
-				if( UI.instance.isHD )
-					value.doubleForHD();
-				
 				_uvFrame = value;
 				manager.updateUV( this );
 			}

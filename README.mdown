@@ -8,15 +8,55 @@ and it makes creating your own widgets extremely simple.  Some conveniences for 
 * automatic handling of double resolution UIFonts
 
 
-Included GUI Components
-=======
+Included UI Components
+-----
 
-**UISpriteButton**:
-**UIToggleButton**:
-**UIProgressBar**:
-**UISlider**:
-**UISwipeDetector**:
-**UIKnob**:
-**UIText**:
-**UIJoystick**:
+Note: all touchable UI components can have highlightedTouchOffsets added.  This mimics what Apple does with their iOS controls by adding a padding around the control that is activated when the control is being touched.  For example, if you set the highlightedTouchOffsets to have an extra 30 pixel offset and a user touches the button, they can slide their finger an extra 30 pixels outside the boundary of the button.  You can experience this by opening any Apple app on your iPhone with a button in it and touch your finger on it than slide it around off the button further and further until it is deselected.
 
+* **UISpriteButton**: standard button with selected state.
+* **UIToggleButton**:
+* **UIProgressBar**:
+* **UISlider**:
+* **UISwipeDetector**:
+* **UIKnob**:
+* **UIText**:
+* **UIJoystick**:
+
+
+Setup
+-----
+
+1. Create an empty object at 0, 0, 0.  Move this object to a new layer, which in the example is simply called "UILayer".
+2. Now add the UI.cs script to this object.  Be sure to set the UILayer that you chose in the previous step in the inspector.  Set the startSpriteCount to the estimated number of sprites you will need.  They will auto-expand if at runtime you need more.
+3. Go to the main camera and remove the UILayer (in this example "UILayer") from the Culling Mask so that your GUI doesn't get rendered twice.
+4. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer json config file is in the Assets/StreamingAssets directory
+5. *Do not* try to create your UI in Awake as the UI may not be done initializing yet.
+
+
+Exporting Sprite Sheets with Texture Packer
+-----
+
+UIToolkit uses the output from the free version of the excellent [Texture Packer](http://www.texturepacker.com/) program.  It is dead easy to use and makes updating your atlases later a breeze.  To get things going with Texture Packer all you need to do is:
+
+1. Drag and drop all your images into Texture Packer's right pane.
+2. In the Output pane (bottom left) set the Data format to json, set the Data file to be in your Assets/StreamingAssets folder and set the Texture file to be in the Assets/Resources folder (or any other Resources folder in your project)
+3. In the Geometry pane, you will need to uncheck Autosize and set the texture size as a power of 2, square texture.
+4. Choose File -> Publish (Command-P) to export the json config file and the texture.  Make sure they both have the same name.
+
+
+Supporting HD and SD Resolutions
+-----
+
+UIToolkit offers some conveniences for handling SD and HD resolutions with the same code.  There are some naming conventions that must be adhered to for this to work.  First off, you will need to have a second texture that is double the resolution of your standard texture that has the same name with "2x" appended to it.  If you want to support both resolution types check the autoTextureSelectionForHD variable in the inspector of your UI game object.
+
+There are also some methods available to assist with relative layout so you can code once and deploy on multiple resolutions.  The UI class has a static method (UI.relativeVec2) that lets you set your positions relative to the left/right and top/bottom of the screen.  For example, to make a button be in the bottom left corner on both the iPad and iPhone all you would need to do to get the position is:
+
+var pos = UI.relativeVec2( .1f, UIxRelativeTo.Left, .1f, UIyRelativeTo.Bottom );
+
+
+Working with UIFonts
+-----
+
+Text support is included with the UIText class.  Your font bitmap can be created with Hiero, Angelcode or Glyph.  If you want to suport both HD and SD resolutions you will need to export a .fnt file for both resolutions.  Both files should be placed in your Assets/StreamingAssets folder and the HD version should have "2x" appended to the name to take part in auto HD switching at runtime.  Add the exported bitmap font png to your texture atlas in Texture Packer and you are good to go, just be sure the image name is the same as the .fnt file.
+
+Once you have a UIText instance loaded up with your specific font file you can make as many UITextInstances as you want by just calling addTextInstance.  Newlines can be added with the standard "\n" and you can modify the returned UITextInstance at any time and the text will automatically be rebuilt.

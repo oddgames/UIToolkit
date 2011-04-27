@@ -16,6 +16,7 @@ public struct UITextureInfo
 {
 	public UIUVRect uvRect;
 	public Vector2 size;
+	public Rect frame;
 }
 
 
@@ -200,8 +201,17 @@ public class UISpriteManager : MonoBehaviour
 				var frameH = int.Parse( frame["h"].ToString() );
 			
 				var ti = new UITextureInfo();
+				ti.frame = new Rect( frameX, frameY, frameW, frameH );
 				ti.size = new Vector2( float.Parse( sourceSize["w"].ToString() ), float.Parse( sourceSize["h"].ToString() ) );
 				ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH );
+				
+				// if we are HD, double our size and uvRect
+				if( isHD )
+				{
+					ti.uvRect.doubleForHD();
+					ti.size.x *= 2;
+					ti.size.y *= 2;
+				}
 			
 				textures.Add( item.Key.ToString(), ti );
 			}
@@ -220,6 +230,18 @@ public class UISpriteManager : MonoBehaviour
 			throw new Exception( "can't find texture details for texture packer sprite:" + filename );
 #endif
 		return textureDetails[filename].uvRect;
+	}
+		
+		
+	// grabs the frame for the given filename
+	public Rect frameForFilename( string filename )
+	{
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !textureDetails.ContainsKey( filename ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + filename );
+#endif
+		return textureDetails[filename].frame;
 	}
 	
 	#endregion

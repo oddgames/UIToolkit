@@ -83,33 +83,36 @@ public class UIText : System.Object
 	
 	
 	// textureOffset is the x and y offset into the sprite sheet that the bitmap font begins
-	public UIText( string fileName, Vector2 textureOffset )
+	public UIText( string fontFilename )
 	{
 		arrayFonts = new UIFonts[256];
 		for( int i = 0; i < arrayFonts.Length; i++ )
 			arrayFonts[i] = new UIFonts();
 		
-		loadConfigfile( fileName );
-		this.textureOffset = textureOffset;
+		loadConfigfile( fontFilename );
+		
+		// grab the texture offset from the UI
+		var rect = UI.instance.frameForFilename( fontFilename + ".png" );
+		this.textureOffset = new Vector2( rect.x, rect.y );
 	}
 
 	
 	// parse the .fnt file with the font definition.  Font files should be in the Assets/StreamingAssets folder
-	private void loadConfigfile( string fileName )
+	private void loadConfigfile( string filename )
 	{
 		// should we load a double resolution font?
-		if( UI.instance.autoTextureSelectionForHD && UI.instance.isHD )
-			fileName = fileName + "2x";
+		if( UI.instance.isHD )
+			filename = filename + "2x";
 
-		if( !fileName.EndsWith( ".fnt" ) )
-			fileName = fileName + ".fnt";
+		if( !filename.EndsWith( ".fnt" ) )
+			filename = filename + ".fnt";
 
 		string localizedStringsFile = Application.dataPath;
 		
 #if UNITY_EDITOR
-		localizedStringsFile = localizedStringsFile.Substring( 0, localizedStringsFile.Length ) + "/StreamingAssets/" + fileName; 
+		localizedStringsFile = localizedStringsFile.Substring( 0, localizedStringsFile.Length ) + "/StreamingAssets/" + filename; 
 #else
-		localizedStringsFile = localizedStringsFile + "/Raw/" + fileName;
+		localizedStringsFile = localizedStringsFile + "/Raw/" + filename;
 #endif
 		// create reader & open file
 		StreamReader sr = new StreamReader( new FileStream( localizedStringsFile, FileMode.Open, FileAccess.Read ) );

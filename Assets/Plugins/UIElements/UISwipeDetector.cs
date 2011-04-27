@@ -14,6 +14,7 @@ public class UISwipeDetector : UITouchableSprite
 	public float minimumDistance = 40.0f;
 	public SwipeDirection swipesToDetect = SwipeDirection.All;
 
+
 	public UISwipeDetector( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
 	{
 		touchInfoArray = new TouchInfo[5];
@@ -94,7 +95,6 @@ public class UISwipeDetector : UITouchableSprite
 			}
 		}
 
-		
 		// Right check
 		if( ( touchInfo.swipeDetectionState & SwipeDirection.Right ) != 0 )
 		{

@@ -13,15 +13,14 @@ Included UI Components
 
 Note: all touchable UI components can have highlightedTouchOffsets added.  This mimics what Apple does with their iOS controls by adding a padding around the control that is activated when the control is being touched.  For example, if you set the highlightedTouchOffsets to have an extra 30 pixel offset and a user touches the button, they can slide their finger an extra 30 pixels outside the boundary of the button.  You can experience this by opening any Apple app on your iPhone with a button in it and touch your finger on it than slide it around off the button further and further until it is deselected.
 
-* **UISpriteButton**: standard button with selected state.
-* **UIToggleButton**:
-* **UIProgressBar**:
-* **UISlider**:
-* **UISwipeDetector**:
-* **UIKnob**:
-* **UIText**:
-* **UIJoystick**:
-
+* **UISpriteButton**: standard button with selected state and delegate action on touchUpInside
+* **UIToggleButton**: 3 state button that can be used just like a checkbox if desired
+* **UIProgressBar**: standard progress bar that offers 2 modes of progression: texture stretching or just revealing the texture as progress advances
+* **UISlider**: slider that works both horizontally and vertically
+* **UIKnob**: rotating knob control
+* **UIText and UITextInstance**: reads in a .fnt file and displays text including line breaks (courtesy of Eskema: http://eskemagames.blogspot.com/)
+* **UIJoystick**: joystick control with configureable dead zone and background image
+* **UISwipeDetector**: control that is capable of detecting swipes in any combination of directions (up, down, left, right)
 
 Setup
 -----

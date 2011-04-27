@@ -1,10 +1,3 @@
-//-----------------------------------------------------------------
-// Holds a single mesh object which is composed of an arbitrary
-// number of quads that all use the same material, allowing
-// multiple, independently moving objects to be drawn on-screen
-// while using only a single draw call.
-//-----------------------------------------------------------------
-
 using System;
 using UnityEngine;
 using System.Collections;
@@ -221,6 +214,18 @@ public class UISpriteManager : MonoBehaviour
 	}
 	
 	
+	// grabs the UITextureInfo for the given filename
+	public UITextureInfo textureInfoForFilename( string filename )
+	{
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !textureDetails.ContainsKey( filename ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + filename );
+#endif
+		return textureDetails[filename];
+	}
+	
+	
 	// grabs the uvRect for the given filename
 	public UIUVRect uvRectForFilename( string filename )
 	{
@@ -380,8 +385,29 @@ public class UISpriteManager : MonoBehaviour
 	
 
 	#region Add/Remove sprite functions
+
+	// shortcut for adding a new sprite
+    public UISprite addSprite( string name, Vector2 position )
+    {
+		return this.addSpriteButton( name, position, 1 );
+    }
+
+
+    public UISprite addSprite( string name, Vector2 position, int depth )
+    {
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !textureDetails.ContainsKey( name ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + name );
+#endif
+		var textureInfo = textureDetails[name];
+		var positionRect = new Rect( position.x, position.y, textureInfo.size.x, textureInfo.size.y );
+
+		return this.addSprite( positionRect, textureInfo.uvRect, depth );
+    }
+
 	
-	// Shortcut for adding a new sprite
+	// shortcut for adding a new sprite
     public UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth )
     {
         // Create and initialize the new sprite

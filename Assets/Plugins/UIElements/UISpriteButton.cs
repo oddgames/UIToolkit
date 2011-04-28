@@ -5,6 +5,7 @@ public delegate void UIButtonTouchUpInside( UISpriteButton sender );
 
 public class UISpriteButton : UITouchableSprite
 {
+	public event UIButtonTouchUpInside touchUpInside;
 	public UIButtonTouchUpInside action = null; // Delegate for when we get a touchUpInside
 	
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
@@ -78,8 +79,8 @@ public class UISpriteButton : UITouchableSprite
 		highlighted = false;
 		
 		// If the touch was inside our touchFrame and we have an action, call it
-		if( touchWasInsideTouchFrame && action != null )
-			action( this );
+		if( touchWasInsideTouchFrame && touchUpInside != null )
+			touchUpInside( this );
 	}
 
 

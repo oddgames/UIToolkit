@@ -8,7 +8,7 @@ public class UISwipeDetector : UITouchableSprite
 {
 	private TouchInfo[] touchInfoArray;
 	
-	public UISwipeDetectorDetectedSwipe action = null; // Delegate for when we get a swipe
+	public event UISwipeDetectorDetectedSwipe onSwipe; // event for when we get a swipe
 	public float timeToSwipe = 0.5f;	
 	public float allowedVariance = 35.0f;
 	public float minimumDistance = 40.0f;
@@ -36,7 +36,8 @@ public class UISwipeDetector : UITouchableSprite
 		if( processTouchInfoWithTouch( touchInfoArray[touch.fingerId], touch ) )
 		{
 			// Got a swipe
-			action( this, touchInfoArray[touch.fingerId].completedSwipeDirection );
+			if( onSwipe != null )
+				onSwipe( this, touchInfoArray[touch.fingerId].completedSwipeDirection );
 			touchInfoArray[touch.fingerId].swipeDetectionStatus = SwipeDetectionStatus.Done;
 		}
 	}

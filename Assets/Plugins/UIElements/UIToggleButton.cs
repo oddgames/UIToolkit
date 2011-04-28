@@ -6,7 +6,7 @@ public delegate void UIToggleButtonChanged( UIToggleButton sender, bool selected
 
 public class UIToggleButton : UITouchableSprite
 {
-	public UIToggleButtonChanged action = null; // Delegate for when we get a touchUpInside
+	public event UIToggleButtonChanged onToggle; // event for when we get a touchUpInside
 	
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
@@ -111,8 +111,8 @@ public class UIToggleButton : UITouchableSprite
 			this.selected = !_selected;
 			
 			// Let our delegate know things changed
-			if( action != null )
-				action( this, _selected );
+			if( onToggle != null )
+				onToggle( this, _selected );
 		}
 	}
 

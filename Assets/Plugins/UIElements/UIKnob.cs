@@ -12,7 +12,7 @@ public class UIKnob : UITouchableSprite
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
 	
-	public UIKnobChanged action;
+	public event UIKnobChanged onKnobChanged;
 	
 	
 	public UIKnob( UITextureInfo textureInfo, int xPos, int yPos ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 1, textureInfo.uvRect )
@@ -122,8 +122,8 @@ public class UIKnob : UITouchableSprite
 
 		_value = ( 360 - clientTransform.rotation.eulerAngles.z ) / 360;
 		
-		if( continuous )
-			action( this, _value );
+		if( continuous && onKnobChanged != null )
+			onKnobChanged( this, _value );
 	}
 	
 
@@ -147,7 +147,8 @@ public class UIKnob : UITouchableSprite
 	{
 		highlighted = false;
 		
-		action( this, _value );
+		if( onKnobChanged != null )
+			onKnobChanged( this, _value );
 	}
 	
 	#endregion;

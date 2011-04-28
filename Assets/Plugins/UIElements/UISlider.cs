@@ -14,7 +14,7 @@ public class UISlider : UITouchableSprite
 	private UISprite _sliderKnob;
 	
 	private UISliderLayout layout = UISliderLayout.Horizontal;
-	public UISliderChanged action;
+	public event UISliderChanged onChange;
 	
 	
 	public UISlider( UITextureInfo textureInfo, int xPos, int yPos, UISprite sliderKnob, UISliderLayout layout ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 5, textureInfo.uvRect, sliderKnob, layout )
@@ -91,8 +91,8 @@ public class UISlider : UITouchableSprite
 		this.value = normalizedValue;
 
 		// If the delegate wants continuous updates, send one along
-		if( continuous && action != null )
-			action( this, _value );
+		if( continuous && onChange != null )
+			onChange( this, _value );
 	}
 
 
@@ -116,8 +116,8 @@ public class UISlider : UITouchableSprite
 		if( touchCount == 0 )
 			highlighted = false;
 		
-		if( action != null )
-			action( this, _value );
+		if( onChange != null )
+			onChange( this, _value );
 	}
 
 }

@@ -12,7 +12,7 @@ public class KitchenSinkManager : MonoBehaviour
 		var playButton = UI.instance.addSpriteButton( "playUp.png", 10, 10 );
 		playButton.highlightedUVframe = UI.instance.uvRectForFilename( "playDown.png" );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		
+		playButton.touchUpInside += sender => Debug.Log( "clicked the button: " + sender );
 		
 		// Scores button
 		var scores = UI.instance.addSpriteButton( "scoresUp.png", 10, 75 );
@@ -32,7 +32,7 @@ public class KitchenSinkManager : MonoBehaviour
 		var knob = new UIKnob( UI.instance.textureInfoForFilename( "knobUp.png" ), 270, 60 );
 		knob.highlightedUVframe = UI.instance.uvRectForFilename( "knobDown.png" );
 		knob.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		knob.action = onKnobChanged;
+		knob.onKnobChanged += onKnobChanged;
 		knob.value = 0.3f;
 		
 		

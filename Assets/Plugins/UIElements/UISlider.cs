@@ -17,6 +17,15 @@ public class UISlider : UITouchableSprite
 	public event UISliderChanged onChange;
 	
 	
+	public static UISlider create( string filename, int xPos, int yPos, UISprite sliderKnob, UISliderLayout layout )
+	{
+		var textureInfo = UI.instance.textureInfoForFilename( filename );
+		var frame = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
+		
+		return new UISlider( frame, 5, textureInfo.uvRect, sliderKnob, layout );
+	}
+	
+	
 	public UISlider( UITextureInfo textureInfo, int xPos, int yPos, UISprite sliderKnob, UISliderLayout layout ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 5, textureInfo.uvRect, sliderKnob, layout )
 	{
 		

@@ -17,6 +17,18 @@ public class UIToggleButton : UITouchableSprite
 
 	#region Constructors
 	
+	public static UIToggleButton create( string filename, string selectedFilename, string highlightedFilename, int xPos, int yPos )
+	{
+		var textureInfo = UI.instance.textureInfoForFilename( filename );
+		var frame = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
+		
+		var selectedTI = UI.instance.textureInfoForFilename( selectedFilename );
+		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
+		
+		return new UIToggleButton( frame, 1, textureInfo.uvRect, selectedTI.uvRect, highlightedTI.uvRect );
+	}
+	
+	
 	public UIToggleButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect selectedUVframe ):base( frame, depth, uvFrame )
 	{
 		this.selectedUVframe = selectedUVframe;
@@ -27,6 +39,8 @@ public class UIToggleButton : UITouchableSprite
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;
+		
+		UI.instance.addTouchableSprite( this );
 	}
 
 

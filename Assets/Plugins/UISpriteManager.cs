@@ -75,9 +75,7 @@ public class UISpriteManager : MonoBehaviour
         // Move the object to the origin so the objects drawn will not be offset from the objects they are intended to represent.
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
-		
-		var textureName = texturePackerConfigName;
-		
+
 		// handle texture loading if required
 		if( autoTextureSelectionForHD )
 		{
@@ -88,13 +86,16 @@ public class UISpriteManager : MonoBehaviour
 			if( Screen.width >= 960 || Screen.height >= 960 )
 #endif
 			{
-				textureName = texturePackerConfigName + "2x";
+#if UNITY_EDITOR
+				Debug.Log( "switching to 2x GUI texture" );
+#endif
+				texturePackerConfigName = texturePackerConfigName + "2x";
 				isHD = true;
 			}
 		}
 
 		// load our texture		
-		var texture = (Texture)Resources.Load( textureName, typeof( Texture ) );
+		var texture = (Texture)Resources.Load( texturePackerConfigName, typeof( Texture ) );
 		if( texture == null )
 			Debug.Log( "UI texture is being autoloaded and it doesnt exist: " + texturePackerConfigName );
 		material.SetTexture( "_MainTex", texture );
@@ -199,7 +200,7 @@ public class UISpriteManager : MonoBehaviour
 				ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH );
 				
 				// if we are HD, double our size and uvRect
-				if( isHD )
+				if( false )
 				{
 					ti.uvRect.doubleForHD();
 					ti.size.x *= 2;
@@ -387,13 +388,13 @@ public class UISpriteManager : MonoBehaviour
 	#region Add/Remove sprite functions
 
 	// shortcut for adding a new sprite
-    public UISprite addSprite( string name, int xPos, int yPos )
+    public UISprite addSprite( string name, int xPos, int yPos, bool gameObjectOriginInCenter = false )
     {
-		return this.addSprite( name, xPos, yPos, 1 );
+		return this.addSprite( name, xPos, yPos, 1, gameObjectOriginInCenter );
     }
 
 
-    public UISprite addSprite( string name, int xPos, int yPos, int depth )
+    public UISprite addSprite( string name, int xPos, int yPos, int depth, bool gameObjectOriginInCenter = false )
     {
 #if UNITY_EDITOR
 		// sanity check while in editor
@@ -408,10 +409,10 @@ public class UISpriteManager : MonoBehaviour
 
 	
 	// shortcut for adding a new sprite
-    public UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth )
+    public UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter = false )
     {
         // Create and initialize the new sprite
-		UISprite newSprite = new UISprite( frame, depth, uvFrame );
+		UISprite newSprite = new UISprite( frame, depth, uvFrame, gameObjectOriginInCenter );
 		addSprite( newSprite );
 		
 		return newSprite;

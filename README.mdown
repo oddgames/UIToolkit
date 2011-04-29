@@ -46,7 +46,7 @@ UIToolkit uses the output from the free version of the excellent [Texture Packer
 Supporting HD and SD Resolutions
 -----
 
-UIToolkit offers some conveniences for handling SD and HD resolutions with the same code.  There are some naming conventions that must be adhered to for this to work.  First off, you will need to have a second texture that is double the resolution of your standard texture that has the same name with "2x" appended to it.  If you want to support both resolution types check the autoTextureSelectionForHD variable in the inspector of your UI game object.
+UIToolkit offers some conveniences for handling SD and HD resolutions with the same code.  There are some naming conventions that must be adhered to for this to work.  First off, you will need to have a second texture that is double the resolution of your standard texture that has the same name with "2x" appended to it.  If you want to support both resolution types check the autoTextureSelectionForHD variable in the inspector of your UI game object.  You will also need a second Texture Packer config file with "2x" appended to it to go along with the double sized texture.
 
 There are also some methods available to assist with relative layout so you can code once and deploy on multiple resolutions.  The UI class has a static method (UI.relativeVec2) that lets you set your positions relative to the left/right and top/bottom of the screen.  For example, to make a button be in the bottom left corner on both the iPad and iPhone all you would need to do to get the position is:
 

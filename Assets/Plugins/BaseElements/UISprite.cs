@@ -31,7 +31,6 @@ public class UISprite : System.Object
     public Vector3 v3 = new Vector3();
     public Vector3 v4 = new Vector3();
 
-
 	// Indices of the associated vertices in the actual mesh (shortcut to get straight to the right vertices in the vertex array)
 	// Also houses indices of UVs in the mesh and color values
 	public UIVertexIndices vertexIndices;
@@ -150,6 +149,24 @@ public class UISprite : System.Object
 
         manager.updatePositions();
     }
+	
+	
+	// sets the sprites to have its origin at it's center and repositions it so it doesn't move from
+	// a non centered origin
+	public virtual void centerize()
+	{
+		if( gameObjectOriginInCenter )
+			return;
+		
+		// offset our sprite in the x and y direction to "fix" the change that occurs when we reset to center
+		var pos = clientTransform.position;
+		pos.x += width / 2;
+		pos.y -= height / 2;
+		clientTransform.position = pos;
+		
+		gameObjectOriginInCenter = true;
+		setSize( width, height );
+	}
 	
 
     // Sets the specified color and automatically notifies the GUISpriteManager to update the colors

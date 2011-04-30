@@ -19,6 +19,7 @@ public class UI : UISpriteManager
 	
 	private const int MAX_CHANGED_TOUCHES = 4;
 	
+	public bool displayTouchDebugAreas = false; // if true, gizmos will be used to show the hit areas in the editor
 	public int drawDepth = 100;	
 	public LayerMask UILayer = 0;
 	[HideInInspector]
@@ -92,9 +93,21 @@ public class UI : UISpriteManager
 			// Examine all current touches
 			for( int i = 0; i < Input.touchCount; i++ )
 			{
+#if UNITY_EDITOR
+				lookAtTouch( UIFakeTouch.fromTouch( Input.GetTouch( i ) ) );
+#else
 				lookAtTouch( Input.GetTouch( i ) );
+#endif
 			}
+		} // end if Input.touchCount
+#if UNITY_EDITOR
+		else
+		{
+			// no touches. so check the mouse input if we are in the editor
+			if( Input.GetMouseButton( 0 ) || Input.GetMouseButtonUp( 0 ) )
+				lookAtTouch( UIFakeTouch.fromInput() );
 		}
+#endif
 
 		// take care of updating our UVs, colors or bounds if necessary
 		if( meshIsDirty )
@@ -111,6 +124,57 @@ public class UI : UISpriteManager
 	   instance = null;
 	}
 
+
+#if UNITY_EDITOR
+	// Debug display of our trigger state
+	void OnDrawGizmos()
+	{
+		if( !displayTouchDebugAreas )
+			return;
+
+		// set to whatever color you want to represent
+		Gizmos.color = Color.yellow;
+		
+		// we’re going to draw the gizmo in local space
+		Gizmos.matrix = transform.localToWorldMatrix;
+	   
+		foreach( var item in _touchableSprites )
+		{
+			// touch position varies based on if we have the GO in the center
+			var pos = item.clientTransform.position;
+			if( !item.gameObjectOriginInCenter )
+			{
+				pos.x += item.width / 2;
+				pos.y -= item.height / 2;
+			}
+			
+			// we cant use the touchFrame.x/y directly because it's coordinate space is from the top left
+			Gizmos.DrawWireCube( pos, new Vector3( item.touchFrame.width, item.touchFrame.height, 5 ) );
+		}
+		
+		// display debug touches
+		if( Input.touchCount > 0 )
+		{
+			Gizmos.color = Color.green;
+			for( int i = 0; i < Input.touchCount; i++ )
+			{
+				var touch = Input.GetTouch( i );
+				var pos = _uiCamera.ScreenToWorldPoint( touch.position );
+				Gizmos.DrawCube( pos, new Vector3( 20, 20, 5 ) );
+			}
+		}
+		else
+		{
+			// display debug fake touches from the mouse
+			if( Input.GetMouseButton( 0 ) )
+			{
+				var touch = UIFakeTouch.fromInput();
+				var pos = _uiCamera.ScreenToWorldPoint( touch.position );
+				Gizmos.DrawCube( pos, new Vector3( 20, 20, 5 ) );
+			}
+		}
+	}
+#endif
 
 	#endregion;
 
@@ -143,7 +207,11 @@ public class UI : UISpriteManager
 	#region Touch management and analysis helpers
 	
 	// examines a touch and sends off began, moved and ended events
+#if UNITY_EDITOR
+	private void lookAtTouch( UIFakeTouch touch )
+#else
 	private void lookAtTouch( Touch touch )
+#endif
 	{
 		// tranform the touch position so the origin is in the top left
 		Vector2 fixedTouchPosition = new Vector2( touch.position.x, _screenResolution.y - touch.position.y );
@@ -168,9 +236,10 @@ public class UI : UISpriteManager
 		{
 			if( button != null && _spriteSelected[touch.fingerId] == button )
 			{
+				// stationary should get touchMoved as well...I think...still testing all scenarious
 				// if we have a moving touch on a sprite keep sending touchMoved
-				if( touch.phase == TouchPhase.Moved )
-					_spriteSelected[touch.fingerId].onTouchMoved( touch, fixedTouchPosition );
+				//if( touch.phase == TouchPhase.Moved )
+				_spriteSelected[touch.fingerId].onTouchMoved( touch, fixedTouchPosition );
 			}
 			else if( _spriteSelected[touch.fingerId] != null )
 			{
@@ -199,7 +268,6 @@ public class UI : UISpriteManager
 		}
 	}
 
-
 	
 	// Gets the closets touchableSprite to the camera that contains the touchPosition
 	private UITouchableSprite getButtonForScreenPosition( Vector2 touchPosition )
@@ -216,6 +284,8 @@ public class UI : UISpriteManager
 
 	#endregion;
 	
+	
+	#region Static layout helpers
 	
 	// helper function to create a vector from relative verbage. the x and y values should be between 0 and 1
 	public static Vector2 relativeVec2( float xPercent, UIxRelativeTo xRelative, float yPercent, UIyRelativeTo yRelative )
@@ -235,6 +305,6 @@ public class UI : UISpriteManager
 		return vec;
 	}
 
-
+	#endregion
 
 }

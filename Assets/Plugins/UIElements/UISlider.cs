@@ -2,7 +2,6 @@ using UnityEngine;
 
 
 public enum UISliderLayout { Horizontal, Vertical }
-public delegate void UISliderChanged( UISlider sender, float value );
 
 public class UISlider : UITouchableSprite
 {
@@ -14,6 +13,7 @@ public class UISlider : UITouchableSprite
 	private UISprite _sliderKnob;
 	
 	private UISliderLayout layout = UISliderLayout.Horizontal;
+	public delegate void UISliderChanged( UISlider sender, float value );
 	public event UISliderChanged onChange;
 	
 	
@@ -48,13 +48,13 @@ public class UISlider : UITouchableSprite
 		// setup the min/max position values for the sliderKnob
 		if( layout == UISliderLayout.Horizontal )
 		{
-			_knobMinimumXY = frame.x;
-			_knobMaximumXY = frame.x + width - sliderKnob.width;
+			_knobMinimumXY = frame.x + sliderKnob.width / 2;
+			_knobMaximumXY = frame.x + width - sliderKnob.width / 2;
 		}
 		else
 		{
-			_knobMinimumXY = -frame.y - height + sliderKnob.height;
-			_knobMaximumXY = -frame.y;
+			_knobMinimumXY = -frame.y - height + sliderKnob.height / 2;
+			_knobMaximumXY = -frame.y - sliderKnob.height / 2;
 		}
 		
 		UI.instance.addTouchableSprite( this );
@@ -88,6 +88,8 @@ public class UISlider : UITouchableSprite
 		}
 		else
 		{
+			// inverse the value because 1 is our peak value but that corresponds to a lower y coordinate due to 0 being on top
+			normalizedKnobValue = 1 - normalizedKnobValue;
 			float newKnobPosition = Mathf.Clamp( clientTransform.position.y - normalizedKnobValue * height, _knobMinimumXY, _knobMaximumXY );
 			_sliderKnob.clientTransform.position = new Vector3( _sliderKnob.clientTransform.position.x, newKnobPosition, _sliderKnob.clientTransform.position.z );
 		}
@@ -101,7 +103,7 @@ public class UISlider : UITouchableSprite
 		Vector2 localTouchPosition = this.inverseTranformPoint( touchPos );
 
 		// Calculate the normalized value (0 - 1) based on the touchPosition
-		float normalizedValue = ( layout == UISliderLayout.Horizontal ) ? ( localTouchPosition.x / width ) : ( localTouchPosition.y / height );
+		float normalizedValue = ( layout == UISliderLayout.Horizontal ) ? ( localTouchPosition.x / width ) : ( ( height - localTouchPosition.y ) / height );
 		this.value = normalizedValue;
 
 		// If the delegate wants continuous updates, send one along
@@ -110,22 +112,34 @@ public class UISlider : UITouchableSprite
 	}
 
 
-	// Touch handlers.  Subclasses should override to get their specific behaviour
+	// Touch handlers
+#if UNITY_EDITOR
+	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+#endif
 	{
 		highlighted = true;
 
 		this.updateSliderKnobForTouchPosition( touchPos );
 	}
 
-	
+
+#if UNITY_EDITOR
+	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+#endif
 	{
 		this.updateSliderKnobForTouchPosition( touchPos );
 	}
 	
-	
+
+#if UNITY_EDITOR
+	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		if( touchCount == 0 )
 			highlighted = false;

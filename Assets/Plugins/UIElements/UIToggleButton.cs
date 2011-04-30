@@ -2,10 +2,9 @@ using UnityEngine;
 using System;
 
 
-public delegate void UIToggleButtonChanged( UIToggleButton sender, bool selected );
-
 public class UIToggleButton : UITouchableSprite
 {
+	public delegate void UIToggleButtonChanged( UIToggleButton sender, bool selected );
 	public event UIToggleButtonChanged onToggle; // event for when we get a touchUpInside
 	
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
@@ -114,7 +113,11 @@ public class UIToggleButton : UITouchableSprite
 
 
 	// Touch handlers
+#if UNITY_EDITOR
+	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		highlighted = false;
 		

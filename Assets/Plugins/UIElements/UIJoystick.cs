@@ -136,8 +136,12 @@ public class UIJoystick : UITouchableSprite
 		}
 	}
 	
-	
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+
+#if UNITY_EDITOR
+	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
+#else
+	public override void onTouchBegan( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		highlighted = true;
 		
@@ -148,14 +152,22 @@ public class UIJoystick : UITouchableSprite
 			_joystickSprite.uvFrame = highlightedUVframe;
 	}
 	
-	
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+
+#if UNITY_EDITOR
+	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
+#else
+	public override void onTouchMoved( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		this.layoutJoystick( this.inverseTranformPoint( touchPos ) );
 	}
 	
-	
+
+#if UNITY_EDITOR
+	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		// Set highlighted to avoid calling super
 		this.highlighted = false;

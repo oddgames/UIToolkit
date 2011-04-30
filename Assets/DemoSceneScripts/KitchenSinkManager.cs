@@ -9,16 +9,17 @@ public class KitchenSinkManager : MonoBehaviour
 	void Start()
 	{
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
-		var playButton = UIButton.create( "playUp.png", "playDown.png", 10, 10 );
+		var playButton = UIButton.create( "playUp.png", "playDown.png", 10, 10, 6 );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		playButton.onTouchUpInside += sender => Debug.Log( "clicked the button: " + sender );
+		playButton.onTouchUpInside += ( sender )  => Debug.Log( "clicked the button: " + sender );
 		
 		
 		// Scores button
-		var scores = UIButton.create( "scoresUp.png", "scoresDown.png", 10, 75 );
+		var scores = UIContinuousButton.create( "scoresUp.png", "scoresDown.png", 10, 75 );
+		scores.centerize();
 		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		scores.onTouchUpInside += onTouchUpInsideScoresButton;
-		scores.color = new Color( 1, 1, 1, 0.5f );
+		scores.onTouchIsDown += ( sender ) => Debug.Log( "touch is down: " + Time.time );
 		
 		
 		// Options button
@@ -29,6 +30,7 @@ public class KitchenSinkManager : MonoBehaviour
 		// Knob
 		var knob = new UIKnob( UI.instance.textureInfoForFilename( "knobUp.png" ), 270, 60 );
 		knob.highlightedUVframe = UI.instance.uvRectForFilename( "knobDown.png" );
+		knob.normalTouchOffsets = new UIEdgeOffsets( 10 ); // give the knob a bit extra touch area
 		knob.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		knob.onKnobChanged += onKnobChanged;
 		knob.value = 0.3f;
@@ -37,6 +39,7 @@ public class KitchenSinkManager : MonoBehaviour
 		// Horizontal Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
 		var hSlider = UISlider.create( "sliderKnob.png", "hSlider.png", 10, 220, UISliderLayout.Horizontal );
 		hSlider.highlightedTouchOffsets = new UIEdgeOffsets( 30, 20, 30, 20 );
+		hSlider.onChange += ( sender, val ) => Debug.Log( val );
 		hSlider.value = 0.6f;
 		
 		
@@ -44,7 +47,8 @@ public class KitchenSinkManager : MonoBehaviour
 		var vSlider = UISlider.create( "vSliderKnob.png", "vSlider.png", 430, 10, UISliderLayout.Vertical );
 		vSlider.highlightedTouchOffsets = new UIEdgeOffsets( 20, 30, 20, 30 );
 		vSlider.continuous = true;
-		vSlider.value = 0.2f;
+		vSlider.onChange += ( sender, val ) => Debug.Log( val );
+		vSlider.value = 0.3f;
 		
 		
 		// Toggle Button
@@ -66,14 +70,6 @@ public class KitchenSinkManager : MonoBehaviour
 		
 		
 		/*		
-		// Progress/Health bar (be sure the bar is on a lower level than the GUIProgressBar
-		UISprite bar = UI.instance.addSprite( new Rect( 251, 267, 128, 8 ), new UIUVRect( 191, 430, 128, 8 ), 1 );
-		UIProgressBar progressBar = new UIProgressBar( new Rect( 240, 250, 150, 30 ), 3, new UIUVRect( 180, 400, 150, 30 ), bar );
-		progressBar.resizeTextureOnChange = true;
-		UI.instance.addSprite( progressBar );
-		progressBar.value = 0.0f;
-
-		
 		// Swipe detector view - big, giant touchbleSprite behind all others
 		UISwipeDetector detector = new UISwipeDetector( new Rect( 0, 60f, Screen.width, Screen.height - 60f ), 10, new UIUVRect( 450, 50, 408, 306 ) );
 		detector.action = onSwipe;
@@ -93,7 +89,7 @@ public class KitchenSinkManager : MonoBehaviour
 			Vector3 pos = playButton.clientTransform.position;
 			if( pos.x > Screen.width + playButton.width / 2 )
 			{
-				pos.x = -playButton.width / 2;
+				pos.x = -playButton.width;
 				playButton.clientTransform.position = pos;
 			}
 			

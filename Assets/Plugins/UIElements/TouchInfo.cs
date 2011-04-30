@@ -42,8 +42,12 @@ public class TouchInfo
 		swipeDetectionStatus = SwipeDetectionStatus.Waiting;
 	}
 	
-	
+
+#if UNITY_EDITOR
+	public void resetWithTouch( UIFakeTouch touch )
+#else
 	public void resetWithTouch( Touch touch )
+#endif
 	{
 		// Initialize the detectionState only with the swipe types we want to listen for
 		swipeDetectionState = swipesToDetect;

@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 
 
-public delegate void UISwipeDetectorDetectedSwipe( UISwipeDetector sender, SwipeDirection direction );
-
 public class UISwipeDetector : UITouchableSprite
 {
 	private TouchInfo[] touchInfoArray;
 	
+	public delegate void UISwipeDetectorDetectedSwipe( UISwipeDetector sender, SwipeDirection direction );
 	public event UISwipeDetectorDetectedSwipe onSwipe; // event for when we get a swipe
+	
 	public float timeToSwipe = 0.5f;	
 	public float allowedVariance = 35.0f;
 	public float minimumDistance = 40.0f;
@@ -20,8 +20,12 @@ public class UISwipeDetector : UITouchableSprite
 		touchInfoArray = new TouchInfo[5];
 	}
 	
-	
+
+#if UNITY_EDITOR
+	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+#endif
 	{
 		if( touchInfoArray[touch.fingerId] == null )
 			touchInfoArray[touch.fingerId] = new TouchInfo( swipesToDetect );
@@ -30,8 +34,12 @@ public class UISwipeDetector : UITouchableSprite
 		touchInfoArray[touch.fingerId].resetWithTouch( touch );
 	}
 
-	
+
+#if UNITY_EDITOR
+	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+#endif
 	{
 		if( processTouchInfoWithTouch( touchInfoArray[touch.fingerId], touch ) )
 		{
@@ -41,16 +49,26 @@ public class UISwipeDetector : UITouchableSprite
 			touchInfoArray[touch.fingerId].swipeDetectionStatus = SwipeDetectionStatus.Done;
 		}
 	}
-	
-	
+
+
+/* Only used for debugging
+#if UNITY_EDITOR
+	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		//Debug.Log( "TOUCH ENDED" );
 		//Debug.Log( string.Format( "x: {0}, y: {1}", touch.position.x, touch.position.y ) );
 	}
+*/
+
 	
-	
+#if UNITY_EDITOR
+	private bool processTouchInfoWithTouch( TouchInfo touchInfo, UIFakeTouch touch )
+#else
 	private bool processTouchInfoWithTouch( TouchInfo touchInfo, Touch touch )
+#endif
 	{
 		// If we already completed the swipe detection or if none are availalbe get out of here
 		if( touchInfo.swipeDetectionStatus != SwipeDetectionStatus.Waiting )
@@ -146,5 +164,6 @@ public class UISwipeDetector : UITouchableSprite
 		
 		return false;
 	}
+
 }
 

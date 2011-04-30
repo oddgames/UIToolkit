@@ -48,7 +48,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 
 
 	// Returns a frame to use to see if this element was touched
-	protected virtual Rect touchFrame
+	public Rect touchFrame
 	{
 		get
 		{
@@ -57,8 +57,16 @@ public abstract class UITouchableSprite : UISprite, IComparable
 			{
 				touchFrameIsDirty = false;
 				
-				// Grab the normal frame of the sprite then add the offsets to get our touch frames
+				// grab the normal frame of the sprite then add the offsets to get our touch frames
+				// remembering to offset if we have our origin in the center
 				Rect normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width, height );
+				
+				if( gameObjectOriginInCenter )
+				{
+					normalFrame.x -= width / 2;
+					normalFrame.y -= height / 2;
+				}
+				
 				_normalTouchFrame = _normalTouchOffsets.addToRect( normalFrame );
 				_highlightedTouchFrame = _highlightedTouchOffsets.addToRect( normalFrame );
 			}
@@ -91,24 +99,42 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	{
 		return new Vector2( point.x - _normalTouchFrame.xMin, point.y - _normalTouchFrame.yMin );
 	}
-
+	
+	
+	public override void centerize()
+	{
+		touchFrameIsDirty = true;
+		base.centerize();
+	}
 
 	#region Touch handlers
 	
 	// Touch handlers.  Subclasses should override these to get their specific behaviour
+#if UNITY_EDITOR
+	public virtual void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
+#endif
 	{
 		highlighted = true;
 	}
 
-	
+
+#if UNITY_EDITOR
+	public virtual void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
+#endif
 	{
 
 	}
 	
-	
+
+#if UNITY_EDITOR
+	public virtual void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#else
 	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		highlighted = false;
 	}

@@ -1,9 +1,9 @@
 using UnityEngine;
 
 
-public delegate void UIButtonTouchUpInside( UISpriteButton sender );
+public delegate void UIButtonTouchUpInside( UIButton sender );
 
-public class UISpriteButton : UITouchableSprite
+public class UIButton : UITouchableSprite
 {
 	public event UIButtonTouchUpInside onTouchUpInside;
 	
@@ -13,7 +13,24 @@ public class UISpriteButton : UITouchableSprite
 	
 	#region Constructors/Destructor
 	
-	public UISpriteButton( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
+	public static UIButton create( string filename, string highlightedFilename, int xPos, int yPos, int depth = 1 )
+	{
+		// grab the texture details for the normal state
+		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
+		
+		// get the highlighted state
+		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
+		
+		// create the button
+		var button = new UIButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		UI.instance.addTouchableSprite( button );
+		
+		return button;
+	}
+
+
+	public UIButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
 	{
 		// Save a copy of our uvFrame here so that when highlighting turns off we have the original UVs
 		_normalUVframe = uvFrame;
@@ -21,11 +38,7 @@ public class UISpriteButton : UITouchableSprite
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;
-	}
-
-
-	public UISpriteButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):this( frame, depth, uvFrame )
-	{
+		
 		this.highlightedUVframe = highlightedUVframe;
 	}
 

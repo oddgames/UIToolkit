@@ -53,10 +53,10 @@ public class UI : UISpriteManager
 		_uiCameraHolder.AddComponent( "Camera" );
 		
 		_uiCamera = _uiCameraHolder.camera;
-		_uiCamera.name = "__UICamera";
+		_uiCamera.name = "UICamera";
 		_uiCamera.clearFlags = CameraClearFlags.Depth;
 		_uiCamera.nearClipPlane = 0.3f;
-		_uiCamera.farClipPlane = 100.0f;
+		_uiCamera.farClipPlane = 50.0f;
 		_uiCamera.depth = drawDepth;
 		_uiCamera.rect = new Rect( 0.0f, 0.0f, 1.0f, 1.0f );
 		_uiCamera.orthographic = true;
@@ -119,11 +119,20 @@ public class UI : UISpriteManager
 
 	
 	// Ensure that the instance is destroyed when the game is stopped in the editor.
-	public void OnApplicationQuit()
+	protected void OnApplicationQuit()
 	{
-	   instance = null;
+		material.mainTexture = null;
+		instance = null;
+		Resources.UnloadUnusedAssets();
 	}
-
+	
+	
+	protected void OnDestroy()
+	{
+		material.mainTexture = null;
+		Resources.UnloadUnusedAssets();
+	}
+	
 
 #if UNITY_EDITOR
 	// Debug display of our trigger state

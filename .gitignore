@@ -7,7 +7,6 @@ Products
 *.perspectivev3
 
 # Unity junk files
-Library/
 Xcode/
 
 /Temp/

@@ -9,23 +9,20 @@ public class KitchenSinkManager : MonoBehaviour
 	void Start()
 	{
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
-		var playButton = UI.instance.addSpriteButton( "playUp.png", 10, 10 );
-		playButton.highlightedUVframe = UI.instance.uvRectForFilename( "playDown.png" );
+		var playButton = UIButton.create( "playUp.png", "playDown.png", 10, 10 );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		playButton.onTouchUpInside += sender => Debug.Log( "clicked the button: " + sender );
 		
 		
 		// Scores button
-		var scores = UI.instance.addSpriteButton( "scoresUp.png", 10, 75 );
-		scores.highlightedUVframe = UI.instance.uvRectForFilename( "scoresDown.png" );
+		var scores = UIButton.create( "scoresUp.png", "scoresDown.png", 10, 75 );
 		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		scores.onTouchUpInside += onTouchUpInsideScoresButton;
 		scores.color = new Color( 1, 1, 1, 0.5f );
 		
 		
 		// Options button
-		var optionsButton = UI.instance.addSpriteButton( "optionsUp.png", 10, 130 );
-		optionsButton.highlightedUVframe = UI.instance.uvRectForFilename( "optionsDown.png" );
+		var optionsButton = UIButton.create( "optionsUp.png", "optionsDown.png", 10, 130 );
 		optionsButton.onTouchUpInside += onTouchUpInsideOptionsButton;
 		
 		
@@ -38,20 +35,16 @@ public class KitchenSinkManager : MonoBehaviour
 		
 		
 		// Horizontal Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
-		var hSliderKnob = UI.instance.addSprite( "sliderKnob.png", 20, 210 );
-		var hSlider = new UISlider( UI.instance.textureInfoForFilename( "hSlider.png" ), 10, 220, hSliderKnob, UISliderLayout.Horizontal );
-		// Increase our hit area a bit while we are tracking along the slider
+		var hSlider = UISlider.create( "sliderKnob.png", "hSlider.png", 10, 220, UISliderLayout.Horizontal );
 		hSlider.highlightedTouchOffsets = new UIEdgeOffsets( 30, 20, 30, 20 );
-		hSlider.value = 0.5f;
+		hSlider.value = 0.6f;
 		
 		
 		// Vertical Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
-		var vSliderKnob = UI.instance.addSprite( "vSliderKnob.png", 420, 0 );
-		var vSlider = UISlider.create( "vSlider.png", 430, 10, vSliderKnob, UISliderLayout.Vertical );
-		// Increase our hit area a bit while we are tracking along the slider
+		var vSlider = UISlider.create( "vSliderKnob.png", "vSlider.png", 430, 10, UISliderLayout.Vertical );
 		vSlider.highlightedTouchOffsets = new UIEdgeOffsets( 20, 30, 20, 30 );
 		vSlider.continuous = true;
-		vSlider.value = 0.5f;
+		vSlider.value = 0.2f;
 		
 		
 		// Toggle Button
@@ -92,7 +85,7 @@ public class KitchenSinkManager : MonoBehaviour
 	#region CoRoutine animation tests that do not use the GUIAnimation system
 	
 	// Play coroutine that animates a button marquee style
-	private IEnumerator marqueePlayButton( UISpriteButton playButton )
+	private IEnumerator marqueePlayButton( UIButton playButton )
 	{
 		while( true )
 		{
@@ -177,7 +170,7 @@ public class KitchenSinkManager : MonoBehaviour
 	}
 	
 	
-	private IEnumerator pulseOptionButton( UISpriteButton optionsButton )
+	private IEnumerator pulseOptionButton( UIButton optionsButton )
 	{
 		UIAnimation ani;
 		
@@ -204,13 +197,13 @@ public class KitchenSinkManager : MonoBehaviour
 
 
 	// Button callback
-	public void onTouchUpInsideScoresButton( UISpriteButton sender )
+	public void onTouchUpInsideScoresButton( UIButton sender )
 	{
 		StartCoroutine( animateLocalScale( sender, new Vector3( 1.3f, 1.3f, 1 ), 0.3f ) );
 	}
 	
 	
-	public void onTouchUpInsideOptionsButton( UISpriteButton sender )
+	public void onTouchUpInsideOptionsButton( UIButton sender )
 	{
 		// Rotation should be around the z axis
 		StartCoroutine( animateRotation( sender, new Vector3( 0, 0, 359 ), 1.0f ) );

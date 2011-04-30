@@ -17,18 +17,23 @@ public class UISlider : UITouchableSprite
 	public event UISliderChanged onChange;
 	
 	
-	public static UISlider create( string filename, int xPos, int yPos, UISprite sliderKnob, UISliderLayout layout )
+	// the knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
+	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
 	{
-		var textureInfo = UI.instance.textureInfoForFilename( filename );
-		var frame = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
+		// create the track first so we can use its dimensions to position the knob		
+		var trackTI = UI.instance.textureInfoForFilename( trackFilename );
+		var trackFrame = new Rect( trackxPos, trackyPos, trackTI.size.x, trackTI.size.y );
 		
-		return new UISlider( frame, 5, textureInfo.uvRect, sliderKnob, layout );
-	}
-	
-	
-	public UISlider( UITextureInfo textureInfo, int xPos, int yPos, UISprite sliderKnob, UISliderLayout layout ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 5, textureInfo.uvRect, sliderKnob, layout )
-	{
+		// position the knob based on the knobs size, layout and the track size
+		if( layout == UISliderLayout.Horizontal )
+			trackyPos += (int)trackTI.size.y / 2;
+		else
+			trackxPos += (int)trackTI.size.x / 2;
+
+		// create a knob using our cacluated position
+		var knob = UI.instance.addSprite( knobFilename, trackxPos, trackyPos, 1, true );
 		
+		return new UISlider( trackFrame, 2, trackTI.uvRect, knob, layout );
 	}
 	
 

@@ -198,14 +198,6 @@ public class UISpriteManager : MonoBehaviour
 				ti.frame = new Rect( frameX, frameY, frameW, frameH );
 				ti.size = new Vector2( float.Parse( sourceSize["w"].ToString() ), float.Parse( sourceSize["h"].ToString() ) );
 				ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH );
-				
-				// if we are HD, double our size and uvRect
-				if( false )
-				{
-					ti.uvRect.doubleForHD();
-					ti.size.x *= 2;
-					ti.size.y *= 2;
-				}
 			
 				textures.Add( item.Key.ToString(), ti );
 			}
@@ -387,14 +379,7 @@ public class UISpriteManager : MonoBehaviour
 
 	#region Add/Remove sprite functions
 
-	// shortcut for adding a new sprite
-    public UISprite addSprite( string name, int xPos, int yPos, bool gameObjectOriginInCenter = false )
-    {
-		return this.addSprite( name, xPos, yPos, 1, gameObjectOriginInCenter );
-    }
-
-
-    public UISprite addSprite( string name, int xPos, int yPos, int depth, bool gameObjectOriginInCenter = false )
+    public UISprite addSprite( string name, int xPos, int yPos, int depth = 1, bool gameObjectOriginInCenter = false )
     {
 #if UNITY_EDITOR
 		// sanity check while in editor
@@ -404,12 +389,12 @@ public class UISpriteManager : MonoBehaviour
 		var textureInfo = textureDetails[name];
 		var positionRect = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
 
-		return this.addSprite( positionRect, textureInfo.uvRect, depth );
+		return this.addSprite( positionRect, textureInfo.uvRect, depth, gameObjectOriginInCenter );
     }
 
 	
-	// shortcut for adding a new sprite
-    public UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter = false )
+	// shortcut for adding a new sprite using the raw materials
+    private UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter = false )
     {
         // Create and initialize the new sprite
 		UISprite newSprite = new UISprite( frame, depth, uvFrame, gameObjectOriginInCenter );
@@ -457,7 +442,7 @@ public class UISpriteManager : MonoBehaviour
     }
 
 
-    public void removeSprite( UISprite sprite )
+    protected void removeSprite( UISprite sprite )
     {
 		vertices[sprite.vertexIndices.mv.one] = Vector3.zero;
 		vertices[sprite.vertexIndices.mv.two] = Vector3.zero;

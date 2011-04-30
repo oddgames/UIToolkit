@@ -116,37 +116,7 @@ public class UI : UISpriteManager
 
 
 	#region Add/Remove Element and Button functions
-	
-	// Shortcut for adding a GUISpriteButton
-	public UISpriteButton addSpriteButton( string name, int xPos, int yPos )
-	{
-		return this.addSpriteButton( name, xPos, yPos, 1 );
-	}
-	
-	
-	public UISpriteButton addSpriteButton( string name, int xPos, int yPos, int depth )
-	{
-#if UNITY_EDITOR
-		// sanity check while in editor
-		if( !textureDetails.ContainsKey( name ) )
-			throw new Exception( "can't find texture details for texture packer sprite:" + name );
-#endif
-		var textureInfo = textureDetails[name];
-		var positionRect = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
-		
-		return this.addSpriteButton( positionRect, depth, textureInfo.uvRect );
-	}
-	
-	
-	public UISpriteButton addSpriteButton( Rect frame, int depth, UIUVRect uvFrame )
-	{
-		UISpriteButton spriteButton = new UISpriteButton( frame, depth, uvFrame );
-		addTouchableSprite( spriteButton );
-		
-		return spriteButton;
-	}
 
-	
 	public void addTouchableSprite( UITouchableSprite touchableSprite )
 	{
 		addSprite( touchableSprite );

@@ -4,6 +4,8 @@ using System.Collections;
 public class KitchenSinkManager : MonoBehaviour
 {
 	public GUIText swipeText;
+	public AudioClip scoresSound;
+	public AudioClip optionsSound;
 	
 
 	void Start()
@@ -20,11 +22,12 @@ public class KitchenSinkManager : MonoBehaviour
 		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		scores.onTouchUpInside += onTouchUpInsideScoresButton;
 		scores.onTouchIsDown += ( sender ) => Debug.Log( "touch is down: " + Time.time );
-		
+		scores.touchDownSound = scoresSound;
 		
 		// Options button
 		var optionsButton = UIButton.create( "optionsUp.png", "optionsDown.png", 10, 130 );
 		optionsButton.onTouchUpInside += onTouchUpInsideOptionsButton;
+		optionsButton.touchDownSound = optionsSound;
 		
 		
 		// Knob

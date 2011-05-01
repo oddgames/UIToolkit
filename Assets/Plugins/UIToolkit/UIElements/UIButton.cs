@@ -8,7 +8,8 @@ public class UIButton : UITouchableSprite
 	
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
-
+	public AudioClip touchDownSound;
+	
 	
 	#region Constructors/Destructor
 	
@@ -85,6 +86,18 @@ public class UIButton : UITouchableSprite
 
 
 	// Touch handlers
+#if UNITY_EDITOR
+	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
+#else
+	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+#endif
+	{
+		if( touchDownSound != null )
+			UI.instance.playSound( touchDownSound );
+	}
+
+
+
 #if UNITY_EDITOR
 	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #else

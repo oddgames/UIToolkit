@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-
+[RequireComponent( typeof( AudioSource ) )]
 public class UI : UISpriteManager
 {
 	// All access should go through instance
@@ -18,7 +18,7 @@ public class UI : UISpriteManager
 	private Camera _uiCamera;
 	private GameObject _uiCameraHolder;
 	private UITouchableSprite[] _spriteSelected;
-	private Vector2 _screenResolution;
+	private AudioSource _audioSource;
 	
 	// Holds all our touchable sprites
 	private List<UITouchableSprite> _touchableSprites = new List<UITouchableSprite>();
@@ -36,6 +36,9 @@ public class UI : UISpriteManager
 		instance = this;
 		
 		base.Awake();
+		
+		// cache the AudioSource
+		_audioSource = GetComponent<AudioSource>();
 
 		// Create the camera
 		_uiCameraHolder = new GameObject();
@@ -50,12 +53,10 @@ public class UI : UISpriteManager
 		_uiCamera.depth = drawDepth;
 		_uiCamera.rect = new Rect( 0.0f, 0.0f, 1.0f, 1.0f );
 		_uiCamera.orthographic = true;
-		
-		_screenResolution = new Vector2( Screen.width, Screen.height );
 		_uiCamera.orthographicSize = Screen.height / 2;
 
 		// Set the camera position based on the screenResolution/orientation
-		_uiCamera.transform.position = new Vector3( _screenResolution.x / 2, -_screenResolution.y / 2, -10.0f );
+		_uiCamera.transform.position = new Vector3( Screen.width / 2, -Screen.height / 2, -10.0f );
 		_uiCamera.cullingMask = UILayer;
 		
 		// Cache the layer for later use when adding sprites
@@ -214,7 +215,7 @@ public class UI : UISpriteManager
 #endif
 	{
 		// tranform the touch position so the origin is in the top left
-		Vector2 fixedTouchPosition = new Vector2( touch.position.x, _screenResolution.y - touch.position.y );
+		Vector2 fixedTouchPosition = new Vector2( touch.position.x, Screen.height - touch.position.y );
 		UITouchableSprite button = getButtonForScreenPosition( fixedTouchPosition );
 
 		bool touchEnded = ( touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled );
@@ -284,5 +285,10 @@ public class UI : UISpriteManager
 
 	#endregion;
 	
+	
+	public void playSound( AudioClip clip )
+	{
+		_audioSource.PlayOneShot( clip );
+	}
 
 }

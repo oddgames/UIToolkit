@@ -38,10 +38,10 @@ public class UIContinuousButton : UIButton
 #if UNITY_EDITOR
 	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
 #else
-	public override void onTouchBegan( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
-		highlighted = true;
+		base.onTouchBegan( touch, touchPos );
 
 		if( onlyFireStartAndEndEvents && onTouchDown != null )
 			onTouchDown( this );

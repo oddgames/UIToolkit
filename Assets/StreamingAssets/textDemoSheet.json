@@ -1,0 +1,11 @@
+{"frames": {
+
+"prototype.png":
+{
+	"frame": {"x":0,"y":0,"w":250,"h":162},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":162},
+	"sourceSize": {"w":256,"h":256}
+}
+}}

@@ -12,7 +12,7 @@ public class TextManager : MonoBehaviour
 
 	void Start()
 	{
-		var text = new UIText( "prototype" );
+		var text = new UIText( "prototype.fnt", "prototype.png" );
 		
 		var vec1 = UI.relativeVec2( .3f, UIxRelativeTo.Right, .1f, UIyRelativeTo.Top );
 		var vec2 = new Vector2( 10, 180 );
@@ -20,16 +20,15 @@ public class TextManager : MonoBehaviour
 		var vec4 = new Vector2( 100, 150 );
 		
 		// add 4 text instances
-		text1 = text.addTextInstance( "hello\nman", vec1, 1.0f, 2, Color.blue );
+		text1 = text.addTextInstance( "hello\nman", vec1, 1.0f );
 		text2 = text.addTextInstance( "testing small bitmap fonts", vec2, 0.3f, 2, Color.white );
-		text3 = text.addTextInstance( "with only 1 draw call for everything", vec3, 0.7f, 2, Color.yellow );
-		text4 = text.addTextInstance( "kudos", vec4 );
+		text3 = text.addTextInstance( "with only 1 draw call for everything", vec3, 0.7f, 5, Color.yellow );
+		text4 = text.addTextInstance( "kudos", vec4, 1.0f, 5 );
 		
 		StartCoroutine( waitThenRemoveText() );
 	}
 	
-	
-	// Update is called once per frame
+
 	IEnumerator waitThenRemoveText()
 	{
 		yield return new WaitForSeconds( 2.0f );

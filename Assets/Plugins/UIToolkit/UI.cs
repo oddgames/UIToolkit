@@ -17,8 +17,6 @@ public class UI : UISpriteManager
 	// All access should go through instance
 	static public UI instance = null;
 	
-	private const int MAX_CHANGED_TOUCHES = 4;
-	
 	public bool displayTouchDebugAreas = false; // if true, gizmos will be used to show the hit areas in the editor
 	public int drawDepth = 100;	
 	public LayerMask UILayer = 0;
@@ -79,8 +77,8 @@ public class UI : UISpriteManager
 			}
 		}
 
-		_spriteSelected = new UITouchableSprite[MAX_CHANGED_TOUCHES];
-		for( int i = 0; i < MAX_CHANGED_TOUCHES; ++i )
+		_spriteSelected = new UITouchableSprite[5];
+		for( int i = 0; i < 5; ++i )
 			_spriteSelected[i] = null;
 	}
 
@@ -105,7 +103,7 @@ public class UI : UISpriteManager
 		{
 			// no touches. so check the mouse input if we are in the editor
 			if( Input.GetMouseButton( 0 ) || Input.GetMouseButtonUp( 0 ) )
-				lookAtTouch( UIFakeTouch.fromInput() );
+				lookAtTouch( UIFakeTouch.fromInput( ref lastMousePosition ) );
 		}
 #endif
 
@@ -177,7 +175,8 @@ public class UI : UISpriteManager
 			// display debug fake touches from the mouse
 			if( Input.GetMouseButton( 0 ) )
 			{
-				var touch = UIFakeTouch.fromInput();
+				Vector2? fakeVec = Vector2.zero;
+				var touch = UIFakeTouch.fromInput( ref fakeVec );
 				var pos = _uiCamera.ScreenToWorldPoint( touch.position );
 				Gizmos.DrawCube( pos, new Vector3( 20, 20, 5 ) );
 			}

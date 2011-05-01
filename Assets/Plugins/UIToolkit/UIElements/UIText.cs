@@ -3,18 +3,6 @@ using System.IO;
 using System.Collections.Generic;
 
 
-public struct UIFonts
-{	
-	public int charID;
-	public int posX;
-	public int posY;
-	public int w;
-	public int h;
-	public int offsetx;
-	public int offsety;
-	public int xadvance;
-}
-
 
 // addTextInstance returns one of these so we just need to do a .text on the instance to update it
 public struct UITextInstance
@@ -27,7 +15,7 @@ public struct UITextInstance
 	public int depth;
 	public int textIndex;
 	public Color color;
-	
+
 	
 	public string text
 	{
@@ -77,22 +65,34 @@ public struct UITextInstance
 
 public class UIText : System.Object 
 {
- 	private UIFonts[] arrayFonts;
+	private struct UIFontCharInfo
+	{	
+		public int charID;
+		public int posX;
+		public int posY;
+		public int w;
+		public int h;
+		public int offsetx;
+		public int offsety;
+		public int xadvance;
+	}
+
+
+ 	private UIFontCharInfo[] arrayFonts;
 	private List<UISprite[]> textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
 	private Vector2 textureOffset;
-	
-	
-	// textureOffset is the x and y offset into the sprite sheet that the bitmap font begins
-	public UIText( string fontFilename )
+
+
+	public UIText( string fontFilename, string textureFilename )
 	{
-		arrayFonts = new UIFonts[256];
+		arrayFonts = new UIFontCharInfo[256];
 		for( int i = 0; i < arrayFonts.Length; i++ )
-			arrayFonts[i] = new UIFonts();
+			arrayFonts[i] = new UIFontCharInfo();
 		
 		loadConfigfile( fontFilename );
 		
 		// grab the texture offset from the UI
-		var rect = UI.instance.frameForFilename( fontFilename + ".png" );
+		var rect = UI.instance.frameForFilename( textureFilename );
 		this.textureOffset = new Vector2( rect.x, rect.y );
 	}
 
@@ -102,10 +102,7 @@ public class UIText : System.Object
 	{
 		// should we load a double resolution font?
 		if( UI.instance.isHD )
-			filename = filename + "2x";
-
-		if( !filename.EndsWith( ".fnt" ) )
-			filename = filename + ".fnt";
+			filename = filename.Substring( 0, filename.Length - 4 ) + "2x.fnt";
 
 		string localizedStringsFile = Application.dataPath;
 		
@@ -290,9 +287,9 @@ public class UIText : System.Object
 
 	
 	// this will create a new UITextInstance and draw the text
-	public UITextInstance addTextInstance( string text, Vector2 position )
+	public UITextInstance addTextInstance( string text, Vector2 position, float scale = 1f, int depth = 1 )
 	{
-		return addTextInstance( text, position, 1.0f, 10, Color.white );
+		return this.addTextInstance( text, position, scale, depth, Color.white );
 	}
 
 	

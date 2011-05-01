@@ -13,6 +13,36 @@ public class UISwipeDetector : UITouchableSprite
 	public float allowedVariance = 35.0f;
 	public float minimumDistance = 40.0f;
 	public SwipeDirection swipesToDetect = SwipeDirection.All;
+	
+
+	/// <summary>
+	/// Creates a swipe detector with no related UI
+	/// </summary>
+	public static UISwipeDetector create( Rect frame, int depth = 1 )
+	{
+		// create the swipe detector
+		var detector = new UISwipeDetector( frame, depth, UIUVRect.zero );
+		UI.instance.addTouchableSprite( detector );
+		
+		return detector;
+	}
+
+
+	/// <summary>
+	/// Creates a swipe detector with a texture backing the hit area
+	/// </summary>
+	public static UISwipeDetector create( string filename, int xPos, int yPos, int depth = 1 )
+	{
+		// grab the texture details
+		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
+
+		// create the swipe detector
+		var detector = new UISwipeDetector( frame, depth, normalTI.uvRect );
+		UI.instance.addTouchableSprite( detector );
+		
+		return detector;
+	}
 
 
 	public UISwipeDetector( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )

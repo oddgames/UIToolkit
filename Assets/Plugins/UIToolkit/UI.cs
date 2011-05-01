@@ -2,14 +2,6 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-#if UNITY_EDITOR
-using System.Reflection;
-using System.Reflection.Emit;
-#endif
-
-
-public enum UIxRelativeTo { Left, Right };
-public enum UIyRelativeTo { Top, Bottom };
 
 
 public class UI : UISpriteManager
@@ -292,27 +284,5 @@ public class UI : UISpriteManager
 
 	#endregion;
 	
-	
-	#region Static layout helpers
-	
-	// helper function to create a vector from relative verbage. the x and y values should be between 0 and 1
-	public static Vector2 relativeVec2( float xPercent, UIxRelativeTo xRelative, float yPercent, UIyRelativeTo yRelative )
-	{
-		var vec = Vector2.zero;
-		
-		if( xRelative == UIxRelativeTo.Left )
-			vec.x = xPercent * Screen.width;
-		else
-			vec.x = Screen.width - ( xPercent * Screen.width );
-		
-		if( yRelative == UIyRelativeTo.Top )
-			vec.y = yPercent * Screen.height;
-		else
-			vec.y = Screen.height - ( yPercent * Screen.height );
-		
-		return vec;
-	}
-
-	#endregion
 
 }

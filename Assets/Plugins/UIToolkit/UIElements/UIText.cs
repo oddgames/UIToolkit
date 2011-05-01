@@ -10,7 +10,8 @@ public struct UITextInstance
 	private UIText parentText;
 	private string _text;
 	
-	public Vector2 position;
+	public float xPos;
+	public float yPos;
 	public float scale;
 	public int depth;
 	public int textIndex;
@@ -31,11 +32,12 @@ public struct UITextInstance
 	}
 	
 	
-	public UITextInstance( UIText parentText, string text, Vector2 position, float scale, int depth, Color color )
+	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color )
 	{
 		this.parentText = parentText;
 		_text = text;
-		this.position = position;
+		this.xPos = xPos;
+		this.yPos = yPos;
 		this.scale = scale;
 		this.depth = depth;
 		this.textIndex = -1;
@@ -77,7 +79,9 @@ public class UIText : System.Object
 		public int xadvance;
 	}
 
-
+	
+	public float lineSpacing = 1.2f;
+	
  	private UIFontCharInfo[] arrayFonts;
 	private List<UISprite[]> textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
 	private Vector2 textureOffset;
@@ -183,9 +187,9 @@ public class UIText : System.Object
 	
 	
 	// draw text on screen, create each quad and send it to the manager
-	private int drawText( string text, Vector2 position, float scale, int depth, Color color )
+	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color color )
 	{		
-		float dx = position.x;
+		float dx = xPos;
 		float dy = 0;
 		float textWidth;
 		float offsetY;
@@ -210,14 +214,14 @@ public class UIText : System.Object
 				// calculate the size to center text on Y axis, based on its scale
 				// 77 is the "M" char usually big enough to get a proper spaced
 				// lineskip, use any other char if you want
-				fontLineSkip += (int)( arrayFonts[77].h * scale );
-				dx =  position.x;
+				fontLineSkip += (int)( arrayFonts[77].h * scale * lineSpacing );
+				dx = xPos;
 			}
 			else
 			{
 				// calculate the size to center text on Y axis, based on its scale
 				offsetY = arrayFonts[charId].offsety * scale;
-				dy =  position.y + offsetY + fontLineSkip;
+				dy =  yPos + offsetY + fontLineSkip;
 			}
 
 			// add quads for each char
@@ -263,10 +267,9 @@ public class UIText : System.Object
 				// lineskip, use any other char if you want
 				fontLineSkip += (int)( arrayFonts[77].h * scale );
 				
-				// we want the longest line
-				if( dxMax < dx )
-					dxMax = dx;
-				dx =  0;
+				// add a small bit of spacing
+				fontLineSkip += (int)( arrayFonts[77].h * scale * lineSpacing );
+				dx = 0;
 			}
 			else
 			{
@@ -280,6 +283,10 @@ public class UIText : System.Object
 		
 			// advance the position to draw the next letter
 			dx += textWidth + arrayFonts[charId].offsetx;
+			
+			// we want the longest line
+			if( dxMax < dx )
+				dxMax = dx;
 		}
 		
 		return new Vector2( dxMax > 0 ? dxMax : dx, dy + ( arrayFonts[77].h * scale ) );
@@ -287,16 +294,16 @@ public class UIText : System.Object
 
 	
 	// this will create a new UITextInstance and draw the text
-	public UITextInstance addTextInstance( string text, Vector2 position, float scale = 1f, int depth = 1 )
+	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale = 1f, int depth = 1 )
 	{
-		return this.addTextInstance( text, position, scale, depth, Color.white );
+		return this.addTextInstance( text, xPos, yPos, scale, depth, Color.white );
 	}
 
 	
-	public UITextInstance addTextInstance( string text, Vector2 position, float scale, int depth, Color color )
+	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth, Color color )
 	{
-		var textInstance = new UITextInstance( this, text, position, scale, depth, color );
-		textInstance.textIndex = drawText( text, position, scale, depth, color );
+		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, color );
+		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, color );
 		
 		return textInstance;
 	}
@@ -306,7 +313,7 @@ public class UIText : System.Object
 	{
 		// kill the current text then draw some new text
 		deleteText( textInstance.textIndex );
-		textInstance.textIndex = drawText( textInstance.text, textInstance.position, textInstance.scale, textInstance.depth, textInstance.color );
+		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.color );
 	}
 	
 	

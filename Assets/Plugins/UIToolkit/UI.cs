@@ -152,6 +152,7 @@ public class UI : UISpriteManager
 			Gizmos.DrawWireCube( pos, new Vector3( item.touchFrame.width, item.touchFrame.height, 5 ) );
 		}
 		
+		/* TODO: fix the debug touches.  they arent lined up correctly in the camera preview
 		// display debug touches
 		if( Input.touchCount > 0 )
 		{
@@ -174,6 +175,7 @@ public class UI : UISpriteManager
 				Gizmos.DrawCube( pos, new Vector3( 20, 20, 5 ) );
 			}
 		}
+		*/
 	}
 #endif
 

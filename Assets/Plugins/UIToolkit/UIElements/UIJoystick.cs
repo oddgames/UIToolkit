@@ -27,7 +27,7 @@ public class UIJoystick : UITouchableSprite
 {
 	public Vector2 position;
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
-	public bool normalize; // Normalize output after the dead-zone?
+	public bool normalize = true; // Normalize output after the dead-zone?  If true, we start at 0 even though the joystick is moved deadZone pixels already
 	
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe = UIUVRect.zero; // Highlighted UV's for the joystick
@@ -35,14 +35,21 @@ public class UIJoystick : UITouchableSprite
 	private UISprite _joystickSprite;
 	private Vector3 _joystickOffset;
 	private UIBoundary _joystickBoundary;
-	private float _maxJoystickMovement = 50.0f; // max distance from _joystickOffset that the joystick will move
-	
-	
-	public UIJoystick( Rect frame, int depth, UIUVRect uvFrame, UISprite joystickSprite, Vector2 joystickOffset ):base( frame, depth, uvFrame )
+	private float _maxJoystickMovement = 40.0f; // max distance from _joystickOffset that the joystick will move
+
+
+	// 
+	public static UIJoystick create( string joystickFilename, Rect hitAreaFrame, float xPos, float yPos )
 	{
-		// Add the joystickSprite to the manager
-		UI.instance.addSprite( joystickSprite );
+		// create a knob using our cacluated position
+		var joystick = UI.instance.addSprite( joystickFilename, 0, 0, 1, true );
 		
+		return new UIJoystick( hitAreaFrame, 1, joystick, xPos, yPos );
+	}
+
+	
+	public UIJoystick( Rect frame, int depth, UISprite joystickSprite, float xPos, float yPos ):base( frame, depth, UIUVRect.zero )
+	{
 		// Save out the uvFrame for the sprite so we can highlight
 		_normalUVframe = joystickSprite.uvFrame;
 		
@@ -51,12 +58,14 @@ public class UIJoystick : UITouchableSprite
 		_joystickSprite.clientTransform.parent = this.clientTransform;
 		
 		// Move the joystick to its default position after converting the offset to a vector3
-		_joystickOffset = new Vector3( joystickOffset.x, joystickOffset.y );
+		_joystickOffset = new Vector3( xPos, yPos );
 		
 		// Set the maxMovement which will in turn calculate the _joystickBoundary
 		this.maxJoystickMovement = _maxJoystickMovement;
 		
 		resetJoystick();
+		
+		UI.instance.addTouchableSprite( this );
 	}
 	
 	
@@ -69,15 +78,21 @@ public class UIJoystick : UITouchableSprite
 			_joystickBoundary = UIBoundary.boundaryFromPoint( _joystickOffset, _maxJoystickMovement );
 		}
 	}
-	
-	
-	public void addBackgroundSprite( Rect frame, int depth, UIUVRect uvFrame )
+
+
+	public void setJoystickHighlightedFilename( string filename )
 	{
-		UISprite sprite = new UISprite( frame, depth, uvFrame, true );
-		sprite.clientTransform.parent = this.clientTransform;
-		UI.instance.addSprite( sprite );
-		sprite.clientTransform.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, depth );
-		sprite.updateTransform();
+		var textureInfo = UI.instance.textureInfoForFilename( filename );
+		highlightedUVframe = textureInfo.uvRect;
+	}
+	
+	
+	public void addBackgroundSprite( string filename )
+	{
+		var track = UI.instance.addSprite( filename, 0, 0, 2, true );
+		track.clientTransform.parent = this.clientTransform;
+		track.clientTransform.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
+		track.updateTransform();
 	}
 	
 	
@@ -170,7 +185,7 @@ public class UIJoystick : UITouchableSprite
 #endif
 	{
 		// Set highlighted to avoid calling super
-		this.highlighted = false;
+		highlighted = false;
 		
 		// Reset back to default state
 		this.resetJoystick();

@@ -92,6 +92,8 @@ public class UIButton : UITouchableSprite
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
+		highlighted = true;
+		
 		if( touchDownSound != null )
 			UI.instance.playSound( touchDownSound );
 	}

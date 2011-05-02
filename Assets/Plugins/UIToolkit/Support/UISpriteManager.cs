@@ -31,6 +31,7 @@ public class UISpriteManager : MonoBehaviour
 	public bool autoTextureSelectionForHD = false;
 	public bool allowPod4GenHD = true; // if false, iPod touch 4G will not take part in HD mode
 	public string texturePackerConfigName;
+	[HideInInspector]
 	public bool isHD = false;
 	
 	public Material material;            // The material to use for the sprites
@@ -49,6 +50,7 @@ public class UISpriteManager : MonoBehaviour
 	protected MeshFilter meshFilter;
 	protected MeshRenderer meshRenderer;
 	protected Mesh mesh;                    // Reference to our mesh (contained in the MeshFilter)
+	[HideInInspector]
 	public Vector2 textureSize = Vector2.zero;
 	
 	protected Vector3[] vertices;  // The vertices of our mesh

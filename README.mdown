@@ -5,6 +5,7 @@ UIToolkit aims to make creating interactive menu systems and HUDs with a single 
 and a tall order. The library comes with a bunch of different UI widgets out of the box
 and it makes creating your own widgets extremely simple.  Some conveniences for dealing with HD resolutions (iPhone 3 vs iPhone 4 for example) are
 optionally provided and include:
+
 * automatic texture swapping to a double resolution texture for HD
 * automatic reconfiguration of UV coordinates and positions
 * automatic handling of double resolution UIFonts
@@ -67,7 +68,7 @@ There are also some methods available to assist with relative layout so you can 
 static method (UI.relativeVec2) that lets you set your positions relative to the left/right and top/bottom of the screen.  For example, to make a
 button be in the bottom left corner on both the iPad and iPhone all you would need to do to get the position is:
 
-var pos = UI.relativeVec2( .1f, UIxRelativeTo.Left, .1f, UIyRelativeTo.Bottom );
+var yPosition = UIRelative.yPercentFrom( UIyAnchor.Top, .25f );
 
 
 Working with UIFonts

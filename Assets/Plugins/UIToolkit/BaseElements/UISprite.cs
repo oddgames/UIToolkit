@@ -1,10 +1,5 @@
-//-----------------------------------------------------------------
-// A class to allow the drawing of multiple "quads" as part of a
-// single aggregated mesh so as to achieve multiple, independently
-// moving objects using a single draw call.
-//-----------------------------------------------------------------
-
 using UnityEngine;
+using System.Collections.Generic;
 
 
 public class UISprite : System.Object
@@ -20,7 +15,8 @@ public class UISprite : System.Object
 	
     protected Vector3[] meshVerts;        // Pointer to the array of vertices in the mesh
     protected Vector2[] UVs;              // Pointer to the array of UVs in the mesh
-
+	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
+	
     public Transform clientTransform;         // Cached Transform of the client GameObject
     public Color _color;       // The color to be used by all four vertices
 
@@ -51,7 +47,7 @@ public class UISprite : System.Object
 		client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
 		client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
 		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
-		
+
 		// Cache the clientTransform
 		clientTransform = client.transform;
 		
@@ -179,6 +175,48 @@ public class UISprite : System.Object
 			manager.updateColors( this );
 		}
 	}
+	
+	
+	#region Sprite Animation methods
+	
+	
+	public UISpriteAnimation addSpriteAnimation( string name, float frameTime, params string[] filenames )
+	{
+		// create the spriteAnimations dictionary on demand
+		if( spriteAnimations == null )
+			spriteAnimations = new Dictionary<string, UISpriteAnimation>();
+		
+		// get the UIUVRects for the sprite frames
+		var uvRects = new List<UIUVRect>( filenames.Length );
+		
+		foreach( var filename in filenames )
+			uvRects.Add( UI.instance.uvRectForFilename( filename ) );
+		
+		var anim = new UISpriteAnimation( frameTime, uvRects );
+		spriteAnimations[name] = anim;
+		
+		return anim;
+	}
+	
+	
+	public void playSpriteAnimation( string name, int loopCount )
+	{
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !spriteAnimations.ContainsKey( name ) )
+			throw new System.Exception( "can't find sprite animation with name:" + name );
+#endif
+	
+		playSpriteAnimation( spriteAnimations[name], loopCount );
+	}
+	
+	
+	public void playSpriteAnimation( UISpriteAnimation anim, int loopCount )
+	{
+		UI.instance.StartCoroutine( anim.play( this, loopCount ) );
+	}
+	
+	#endregion
 	
 	
 	#region Animation methods

@@ -30,8 +30,8 @@ public struct UIEdgeOffsets
 		// Clamp x and y to be greater than zero
 		return new Rect
 		(
-			 Mathf.Clamp( frame.x - left, 0, 480 ),
-			 Mathf.Clamp( frame.y - top, 0, 480 ),
+			 Mathf.Clamp( frame.x - left, 0, Screen.width ),
+			 Mathf.Clamp( frame.y - top, 0, Screen.height ),
 			 frame.width + right + left,
 			 frame.height + bottom + top
 		);

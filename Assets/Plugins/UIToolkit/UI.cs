@@ -218,7 +218,7 @@ public class UI : UISpriteManager
 	{
 		// tranform the touch position so the origin is in the top left
 		Vector2 fixedTouchPosition = new Vector2( touch.position.x, Screen.height - touch.position.y );
-		UITouchableSprite button = getButtonForScreenPosition( fixedTouchPosition );
+		var button = getButtonForScreenPosition( fixedTouchPosition );
 
 		bool touchEnded = ( touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled );
 		

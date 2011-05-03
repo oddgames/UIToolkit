@@ -51,7 +51,7 @@ public class UIContinuousButton : UIButton
 #if UNITY_EDITOR
 	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
 #else
-	public override void onTouchMoved( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
 		// dont fire this continously if we were asked to only fire start and end

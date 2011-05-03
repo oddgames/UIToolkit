@@ -10,28 +10,42 @@ public class KitchenSinkManager : MonoBehaviour
 
 	void Start()
 	{
+		// we will use these to help out with relatively positioning some items
+		Vector2 size;
+		int x; 
+		int y;
+		
+
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
-		var playButton = UIButton.create( "playUp.png", "playDown.png", 10, 10, 6 );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .05f );
+		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, y, 6 );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		playButton.onTouchUpInside += ( sender )  => Debug.Log( "clicked the button: " + sender );
 		
 		
 		// Scores button
-		var scores = UIContinuousButton.create( "scoresUp.png", "scoresDown.png", 10, 75 );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .24f );
+		var scores = UIContinuousButton.create( "scoresUp.png", "scoresDown.png", x, y );
 		scores.centerize();
 		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		scores.onTouchUpInside += onTouchUpInsideScoresButton;
 		scores.onTouchIsDown += ( sender ) => Debug.Log( "touch is down: " + Time.time );
 		scores.touchDownSound = scoresSound;
-		
+	
+	
 		// Options button
-		var optionsButton = UIButton.create( "optionsUp.png", "optionsDown.png", 10, 130 );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .43f );
+		var optionsButton = UIButton.create( "optionsUp.png", "optionsDown.png", x, y );
 		optionsButton.onTouchUpInside += onTouchUpInsideOptionsButton;
 		optionsButton.touchDownSound = optionsSound;
 		
 		
 		// Knob
-		var knob = new UIKnob( UI.instance.textureInfoForFilename( "knobUp.png" ), 270, 60 );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Left, .5f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .39f );
+		var knob = new UIKnob( UI.instance.textureInfoForFilename( "knobUp.png" ), x, y );
 		knob.highlightedUVframe = UI.instance.uvRectForFilename( "knobDown.png" );
 		knob.normalTouchOffsets = new UIEdgeOffsets( 10 ); // give the knob a bit extra touch area
 		knob.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
@@ -40,37 +54,54 @@ public class KitchenSinkManager : MonoBehaviour
 		
 		
 		// Horizontal Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
-		var hSlider = UISlider.create( "sliderKnob.png", "hSlider.png", 10, 220, UISliderLayout.Horizontal );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .7f );
+		var hSlider = UISlider.create( "sliderKnob.png", "hSlider.png", x, y, UISliderLayout.Horizontal );
 		hSlider.highlightedTouchOffsets = new UIEdgeOffsets( 30, 20, 30, 20 );
 		hSlider.onChange += ( sender, val ) => Debug.Log( val );
 		hSlider.value = 0.6f;
 		
 		
 		// Vertical Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
-		var vSlider = UISlider.create( "vSliderKnob.png", "vSlider.png", 430, 10, UISliderLayout.Vertical );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Right, .1f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .21f );
+		var vSlider = UISlider.create( "vSliderKnob.png", "vSlider.png", x, y, UISliderLayout.Vertical );
 		vSlider.highlightedTouchOffsets = new UIEdgeOffsets( 20, 30, 20, 30 );
 		vSlider.continuous = true;
 		vSlider.onChange += ( sender, val ) => Debug.Log( val );
 		vSlider.value = 0.3f;
-		
+
 		
 		// Toggle Button
-		var toggleButton = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", 300, 260 );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Right, .3f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .35f );
+		var toggleButton = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", x, y );
 		toggleButton.onToggle += onToggleButtonChanged;
 		toggleButton.selected = true;
 		
-		
+
 		// Progress/Health bar (be sure the bar is on a lower level than the GUIProgressBar
-		var progressBar = UIProgressBar.create( "progressBar.png", "progressBarBorder.png", 5, 3, 200, 150 );
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .9f );
+		var progressBar = UIProgressBar.create( "progressBar.png", "progressBarBorder.png", 5, 3, x, y );
 		progressBar.resizeTextureOnChange = true;
 		progressBar.value = 0.4f;
+		
+		
+		// animated sprite
+		x = (int)UIRelative.xPercentFrom( UIxAnchor.Right, .3f );
+		y = (int)UIRelative.yPercentFrom( UIyAnchor.Bottom, .2f );
+		var animatedSprite = UI.instance.addSprite( "Gai_1.png", x, y, 1, true );
+		var anim = animatedSprite.addSpriteAnimation( "anim", 0.15f, "Gai_1.png", "Gai_2.png", "Gai_3.png", "Gai_4.png", "Gai_5.png", "Gai_6.png", "Gai_7.png", "Gai_8.png", "Gai_9.png", "Gai_10.png", "Gai_11.png", "Gai_12.png" );
+		//anim.loopReverse = true; // optinally loop in reverse
+		animatedSprite.playSpriteAnimation( "anim", 5 );
 		
 		
 		// Test movement
 		StartCoroutine( marqueePlayButton( playButton ) );
 		StartCoroutine( animateProgressBar( progressBar ) );
 		StartCoroutine( pulseOptionButton( optionsButton ) );
-		
+
 		
 		/*		
 		// Swipe detector view - big, giant touchbleSprite behind all others

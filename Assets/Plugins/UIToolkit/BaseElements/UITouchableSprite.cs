@@ -66,7 +66,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 					normalFrame.x -= width / 2;
 					normalFrame.y -= height / 2;
 				}
-				
+
 				_normalTouchFrame = _normalTouchOffsets.addToRect( normalFrame );
 				_highlightedTouchFrame = _highlightedTouchOffsets.addToRect( normalFrame );
 			}

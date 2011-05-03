@@ -155,7 +155,7 @@ public class UIJoystick : UITouchableSprite
 #if UNITY_EDITOR
 	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
 #else
-	public override void onTouchBegan( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
 		highlighted = true;
@@ -171,7 +171,7 @@ public class UIJoystick : UITouchableSprite
 #if UNITY_EDITOR
 	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
 #else
-	public override void onTouchMoved( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
 		this.layoutJoystick( this.inverseTranformPoint( touchPos ) );

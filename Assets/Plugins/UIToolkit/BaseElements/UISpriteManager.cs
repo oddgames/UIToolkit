@@ -1,3 +1,9 @@
+/*
+	Many thanks to the excellent work of Brady Wright from Above and Beyond Software for providing the community with the
+	amazing SpriteManager back in the day.  A few bits of his original code are buried somewhere in here.  Be sure to check
+	out his amazing products in the Unity Asset Store.
+	http://forum.unity3d.com/threads/16763-SpriteManager-draw-lots-of-sprites-in-a-single-draw-call!?highlight=spritemanager
+*/
 using System;
 using UnityEngine;
 using System.Collections;

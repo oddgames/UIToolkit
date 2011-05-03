@@ -80,5 +80,5 @@ and the HD version should have "2x" appended to the name to take part in auto HD
 texture atlas in Texture Packer and you are good to go, just be sure the image name is the same as the .fnt file.
 
 Once you have a UIText instance loaded up with your specific font file you can make as many UITextInstances as you want by just calling
-addTextInstance.  Newlines can be added with the standard "\n" and you can modify the returned UITextInstance at any time and the text
+addTextInstance.  Newlines can be added with the standard "\\n" and you can modify the returned UITextInstance at any time and the text
 will automatically be rebuilt.

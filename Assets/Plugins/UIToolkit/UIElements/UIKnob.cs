@@ -12,20 +12,24 @@ public class UIKnob : UITouchableSprite
 	
 	public delegate void UIKnobChanged( UIKnob sender, float value );
 	public event UIKnobChanged onKnobChanged;
-	
-	
-	public UIKnob( UITextureInfo textureInfo, int xPos, int yPos ):this( new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y ), 1, textureInfo.uvRect )
+
+
+	public static UIKnob create( string filename, string highlightedFilename, int xPos, int yPos, int depth = 1 )
 	{
+		// grab the texture details for the normal state
+		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
 		
+		// get the highlighted state
+		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
+		
+		// create the button
+		return new UIKnob( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
 	}
+
 	
-	
-	public UIKnob( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
+	public UIKnob( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame, true )
 	{
-		// Set our origin in the center
-		this.gameObjectOriginInCenter = true;
-		touchFrameIsDirty = true;
-		
 		_normalUVframe = uvFrame;
 		
 		UI.instance.addTouchableSprite( this );

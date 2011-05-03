@@ -45,8 +45,7 @@ public class KitchenSinkManager : MonoBehaviour
 		// Knob
 		x = (int)UIRelative.xPercentFrom( UIxAnchor.Left, .5f );
 		y = (int)UIRelative.yPercentFrom( UIyAnchor.Top, .39f );
-		var knob = new UIKnob( UI.instance.textureInfoForFilename( "knobUp.png" ), x, y );
-		knob.highlightedUVframe = UI.instance.uvRectForFilename( "knobDown.png" );
+		var knob = UIKnob.create( "knobUp.png", "knobDown.png", x, y );
 		knob.normalTouchOffsets = new UIEdgeOffsets( 10 ); // give the knob a bit extra touch area
 		knob.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		knob.onKnobChanged += onKnobChanged;

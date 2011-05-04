@@ -41,7 +41,6 @@ public class UISpriteManager : MonoBehaviour
 	public bool isHD = false;
 	
 	public Material material;            // The material to use for the sprites
-	public int startSpriteCount = 10;        // How many sprites to allocate space for
 	public WINDING_ORDER winding = WINDING_ORDER.CCW; // Which way to wind polygons
 	
 	protected bool meshIsDirty = false; // Flag that gets set if any of the following flags are set.  No updates will happen unless this is true
@@ -51,7 +50,7 @@ public class UISpriteManager : MonoBehaviour
 	protected bool vertCountChanged = false;// Has the number of vertices changed?
 	protected bool updateBounds = false;    // Update the mesh bounds?
 	
-	protected UISprite[] sprites;    // Array of all sprites (the offset of the vertices corresponding to each sprite should be found simply by taking the sprite's index * 4 (4 verts per sprite).
+	protected UISprite[] sprites = new UISprite[0];    // Array of all sprites (the offset of the vertices corresponding to each sprite should be found simply by taking the sprite's index * 4 (4 verts per sprite).
 	
 	protected MeshFilter meshFilter;
 	protected MeshRenderer meshRenderer;
@@ -59,10 +58,10 @@ public class UISpriteManager : MonoBehaviour
 	[HideInInspector]
 	public Vector2 textureSize = Vector2.zero;
 	
-	protected Vector3[] vertices;  // The vertices of our mesh
-	protected int[] triIndices;    // Indices into the vertex array
-	protected Vector2[] UVs;       // UV coordinates
-	protected Color[] colors;      // Color values
+	protected Vector3[] vertices = new Vector3[0];  // The vertices of our mesh
+	protected int[] triIndices = new int[0];    // Indices into the vertex array
+	protected Vector2[] UVs = new Vector2[0];       // UV coordinates
+	protected Color[] colors = new Color[0];      // Color values
 	
 	protected Dictionary<string, UITextureInfo> textureDetails; // texture details loaded from the TexturePacker config file
 
@@ -78,9 +77,6 @@ public class UISpriteManager : MonoBehaviour
 
         meshRenderer.renderer.material = material;
         mesh = meshFilter.mesh;
-
-        // Create our vert, UV, color and sprite arrays
-		createArrays( startSpriteCount );
 
         // Move the object to the origin so the objects drawn will not be offset from the objects they are intended to represent.
         transform.position = Vector3.zero;
@@ -281,66 +277,10 @@ public class UISpriteManager : MonoBehaviour
 	
 	
 	#region Vertex and UV array management
-	
-	// Initializes all required arrays
-    protected void createArrays( int count )
-    {
-        // Create the sprite array
-        sprites = new UISprite[count];
 
-        // Vertices:
-        vertices = new Vector3[count * 4];
-        
-        // UVs:
-        UVs = new Vector2[count * 4];
-
-        // Colors:
-        colors = new Color[count * 4];
-
-        // Triangle indices:
-        triIndices = new int[count * 6];
-
-        // Inform existing sprites of the new vertex and UV buffers:
-        //for( int i = 0; i < firstNewElement; ++i )
-        //    sprites[i].setBuffers( vertices, UVs );
-
-        // Setup the triIndices
-        for( int i = 0; i < sprites.Length; ++i )
-        {
-            // Init triangle indices:
-            if( winding == WINDING_ORDER.CCW ) // Counter-clockwise winding
-            {
-                triIndices[i * 6 + 0] = i * 4 + 0;  //    0_ 2            0 ___ 3
-                triIndices[i * 6 + 1] = i * 4 + 1;  //  | /      Verts:  |   /|
-                triIndices[i * 6 + 2] = i * 4 + 3;  // 1|/                1|/__|2
-
-                triIndices[i * 6 + 3] = i * 4 + 3;  //      3
-                triIndices[i * 6 + 4] = i * 4 + 1;  //   /|
-                triIndices[i * 6 + 5] = i * 4 + 2;  // 4/_|5
-            }
-            else
-            {   // Clockwise winding
-                triIndices[i * 6 + 0] = i * 4 + 0;  //    0_ 1            0 ___ 3
-                triIndices[i * 6 + 1] = i * 4 + 3;  //  | /      Verts:  |   /|
-                triIndices[i * 6 + 2] = i * 4 + 1;  // 2|/                1|/__|2
-
-                triIndices[i * 6 + 3] = i * 4 + 3;  //      3
-                triIndices[i * 6 + 4] = i * 4 + 2;  //   /|
-                triIndices[i * 6 + 5] = i * 4 + 1;  // 5/_|4
-            }
-        }
-
-        vertsChanged = true;
-        uvsChanged = true;
-        colorsChanged = true;
-        vertCountChanged = true;
-		meshIsDirty = true;
-    }
-	
-	
     // Enlarges the sprite array by the specified count and also resizes the UV and vertex arrays by the necessary corresponding amount.
     // Returns the index of the first newly allocated element
-    protected int enlargeArrays( int count )
+    protected int expandMaxSpriteLimit( int count )
     {
         int firstNewElement = sprites.Length;
 
@@ -454,7 +394,7 @@ public class UISpriteManager : MonoBehaviour
 		
 		// did we find a sprite?  if not, expand our arrays
 		if( i == sprites.Length )
-			i = enlargeArrays( 5 );
+			i = expandMaxSpriteLimit( 5 );
 		
         // Assign and setup the sprite
 		sprites[i] = sprite;

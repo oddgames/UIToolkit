@@ -34,8 +34,7 @@ Setup
 -----
 
 1. Create an empty object at 0, 0, 0.  Move this object to a new layer, which in the example is simply called "UILayer".
-2. Now add the UI.cs script to this object.  Be sure to set the UILayer that you chose in the previous step in the inspector.  Set the startSpriteCount
-to the estimated number of sprites you will need.  They will auto-expand if at runtime you need more.
+2. Now add the UI.cs script to this object.  Be sure to set the UILayer that you chose in the previous step in the inspector.
 3. Go to the main camera and remove the UILayer (in this example "UILayer") from the Culling Mask so that your GUI doesn't get rendered twice.
 4. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer json config file is in the Assets/StreamingAssets
 directory and that your

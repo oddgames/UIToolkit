@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UIEaseType = System.Func<float, float>; 
 
 
@@ -119,14 +120,14 @@ public static class UISpriteAnimationExtensions
 	// float version (for alpha)
 	public static UIAnimation fromTo( this UISprite sprite, float duration, UIAnimationProperty aniProperty, float start, float target, UIEaseType ease )
 	{
-		return animate( sprite, true, duration, aniProperty, target, ease );
+		return animate( sprite, duration, aniProperty, start, target, ease );
 	}
 	
 	
 	// Vector3 version
 	public static UIAnimation fromTo( this UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, UIEaseType ease )
 	{
-		return animate( sprite, true, duration, aniProperty, target, ease );
+		return animate( sprite, duration, aniProperty, start, target, ease );
 	}
 
 	

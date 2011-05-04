@@ -26,7 +26,7 @@ public class KitchenSinkManager : MonoBehaviour
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, .24f );
 		var scores = UIContinuousButton.create( "scoresUp.png", "scoresDown.png", x, y );
-		scores.centerize();
+		scores.centerize(); // centerize the button so we can scale it from the center
 		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		scores.onTouchUpInside += onTouchUpInsideScoresButton;
 		scores.onTouchIsDown += ( sender ) => Debug.Log( "touch is down: " + Time.time );
@@ -161,18 +161,6 @@ public class KitchenSinkManager : MonoBehaviour
 	
 	
 	#region GUIAnimations
-	
-	private IEnumerator animateLocalScale( UISprite sprite, Vector3 to, float duration )
-	{
-		Vector3 originalPosition = new Vector3( 1f, 1f, 1f );
-		
-		// Go back and forth.  The chain() method will return when the animation is done
-		var ani = sprite.scaleTo( duration, to, Easing.Sinusoidal.easeOut );
-		yield return ani.chain();
-		
-		sprite.scaleTo( duration, originalPosition, Easing.Circular.easeIn );
-	}
-
 
 	private IEnumerator animatePosition( UISprite sprite, Vector3 to, float duration )
 	{
@@ -227,7 +215,9 @@ public class KitchenSinkManager : MonoBehaviour
 	// Button callback
 	public void onTouchUpInsideScoresButton( UIButton sender )
 	{
-		StartCoroutine( animateLocalScale( sender, new Vector3( 1.3f, 1.3f, 1 ), 0.3f ) );
+		var ani = sender.scaleFromTo( 0.3f, new Vector3( 1, 1, 1 ), new Vector3( 1.3f, 1.3f, 1 ), Easing.Sinusoidal.easeOut );
+		ani.autoreverse = true;
+		ani.onComplete = () => Debug.Log( "done scaling button" ); // example of completion handler
 	}
 	
 	

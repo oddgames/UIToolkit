@@ -10,8 +10,8 @@ public struct UITextInstance
 	private UIText parentText;
 	private string _text;
 	
-	public float xPos;
-	public float yPos;
+	public int xPos;
+	public int yPos;
 	public float scale;
 	public int depth;
 	public int textIndex;
@@ -32,7 +32,7 @@ public struct UITextInstance
 	}
 	
 	
-	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color )
+	public UITextInstance( UIText parentText, string text, int xPos, int yPos, float scale, int depth, Color color )
 	{
 		this.parentText = parentText;
 		_text = text;
@@ -244,7 +244,7 @@ public class UIText : System.Object
 	}
 	
 	
-	public Vector2 sizeForText( string text, float scale = 1.0f )
+	public UIVector2 sizeForText( string text, float scale = 1.0f )
 	{
 		float dx = 0;
 		float dxMax = 0;
@@ -289,18 +289,18 @@ public class UIText : System.Object
 				dxMax = dx;
 		}
 		
-		return new Vector2( dxMax > 0 ? dxMax : dx, dy + ( arrayFonts[77].h * scale ) );
+		return new UIVector2( (int)dxMax > 0 ? (int)dxMax : (int)dx, (int)( dy + ( arrayFonts[77].h * scale ) ) );
 	}
 
 	
 	// this will create a new UITextInstance and draw the text
-	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale = 1f, int depth = 1 )
+	public UITextInstance addTextInstance( string text, int xPos, int yPos, float scale = 1f, int depth = 1 )
 	{
 		return this.addTextInstance( text, xPos, yPos, scale, depth, Color.white );
 	}
 
 	
-	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth, Color color )
+	public UITextInstance addTextInstance( string text, int xPos, int yPos, float scale, int depth, Color color )
 	{
 		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, color );
 		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, color );

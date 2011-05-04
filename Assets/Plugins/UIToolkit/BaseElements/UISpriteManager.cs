@@ -252,6 +252,30 @@ public class UISpriteManager : MonoBehaviour
 #endif
 		return textureDetails[filename].frame;
 	}
+
+
+	// grabs the width for the given filename, useful when using the UIRelative class
+	public float widthForFilename( string filename )
+	{
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !textureDetails.ContainsKey( filename ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + filename );
+#endif
+		return textureDetails[filename].size.x;
+	}
+
+
+	// grabs the height for the given filename, useful when using the UIRelative class
+	public float heightForFilename( string filename )
+	{
+#if UNITY_EDITOR
+		// sanity check while in editor
+		if( !textureDetails.ContainsKey( filename ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + filename );
+#endif
+		return textureDetails[filename].size.y;
+	}
 	
 	#endregion
 	

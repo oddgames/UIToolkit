@@ -70,7 +70,6 @@ public class UIAnimation
 			var sameAnimationType = _spriteAnimations[sprite].Where( i => i.aniProperty == aniProperty ).FirstOrDefault();
 			if( sameAnimationType != null )
 			{
-				Debug.Log( "Killing animatino" );
 				sameAnimationType.stop();
 				_spriteAnimations[sprite].Remove( sameAnimationType );
 			}

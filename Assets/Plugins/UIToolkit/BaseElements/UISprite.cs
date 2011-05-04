@@ -221,7 +221,7 @@ public class UISprite : System.Object
 	
 	#region Animation methods
 	
-	// Float version (for alpha)
+	// float version (for alpha)
 	public UIAnimation to( float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
 	{
 		return animate( true, duration, aniProperty, target, ease, easeType );
@@ -247,9 +247,23 @@ public class UISprite : System.Object
 	{
 		return animate( false, duration, aniProperty, target, ease, easeType );
 	}
+
+
+	// float version (for alpha)
+	public UIAnimation fromTo( float duration, UIAnimationProperty aniProperty, float start, float target, IEasing ease, Easing.EasingType easeType )
+	{
+		return animate( true, duration, aniProperty, target, ease, easeType );
+	}
 	
 	
-	// Sets up and starts a new animation in a Coroutine - float version
+	// Vector3 version
+	public UIAnimation fromTo( float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, IEasing ease, Easing.EasingType easeType )
+	{
+		return animate( true, duration, aniProperty, target, ease, easeType );
+	}
+
+	
+	// Figures out the start value and kicks off the animation
 	private UIAnimation animate( bool animateTo, float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
 	{
 		float current = 0.0f;
@@ -268,6 +282,13 @@ public class UISprite : System.Object
 		if( !animateTo )
 			target = current;
 		
+		return this.animate( duration, aniProperty, start, target, ease, easeType );
+	}
+	
+
+	// Sets up and starts a new animation in a Coroutine - float version
+	private UIAnimation animate( float duration, UIAnimationProperty aniProperty, float start, float target, IEasing ease, Easing.EasingType easeType )
+	{
 		UIAnimation ani = new UIAnimation( this, duration, aniProperty, start, target, ease, easeType );
 		UI.instance.StartCoroutine( ani.animate() );
 		
@@ -275,7 +296,7 @@ public class UISprite : System.Object
 	}
 	
 
-	// Sets up and starts a new animation in a Coroutine - Vector3 version
+	// Figures out the start value and kicks off the animation
 	private UIAnimation animate( bool animateTo, float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
 	{
 		Vector3 current = Vector3.zero;
@@ -300,6 +321,13 @@ public class UISprite : System.Object
 		if( !animateTo )
 			target = current;
 		
+		return this.animate( duration, aniProperty, start, target, ease, easeType );
+	}
+
+
+	// Sets up and starts a new animation in a Coroutine - Vector3 version
+	private UIAnimation animate( float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, IEasing ease, Easing.EasingType easeType )
+	{
 		UIAnimation ani = new UIAnimation( this, duration, aniProperty, start, target, ease, easeType );
 		UI.instance.StartCoroutine( ani.animate() );
 		

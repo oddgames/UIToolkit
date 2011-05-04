@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-[RequireComponent( typeof( AudioSource ) )]
 public class UI : UISpriteManager
 {
 	// All access should go through instance
@@ -37,8 +36,10 @@ public class UI : UISpriteManager
 		
 		base.Awake();
 		
-		// cache the AudioSource
+		// add the audio source if we dont have one and cache it
 		_audioSource = GetComponent<AudioSource>();
+		if( _audioSource == null )
+			_audioSource = gameObject.AddComponent<AudioSource>();
 
 		// Create the camera
 		_uiCameraHolder = new GameObject();

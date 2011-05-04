@@ -164,13 +164,13 @@ public class KitchenSinkManager : MonoBehaviour
 	
 	private IEnumerator animateLocalScale( UISprite sprite, Vector3 to, float duration )
 	{
-		Vector3 originalPosition = sprite.clientTransform.localScale;
+		Vector3 originalPosition = new Vector3( 1f, 1f, 1f );
 		
 		// Go back and forth.  The chain() method will return when the animation is done
-		var ani = sprite.to( duration, UIAnimationProperty.LocalScale, to, Easing.Sinusoidal.factory(), Easing.EasingType.Out );
+		var ani = sprite.scaleTo( duration, to, Easing.Sinusoidal.easeOut );
 		yield return ani.chain();
 		
-		sprite.to( duration, UIAnimationProperty.LocalScale, originalPosition, Easing.Circular.factory(), Easing.EasingType.In );
+		sprite.scaleTo( duration, originalPosition, Easing.Circular.easeIn );
 	}
 
 
@@ -179,10 +179,10 @@ public class KitchenSinkManager : MonoBehaviour
 		Vector3 originalPosition = sprite.clientTransform.position;
 		
 		// Go back and forth.  The chain() method will return when the animation is done
-		var ani = sprite.to( duration, UIAnimationProperty.Position, to, Easing.Quintic.factory(), Easing.EasingType.InOut );
+		var ani = sprite.positionTo( duration, to, Easing.Quartic.easeInOut );
 		yield return ani.chain();
-		
-		sprite.to( duration, UIAnimationProperty.Position, originalPosition, Easing.Quintic.factory(), Easing.EasingType.In );
+
+		sprite.positionTo( duration, originalPosition, Easing.Quintic.easeIn );		
 	}
 
 
@@ -190,11 +190,11 @@ public class KitchenSinkManager : MonoBehaviour
 	{
 		Vector3 originalPosition = sprite.clientTransform.eulerAngles;
 		
-		// Go back and forth.  The chain() method will return when the animation is done
-		var ani = sprite.to( duration, UIAnimationProperty.EulerAngles, to, Easing.Sinusoidal.factory(), Easing.EasingType.Out );
+		// rotate.  The chain() method will return when the animation is done
+		var ani = sprite.eulerAnglesTo( duration, to, Easing.Sinusoidal.easeOut );
 		yield return ani.chain();
-		
-		sprite.to( duration, UIAnimationProperty.EulerAngles, originalPosition, Easing.Circular.factory(), Easing.EasingType.In );
+
+		sprite.eulerAnglesTo( duration, originalPosition, Easing.Circular.easeIn );
 	}
 	
 	
@@ -204,10 +204,10 @@ public class KitchenSinkManager : MonoBehaviour
 		
 		while( true )
 		{
-			ani = optionsButton.to( 0.7f, UIAnimationProperty.Alpha, 0.1f, Easing.Linear.factory(), Easing.EasingType.In );
+			ani = optionsButton.alphaTo( 0.7f, 0.1f, Easing.Linear.easeIn );
 			yield return ani.chain();
 			
-			ani = optionsButton.to( 0.7f, UIAnimationProperty.Alpha, 1.0f, Easing.Linear.factory(), Easing.EasingType.Out );
+			ani = optionsButton.alphaTo( 0.7f, 1.0f, Easing.Linear.easeOut );
 			yield return ani.chain();
 		}
 	}
@@ -237,7 +237,7 @@ public class KitchenSinkManager : MonoBehaviour
 		StartCoroutine( animateRotation( sender, new Vector3( 0, 0, 359 ), 1.0f ) );
 		               
 		// Dont forget to make the y negative because our origin is the top left
-		StartCoroutine( animatePosition( sender, new Vector3( 270, -200, 1 ), 1.0f ) );
+		StartCoroutine( animatePosition( sender, new Vector3( Screen.width * 0.5f, -Screen.height * 0.7f, 1 ), 1.0f ) );
 	}
 	
 	

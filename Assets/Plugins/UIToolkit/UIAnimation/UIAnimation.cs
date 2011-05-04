@@ -13,21 +13,19 @@ public class UIAnimation
 	UISprite sprite;
 	float duration;
 	UIAnimationProperty aniProperty;
-	Easing.EasingType easeType;
-	IEasing ease;
+	System.Func<float, float> ease;
 	Vector3 start;
 	Vector3 target;
 	float startFloat;
 	float targetFloat;
 	
 	
-	public UIAnimation( UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, IEasing ease, Easing.EasingType easeType )
+	public UIAnimation( UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease )
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		this.aniProperty = aniProperty;
 		this.ease = ease;
-		this.easeType = easeType;
 		
 		this.target = target;
 		this.start = start;
@@ -37,13 +35,12 @@ public class UIAnimation
 	}
 
 
-	public UIAnimation( UISprite sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, IEasing ease, Easing.EasingType easeType )
+	public UIAnimation( UISprite sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease )
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		this.aniProperty = aniProperty;
 		this.ease = ease;
-		this.easeType = easeType;
 		
 		this.targetFloat = targetFloat;
 		this.startFloat = startFloat;
@@ -63,19 +60,7 @@ public class UIAnimation
 		{				
 			// Get our easing position
 			float easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
-			
-			switch( easeType )
-			{
-				case Easing.EasingType.In:
-					easPos = ease.easeIn( easPos );
-					break;
-				case Easing.EasingType.Out:
-					easPos = ease.easeOut( easPos );
-					break;
-				default:
-					easPos = ease.easeInOut( easPos );
-					break;
-			}
+			easPos = ease( easPos );
 			
 			// Set the proper property
 			switch( aniProperty )

@@ -39,7 +39,7 @@ Setup
 4. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer json config file is in the Assets/StreamingAssets
 directory and that your
 sprite atlases are in the Resources folder so they can be loaded at runtime.
-5. *Do not* try to create your UI in Awake as the UI may not be done initializing yet.
+5. *Do not* try to create your UI in Awake as the UI may not be done initializing yet.  Use Start instead.
 
 
 Exporting Sprite Sheets with Texture Packer
@@ -73,10 +73,10 @@ var yPosition = UIRelative.yPercentFrom( UIyAnchor.Top, .25f );
 Working with UIFonts
 -----
 
-Text support is included with the UIText class.  Your font bitmap can be created with Hiero, Angelcode or Glyph.  If you want to suport both HD
+Text support is included with the UIText class.  Your font bitmap can be created with Hiero, Angelcode or Glyph.  If you want to support both HD
 and SD resolutions you will need to export a .fnt file for both resolutions.  Both files should be placed in your Assets/StreamingAssets folder
 and the HD version should have "2x" appended to the name to take part in auto HD switching at runtime.  Add the exported bitmap font png to your
-texture atlas in Texture Packer and you are good to go, just be sure the image name is the same as the .fnt file.
+texture atlas in Texture Packer and you are good to go, just be sure the image name is the same as the .fnt filename.
 
 Once you have a UIText instance loaded up with your specific font file you can make as many UITextInstances as you want by just calling
 addTextInstance.  Newlines can be added with the standard "\\n" and you can modify the returned UITextInstance at any time and the text

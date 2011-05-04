@@ -23,10 +23,7 @@ public class UIButton : UITouchableSprite
 		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		var button = new UIButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
-		UI.instance.addTouchableSprite( button );
-		
-		return button;
+		return new UIButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
 	}
 
 
@@ -40,6 +37,8 @@ public class UIButton : UITouchableSprite
 			highlightedUVframe = uvFrame;
 		
 		this.highlightedUVframe = highlightedUVframe;
+		
+		UI.instance.addTouchableSprite( this );
 	}
 
 	#endregion;

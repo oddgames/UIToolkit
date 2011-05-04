@@ -28,9 +28,15 @@ public class UIKnob : UITouchableSprite
 	}
 
 	
-	public UIKnob( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame, true )
+	public UIKnob( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, true )
 	{
 		_normalUVframe = uvFrame;
+		
+		// If a highlighted frame has not yet been set use the normalUVframe
+		if( highlightedUVframe == UIUVRect.zero )
+			highlightedUVframe = uvFrame;
+		
+		this.highlightedUVframe = highlightedUVframe;
 		
 		UI.instance.addTouchableSprite( this );
 	}

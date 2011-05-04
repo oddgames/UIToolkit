@@ -22,10 +22,7 @@ public class UIContinuousButton : UIButton
 		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		var button = new UIContinuousButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
-		UI.instance.addTouchableSprite( button );
-		
-		return button;
+		return new UIContinuousButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
 	}
 
 

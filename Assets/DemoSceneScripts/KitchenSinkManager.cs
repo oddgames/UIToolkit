@@ -63,7 +63,7 @@ public class KitchenSinkManager : MonoBehaviour
 		// Toggle Button
 		var toggleButton = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0 );
 		toggleButton.positionFromTopRight( .3f, .2f );
-		toggleButton.onToggle += ( sender, newValue ) => hSlider.hidden = !newValue;
+		//toggleButton.onToggle += ( sender, newValue ) => hSlider.hidden = !newValue;
 		toggleButton.selected = true;
 		
 

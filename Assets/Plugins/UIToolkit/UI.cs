@@ -22,7 +22,7 @@ public class UI : UISpriteManager
 	// Holds all our touchable sprites
 	private List<UITouchableSprite> _touchableSprites = new List<UITouchableSprite>();
 	
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	private Vector2? lastMousePosition;
 #endif
 
@@ -85,14 +85,14 @@ public class UI : UISpriteManager
 			// Examine all current touches
 			for( int i = 0; i < Input.touchCount; i++ )
 			{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 				lookAtTouch( UIFakeTouch.fromTouch( Input.GetTouch( i ) ) );
 #else
 				lookAtTouch( Input.GetTouch( i ) );
 #endif
 			}
 		} // end if Input.touchCount
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 		else
 		{
 			// no touches. so check the mouse input if we are in the editor
@@ -211,7 +211,7 @@ public class UI : UISpriteManager
 	#region Touch management and analysis helpers
 	
 	// examines a touch and sends off began, moved and ended events
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	private void lookAtTouch( UIFakeTouch touch )
 #else
 	private void lookAtTouch( Touch touch )

@@ -46,16 +46,7 @@ public class UISlider : UITouchableSprite
 		_sliderKnob.clientTransform.parent = this.clientTransform;
 
 		// setup the min/max position values for the sliderKnob
-		if( layout == UISliderLayout.Horizontal )
-		{
-			_knobMinimumXY = frame.x + sliderKnob.width / 2;
-			_knobMaximumXY = frame.x + width - sliderKnob.width / 2;
-		}
-		else
-		{
-			_knobMinimumXY = -frame.y - height + sliderKnob.height / 2;
-			_knobMaximumXY = -frame.y - sliderKnob.height / 2;
-		}
+		updateSliderKnobConstraints();
 		
 		UI.instance.addTouchableSprite( this );
 	}
@@ -91,6 +82,33 @@ public class UISlider : UITouchableSprite
 				// Update the slider position
 				this.updateSliderKnobWithNormalizedValue( _value );
 			}
+		}
+	}
+	
+	
+	public override void updateTransform()
+	{
+		base.updateTransform();
+		
+		updateSliderKnobConstraints();
+	}
+
+
+	/// <summary>
+	/// Updates the min/max constraints for the slider knob
+	/// </summary>
+	private void updateSliderKnobConstraints()
+	{
+		// setup the min/max position values for the sliderKnob
+		if( layout == UISliderLayout.Horizontal )
+		{
+			_knobMinimumXY = clientTransform.position.x + _sliderKnob.width / 2;
+			_knobMaximumXY = clientTransform.position.x + width - _sliderKnob.width / 2;
+		}
+		else
+		{
+			_knobMinimumXY = clientTransform.position.y - height + _sliderKnob.height / 2;
+			_knobMaximumXY = clientTransform.position.y - _sliderKnob.height / 2;
 		}
 	}
 
@@ -130,7 +148,7 @@ public class UISlider : UITouchableSprite
 
 
 	// Touch handlers
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
 #else
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
@@ -142,7 +160,7 @@ public class UISlider : UITouchableSprite
 	}
 
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
 #else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
@@ -152,7 +170,7 @@ public class UISlider : UITouchableSprite
 	}
 	
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )

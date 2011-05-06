@@ -83,7 +83,11 @@ public class UISpriteManager : MonoBehaviour
         transform.rotation = Quaternion.identity;
 
 		// handle texture loading if required
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+		var deviceAllowsHD = true;
+#else
 		var deviceAllowsHD = ( allowPod4GenHD && iPhoneSettings.generation == iPhoneGeneration.iPodTouch4Gen ) || iPhoneSettings.generation != iPhoneGeneration.iPodTouch4Gen;
+#endif
 		if( autoTextureSelectionForHD && deviceAllowsHD )
 		{
 			// are we laoding up a 2x texture?

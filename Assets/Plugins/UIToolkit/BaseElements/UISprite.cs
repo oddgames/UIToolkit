@@ -179,7 +179,6 @@ public class UISprite : System.Object
 	
 	#region Sprite Animation methods
 	
-	
 	public UISpriteAnimation addSpriteAnimation( string name, float frameTime, params string[] filenames )
 	{
 		// create the spriteAnimations dictionary on demand

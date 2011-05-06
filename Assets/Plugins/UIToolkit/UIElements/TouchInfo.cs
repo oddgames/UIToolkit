@@ -43,7 +43,7 @@ public class TouchInfo
 	}
 	
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public void resetWithTouch( UIFakeTouch touch )
 #else
 	public void resetWithTouch( Touch touch )

@@ -49,10 +49,11 @@ UIToolkit uses the output from the free version of the excellent [Texture Packer
 and makes updating your atlases later a breeze.  To get things going with Texture Packer all you need to do is:
 
 1. Drag and drop all your images into Texture Packer's right pane.
-2. In the Output pane (bottom left) set the Data format to json, set the Data file to be in your Assets/StreamingAssets folder and set the Texture
+2. In the Output pane (bottom left) set the Data format to json, set the Data file to be in a Resources folder in your project and set the Texture
 file to be in the Assets/Resources folder (or any other Resources folder in your project)
 3. In the Geometry pane, you will need to uncheck Autosize and set the texture size as a power of 2, square texture.
-4. Choose File -> Publish (Command-P) to export the json config file and the texture.  Make sure they both have the same name.
+4. Choose File -> Publish (Command-P) to export the json config file and the texture.  Make sure they both have the same name.  **Note**: you must rename
+the .json file to .txt.  Unity currently will not recognize .json files as TextAssets.
 
 
 Supporting HD and SD Resolutions
@@ -74,9 +75,10 @@ Working with UIFonts
 -----
 
 Text support is included with the UIText class.  Your font bitmap can be created with Hiero, Angelcode or Glyph.  If you want to support both HD
-and SD resolutions you will need to export a .fnt file for both resolutions.  Both files should be placed in your Assets/StreamingAssets folder
+and SD resolutions you will need to export a .fnt file for both resolutions.  Both files should be placed in a Resources folder in your project
 and the HD version should have "2x" appended to the name to take part in auto HD switching at runtime.  Add the exported bitmap font png to your
-texture atlas in Texture Packer and you are good to go, just be sure the image name is the same as the .fnt filename.
+texture atlas in Texture Packer and you are good to go, just be sure the image name is the same as the .fnt filename.  **Note**: you must rename
+the .fnt file to .txt.  Unity currently will not recognize .fnt files as TextAssets.
 
 Once you have a UIText instance loaded up with your specific font file you can make as many UITextInstances as you want by just calling
 addTextInstance.  Newlines can be added with the standard "\\n" and you can modify the returned UITextInstance at any time and the text

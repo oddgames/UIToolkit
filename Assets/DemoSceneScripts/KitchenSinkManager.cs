@@ -51,7 +51,7 @@ public class KitchenSinkManager : MonoBehaviour
 		knob.value = 0.3f;
 		
 		
-		// Horizontal Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
+		// Horizontal Slider
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, .7f );
 		var hSlider = UISlider.create( "sliderKnob.png", "hSlider.png", x, y, UISliderLayout.Horizontal );
@@ -60,7 +60,7 @@ public class KitchenSinkManager : MonoBehaviour
 		hSlider.value = 0.6f;
 		
 		
-		// Vertical Slider.  Be sure to offset the sliderKnobs Y value to line it up properly
+		// Vertical Slider
 		x = UIRelative.xPercentFrom( UIxAnchor.Right, .1f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, .21f );
 		var vSlider = UISlider.create( "vSliderKnob.png", "vSlider.png", x, y, UISliderLayout.Vertical );
@@ -78,7 +78,7 @@ public class KitchenSinkManager : MonoBehaviour
 		toggleButton.selected = true;
 		
 
-		// Progress/Health bar (be sure the bar is on a lower level than the GUIProgressBar
+		// Progress/Health bar
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, .02f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, .9f );
 		var progressBar = UIProgressBar.create( "progressBar.png", "progressBarBorder.png", 5, 3, x, y );

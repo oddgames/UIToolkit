@@ -452,7 +452,7 @@ public class UISpriteManager : MonoBehaviour
 
         sprite.___hidden = false;
 
-        // Update the vertices.  This will end up caling UpdatePositions() to set the vertsChanged flag
+        // Update the vertices.  This will end up caling updatePositions() to set the vertsChanged flag
         sprite.updateTransform();
     }
 

@@ -43,7 +43,7 @@ public class UISprite : System.Object
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
 		
 		// Setup our GO
-		client = new GameObject( "UIElement" );
+		client = new GameObject( this.GetType().Name );
 		client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
 		client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
 		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index

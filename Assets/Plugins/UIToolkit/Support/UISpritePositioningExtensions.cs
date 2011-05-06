@@ -12,7 +12,7 @@ public static class UISpritePositioningExtensions
 		var pos = sprite.position;
 		var centerPos = UIRelative.center( sprite.width, sprite.height );
 		pos.x = centerPos.x;
-		pos.y = centerPos.y;
+		pos.y = -centerPos.y;
 		
 		sprite.position = pos;
 	}

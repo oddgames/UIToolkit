@@ -27,8 +27,8 @@ public class JoystickManager : MonoBehaviour
 
 	void Update()
 	{
-		rightText.text = string.Format( "x: {0:0.00}, y: {1:0.00}", rightJoystick.position.x, rightJoystick.position.y );
-		leftText.text = string.Format( "x: {0:0.00}, y: {1:0.00}", leftJoystick.position.x, leftJoystick.position.y );
+		rightText.text = string.Format( "x: {0:0.00}, y: {1:0.00}", rightJoystick.joystickPosition.x, rightJoystick.joystickPosition.y );
+		leftText.text = string.Format( "x: {0:0.00}, y: {1:0.00}", leftJoystick.joystickPosition.x, leftJoystick.joystickPosition.y );
 	}
 
 }

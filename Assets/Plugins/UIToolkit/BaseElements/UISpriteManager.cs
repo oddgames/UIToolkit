@@ -424,7 +424,7 @@ public class UISpriteManager : MonoBehaviour
         sprites[sprite.index] = null;
 		
 		// This should happen when the sprite dies!!
-		//Destroy( sprite.client );
+		Destroy( sprite.client );
 		
         vertsChanged = true;
 		meshIsDirty = true;
@@ -468,10 +468,10 @@ public class UISpriteManager : MonoBehaviour
     // Updates the UVs of the specified sprite and copies the new values into the mesh object.
     public void updateUV( UISprite sprite )
     {
-		UVs[sprite.vertexIndices.uv.one] = sprite.uvFrame.lowerLeftUV + Vector2.up * sprite.uvFrame.uvDimensions.y;  // Upper-left
-		UVs[sprite.vertexIndices.uv.two] = sprite.uvFrame.lowerLeftUV;                              // Lower-left
-		UVs[sprite.vertexIndices.uv.three] = sprite.uvFrame.lowerLeftUV + Vector2.right * sprite.uvFrame.uvDimensions.x;// Lower-right
-		UVs[sprite.vertexIndices.uv.four] = sprite.uvFrame.lowerLeftUV + sprite.uvFrame.uvDimensions;     // Upper-right
+		UVs[sprite.vertexIndices.uv.one] = sprite.uvFrame.lowerLeftUV + Vector2.up * sprite.uvFrame.uvDimensions.y; // Upper-left
+		UVs[sprite.vertexIndices.uv.two] = sprite.uvFrame.lowerLeftUV; // Lower-left
+		UVs[sprite.vertexIndices.uv.three] = sprite.uvFrame.lowerLeftUV + Vector2.right * sprite.uvFrame.uvDimensions.x; // Lower-right
+		UVs[sprite.vertexIndices.uv.four] = sprite.uvFrame.lowerLeftUV + sprite.uvFrame.uvDimensions; // Upper-right
         
         uvsChanged = true;
 		meshIsDirty = true;

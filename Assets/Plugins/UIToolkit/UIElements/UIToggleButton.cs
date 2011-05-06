@@ -102,15 +102,6 @@ public class UIToggleButton : UITouchableSprite
 		}
 	}
 
-	
-	// Override transform() so we can mark the touchFrame as dirty
-	public override void updateTransform()
-	{
-		base.updateTransform();
-		
-		touchFrameIsDirty = true;
-	}
-
 
 	// Touch handlers
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER

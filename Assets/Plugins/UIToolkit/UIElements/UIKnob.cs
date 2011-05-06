@@ -105,7 +105,7 @@ public class UIKnob : UITouchableSprite
 		clientTransform.rotation = Quaternion.Euler( 0, 0, rot );
 		updateTransform();
 
-		_value = ( 360 - clientTransform.rotation.eulerAngles.z ) / 360;
+		_value = ( 360 - eulerAngles.z ) / 360;
 		
 		if( continuous && onKnobChanged != null )
 			onKnobChanged( this, _value );

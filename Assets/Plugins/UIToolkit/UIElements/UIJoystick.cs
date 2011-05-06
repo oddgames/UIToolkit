@@ -25,7 +25,7 @@ struct UIBoundary
 
 public class UIJoystick : UITouchableSprite
 {
-	public Vector2 position;
+	public Vector2 joystickPosition;
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
 	public bool normalize = true; // Normalize output after the dead-zone?  If true, we start at 0 even though the joystick is moved deadZone pixels already
 	
@@ -55,7 +55,7 @@ public class UIJoystick : UITouchableSprite
 		
 		// Save the joystickSprite and make it a child of the us for organization purposes
 		_joystickSprite = joystickSprite;
-		_joystickSprite.clientTransform.parent = this.clientTransform;
+		_joystickSprite.parent = this.clientTransform;
 		
 		// Move the joystick to its default position after converting the offset to a vector3
 		_joystickOffset = new Vector3( xPos, yPos );
@@ -90,18 +90,16 @@ public class UIJoystick : UITouchableSprite
 	public void addBackgroundSprite( string filename )
 	{
 		var track = UI.instance.addSprite( filename, 0, 0, 2, true );
-		track.clientTransform.parent = this.clientTransform;
-		track.clientTransform.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
-		track.updateTransform();
+		track.parent = this.clientTransform;
+		track.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
 	}
 	
 	
 	// Resets the sprite to default position and zeros out the position vector
 	private void resetJoystick()
 	{
-		_joystickSprite.clientTransform.localPosition = _joystickOffset;
-		_joystickSprite.updateTransform();
-		position.x = position.y = 0.0f;
+		_joystickSprite.localPosition = _joystickOffset;
+		joystickPosition.x = joystickPosition.y = 0.0f;
 		
 		// If we have a highlightedUVframe, swap the original back in
 		if( highlightedUVframe != UIUVRect.zero )
@@ -117,37 +115,36 @@ public class UIJoystick : UITouchableSprite
 		newPosition.y = Mathf.Clamp( -localTouchPosition.y, _joystickBoundary.minY, _joystickBoundary.maxY );
 		
 		// Set the new position and update the transform		
-		_joystickSprite.clientTransform.localPosition = newPosition;
-		_joystickSprite.updateTransform();
+		_joystickSprite.localPosition = newPosition;
 		
 		// Get a value between -1 and 1 for position
-		position.x = ( newPosition.x - _joystickOffset.x ) / _maxJoystickMovement;
-		position.y = ( newPosition.y - _joystickOffset.y ) / _maxJoystickMovement;
+		joystickPosition.x = ( newPosition.x - _joystickOffset.x ) / _maxJoystickMovement;
+		joystickPosition.y = ( newPosition.y - _joystickOffset.y ) / _maxJoystickMovement;
 		
 		// Adjust for dead zone	
-		float absoluteX = Mathf.Abs( position.x );
-		float absoluteY = Mathf.Abs( position.y );
+		float absoluteX = Mathf.Abs( joystickPosition.x );
+		float absoluteY = Mathf.Abs( joystickPosition.y );
 	
 		if( absoluteX < deadZone.x )
 		{
 			// Report the joystick as being at the center if it is within the dead zone
-			position.x = 0;
+			joystickPosition.x = 0;
 		}
 		else if( normalize )
 		{
 			// Rescale the output after taking the dead zone into account
-			position.x = Mathf.Sign( position.x ) * ( absoluteX - deadZone.x ) / ( 1 - deadZone.x );
+			joystickPosition.x = Mathf.Sign( joystickPosition.x ) * ( absoluteX - deadZone.x ) / ( 1 - deadZone.x );
 		}
 		
 		if( absoluteY < deadZone.y )
 		{
 			// Report the joystick as being at the center if it is within the dead zone
-			position.y = 0;
+			joystickPosition.y = 0;
 		}
 		else if( normalize )
 		{
 			// Rescale the output after taking the dead zone into account
-			position.y = Mathf.Sign( position.y ) * ( absoluteY - deadZone.y ) / ( 1 - deadZone.y );
+			joystickPosition.y = Mathf.Sign( joystickPosition.y ) * ( absoluteY - deadZone.y ) / ( 1 - deadZone.y );
 		}
 	}
 	

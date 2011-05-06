@@ -63,7 +63,7 @@ public class KitchenSinkManager : MonoBehaviour
 		// Toggle Button
 		var toggleButton = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0 );
 		toggleButton.positionFromTopRight( .3f, .2f );
-		//toggleButton.onToggle += ( sender, newValue ) => hSlider.hidden = !newValue;
+		toggleButton.onToggle += ( sender, newValue ) => hSlider.hidden = !newValue;
 		toggleButton.selected = true;
 		
 
@@ -105,15 +105,16 @@ public class KitchenSinkManager : MonoBehaviour
 		while( true )
 		{
 			// Make sure we arent off the right side of the screen
-			Vector3 pos = playButton.clientTransform.position;
+			Vector3 pos = playButton.position;
 			if( pos.x > Screen.width + playButton.width / 2 )
 			{
 				pos.x = -playButton.width;
-				playButton.clientTransform.position = pos;
+				playButton.position = pos;
 			}
 			
-			playButton.clientTransform.Translate( 2.0f, 0, 0 );
-			playButton.updateTransform();
+			pos.x += 2f;
+			
+			playButton.position = pos;
 			
 			yield return 0;
 		}
@@ -151,7 +152,7 @@ public class KitchenSinkManager : MonoBehaviour
 
 	private IEnumerator animatePosition( UISprite sprite, Vector3 to, float duration )
 	{
-		Vector3 originalPosition = sprite.clientTransform.position;
+		Vector3 originalPosition = sprite.position;
 		
 		// Go back and forth.  The chain() method will return when the animation is done
 		var ani = sprite.positionTo( duration, to, Easing.Quartic.easeInOut );
@@ -163,7 +164,7 @@ public class KitchenSinkManager : MonoBehaviour
 
 	private IEnumerator animateRotation( UISprite sprite, Vector3 to, float duration )
 	{
-		Vector3 originalPosition = sprite.clientTransform.eulerAngles;
+		Vector3 originalPosition = sprite.eulerAngles;
 		
 		// rotate.  The chain() method will return when the animation is done
 		var ani = sprite.eulerAnglesTo( duration, to, Easing.Sinusoidal.easeOut );
@@ -221,7 +222,7 @@ public class KitchenSinkManager : MonoBehaviour
 	// Knob callback
 	public void onKnobChanged( UIKnob sender, float value )
 	{
-		//Debug.Log( "onKnobChanged: " + value );
+		Debug.Log( "onKnobChanged: " + value );
 	}
 
 	

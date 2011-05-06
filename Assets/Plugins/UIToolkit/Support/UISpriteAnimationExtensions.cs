@@ -173,13 +173,13 @@ public static class UISpriteAnimationExtensions
 		switch( aniProperty )
 		{
 			case UIAnimationProperty.Position:
-				current = sprite.clientTransform.position;
+				current = sprite.position;
 				break;
 			case UIAnimationProperty.LocalScale:
-				current = sprite.clientTransform.localScale;
+				current = sprite.localScale;
 				break;
 			case UIAnimationProperty.EulerAngles:
-				current = sprite.clientTransform.eulerAngles;
+				current = sprite.eulerAngles;
 				break;
 		}
 		

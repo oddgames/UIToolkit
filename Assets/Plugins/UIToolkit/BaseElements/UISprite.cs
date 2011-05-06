@@ -4,32 +4,37 @@ using System.Collections.Generic;
 
 public class UISprite : System.Object
 {
-    public UISpriteManager manager = null;      // Reference to the sprite manager in which this sprite resides
-    public bool ___hidden = false;   // Indicates whether this sprite is currently hidden (has to be public because C# has no "friend" feature, just don't access directly from outside)
+    public UISpriteManager manager = null; // Reference to the sprite manager in which this sprite resides
+    public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
 
     public float width;  // Width and Height of the sprite in worldspace units. DO NOT SET THESE
-    public float height; // THESE ARE PUBLIC TO AVOID THE GETTER OVERHEAD
+    public float height; // THESE ARE PUBLIC TO AVOID THE GETTER PROPERTY OVERHEAD
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
-    protected GameObject client;        // Reference to the client GameObject
-	protected UIUVRect _uvFrame;		// UV coordinates and size for the sprite
+    
+    public Color _color; // The color to be used by all four vertices
+
+    public int index; // Index of this sprite in its SpriteManager's list
 	
-    protected Vector3[] meshVerts;        // Pointer to the array of vertices in the mesh
-    protected Vector2[] UVs;              // Pointer to the array of UVs in the mesh
-	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
-	
-    public Transform clientTransform;         // Cached Transform of the client GameObject
-    public Color _color;       // The color to be used by all four vertices
-
-    public int index;                     // Index of this sprite in its SpriteManager's list
-
-    public Vector3 v1 = new Vector3();      // The sprite's vertices in local space
-    public Vector3 v2 = new Vector3();
-    public Vector3 v3 = new Vector3();
-    public Vector3 v4 = new Vector3();
-
 	// Indices of the associated vertices in the actual mesh (shortcut to get straight to the right vertices in the vertex array)
 	// Also houses indices of UVs in the mesh and color values
 	public UIVertexIndices vertexIndices;
+    public Vector3 v1 = new Vector3(); // The sprite's vertices in local space
+    public Vector3 v2 = new Vector3();
+    public Vector3 v3 = new Vector3();
+    public Vector3 v4 = new Vector3();
+	
+	private GameObject _client; // Reference to the client GameObject
+    public GameObject client
+    {
+    	get { return _client; }
+    }
+	protected UIUVRect _uvFrame; // UV coordinates and size for the sprite
+	
+    protected Vector3[] meshVerts; // Pointer to the array of vertices in the mesh
+    protected Vector2[] UVs; // Pointer to the array of UVs in the mesh
+	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
+	
+    protected Transform clientTransform; // Cached Transform of the client GameObject
 	
 	
 	public UISprite( Rect frame, int depth, UIUVRect uvFrame ):this( frame, depth, uvFrame, false )
@@ -43,13 +48,13 @@ public class UISprite : System.Object
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
 		
 		// Setup our GO
-		client = new GameObject( this.GetType().Name );
-		client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
-		client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
-		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
+		_client = new GameObject( this.GetType().Name );
+		_client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
+		_client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
+		_client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
 
 		// Cache the clientTransform
-		clientTransform = client.transform;
+		clientTransform = _client.transform;
 		
 		// Save these for later.  The manager will call initializeSize() when the UV's get setup
 		width = frame.width;
@@ -89,6 +94,65 @@ public class UISprite : System.Object
                 manager.showSprite( this );
         }
     }
+	
+	
+	#region Transform passthrough properties so we can update necessary verts when changes occur
+	
+	public virtual Vector3 position
+	{
+		get { return clientTransform.position; }
+		set
+		{
+			clientTransform.position = value;
+			updateTransform();
+		}
+	}
+
+
+	public virtual Vector3 localPosition
+	{
+		get { return clientTransform.localPosition; }
+		set
+		{
+			clientTransform.localPosition = value;
+			updateTransform();
+		}
+	}
+	
+	
+	public virtual Vector3 eulerAngles
+	{
+		get { return clientTransform.eulerAngles; }
+		set
+		{
+			clientTransform.eulerAngles = value;
+			updateTransform();
+		}
+	}
+
+
+	public virtual Vector3 localScale
+	{
+		get { return clientTransform.localScale; }
+		set
+		{
+			clientTransform.localScale = value;
+			updateTransform();
+		}
+	}
+	
+	
+	public Transform parent
+	{
+		get { return clientTransform.parent; }
+		set
+		{
+			clientTransform.parent = value;
+			updateTransform();
+		}
+	}
+	
+	#endregion
 
 
 	// This gets called by the manager just after the UV's get setup

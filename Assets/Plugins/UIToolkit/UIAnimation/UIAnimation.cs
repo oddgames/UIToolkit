@@ -96,13 +96,13 @@ public class UIAnimation
 			switch( _aniProperty )
 			{
 				case UIAnimationProperty.Position:
-					sprite.clientTransform.position = Vector3.Lerp( start, target, easPos );
+					sprite.position = Vector3.Lerp( start, target, easPos );
 					break;
 				case UIAnimationProperty.LocalScale:
-					sprite.clientTransform.localScale = Vector3.Lerp( start, target, easPos );
+					sprite.localScale = Vector3.Lerp( start, target, easPos );
 					break;
 				case UIAnimationProperty.EulerAngles:
-					sprite.clientTransform.eulerAngles = Vector3.Lerp( start, target, easPos );
+					sprite.eulerAngles = Vector3.Lerp( start, target, easPos );
 					break;
 				case UIAnimationProperty.Alpha:
 					Color currentColor = sprite.color;
@@ -110,9 +110,6 @@ public class UIAnimation
 					sprite.color = currentColor;
 					break;
 			}
-			
-			// Commit the changes back to the main mesh
-			sprite.updateTransform();
 
 			// See if we are done with our animation yet
 			if( ( startTime + duration ) <= Time.time )

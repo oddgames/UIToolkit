@@ -25,6 +25,32 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
 	{
 	}
+	
+
+	#region Transform passthrough properties - we need to set the touchFrame dirty when these change
+	
+	public new Vector3 position
+	{
+		get { return clientTransform.position; }
+		set
+		{
+			clientTransform.position = value;
+			updateTransform();
+		}
+	}
+
+
+	public new Vector3 localPosition
+	{
+		get { return clientTransform.localPosition; }
+		set
+		{
+			clientTransform.localPosition = value;
+			updateTransform();
+		}
+	}
+	
+	#endregion
 
 	
 	#region Properties and Getters/Setters
@@ -81,7 +107,16 @@ public abstract class UITouchableSprite : UISprite, IComparable
 			return ( _highlighted ) ? _highlightedTouchFrame : _normalTouchFrame;
 		}
 	}
-	
+
+
+	// Override transform() so we can mark the touchFrame as dirty
+	public override void updateTransform()
+	{
+		base.updateTransform();
+		
+		touchFrameIsDirty = true;
+	}
+
 	#endregion;
 
 
@@ -154,7 +189,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
         if( obj is UITouchableSprite )
         {
             UITouchableSprite temp = obj as UITouchableSprite;
-            return this.clientTransform.position.z.CompareTo( temp.clientTransform.position.z );
+            return position.z.CompareTo( temp.position.z );
         }
 		
 		return -1;

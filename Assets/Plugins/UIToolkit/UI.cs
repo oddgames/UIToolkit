@@ -142,7 +142,7 @@ public class UI : UISpriteManager
 		foreach( var item in _touchableSprites )
 		{
 			// touch position varies based on if we have the GO in the center
-			var pos = item.clientTransform.position;
+			var pos = item.position;
 			if( !item.gameObjectOriginInCenter )
 			{
 				pos.x += item.width / 2;

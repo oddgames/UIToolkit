@@ -43,7 +43,7 @@ public class UISlider : UITouchableSprite
 		
 		// save the sliderKnob and make it a child of the slider for organization purposes
 		_sliderKnob = sliderKnob;
-		_sliderKnob.clientTransform.parent = this.clientTransform;
+		_sliderKnob.parent = this.clientTransform;
 
 		// setup the min/max position values for the sliderKnob
 		updateSliderKnobConstraints();
@@ -102,13 +102,13 @@ public class UISlider : UITouchableSprite
 		// setup the min/max position values for the sliderKnob
 		if( layout == UISliderLayout.Horizontal )
 		{
-			_knobMinimumXY = clientTransform.position.x + _sliderKnob.width / 2;
-			_knobMaximumXY = clientTransform.position.x + width - _sliderKnob.width / 2;
+			_knobMinimumXY = position.x + _sliderKnob.width / 2;
+			_knobMaximumXY = position.x + width - _sliderKnob.width / 2;
 		}
 		else
 		{
-			_knobMinimumXY = clientTransform.position.y - height + _sliderKnob.height / 2;
-			_knobMaximumXY = clientTransform.position.y - _sliderKnob.height / 2;
+			_knobMinimumXY = position.y - height + _sliderKnob.height / 2;
+			_knobMaximumXY = position.y - _sliderKnob.height / 2;
 		}
 	}
 
@@ -118,17 +118,16 @@ public class UISlider : UITouchableSprite
 	{
 		if( layout == UISliderLayout.Horizontal )
 		{
-			float newKnobPosition = Mathf.Clamp( clientTransform.position.x + normalizedKnobValue * width, _knobMinimumXY, _knobMaximumXY );
-			_sliderKnob.clientTransform.position = new Vector3( newKnobPosition, _sliderKnob.clientTransform.position.y, _sliderKnob.clientTransform.position.z );
+			float newKnobPosition = Mathf.Clamp( position.x + normalizedKnobValue * width, _knobMinimumXY, _knobMaximumXY );
+			_sliderKnob.position = new Vector3( newKnobPosition, _sliderKnob.position.y, _sliderKnob.position.z );
 		}
 		else
 		{
 			// inverse the value because 1 is our peak value but that corresponds to a lower y coordinate due to 0 being on top
 			normalizedKnobValue = 1 - normalizedKnobValue;
-			float newKnobPosition = Mathf.Clamp( clientTransform.position.y - normalizedKnobValue * height, _knobMinimumXY, _knobMaximumXY );
-			_sliderKnob.clientTransform.position = new Vector3( _sliderKnob.clientTransform.position.x, newKnobPosition, _sliderKnob.clientTransform.position.z );
+			float newKnobPosition = Mathf.Clamp( position.y - normalizedKnobValue * height, _knobMinimumXY, _knobMaximumXY );
+			_sliderKnob.position = new Vector3( _sliderKnob.position.x, newKnobPosition, _sliderKnob.position.z );
 		}
-		_sliderKnob.updateTransform();
 	}
 
 	

@@ -333,7 +333,10 @@ public class UIText : System.Object
 		int length = textSprites[textIndex].Length;
 
 		for( int i = 0; i < length; i++ )
+		{
 			UI.instance.removeElement( textSprites[textIndex][i] );
+			textSprites[textIndex][i] = null;
+		}
 		
 		textSprites[textIndex] = null;
 	}

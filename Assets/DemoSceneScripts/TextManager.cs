@@ -61,6 +61,7 @@ public class TextManager : MonoBehaviour
 		
 		yield return new WaitForSeconds( 1.0f );
 		text4.clear();
+		text2.clear();
 	}
 
 }

@@ -13,7 +13,7 @@ public class TextManager : MonoBehaviour
 	void Start()
 	{
 		// setup our text instance which will parse our .fnt file and allow us to
-		var text = new UIText( "prototype.fnt", "prototype.png" );
+		var text = new UIText( "prototype", "prototype.png" );
 
 		// spawn new text instances showing off the relative positioning features by placing one text instance in each corner
 		var x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );

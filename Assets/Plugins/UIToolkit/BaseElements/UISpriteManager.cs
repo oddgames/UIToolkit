@@ -24,11 +24,10 @@ public class UISpriteManager : MonoBehaviour
 
 	#region ivars
 	
-	// Which way to wind polygons?
-	public enum WINDING_ORDER
+	public enum UISpriteWindowOrder
 	{
-	    CCW,        // Counter-clockwise
-	    CW      	// Clockwise
+	    CCW,
+	    CW
 	};
 	
 	// if set to true, the texture will be chosen and loaded from textureName
@@ -42,7 +41,7 @@ public class UISpriteManager : MonoBehaviour
 	public bool isHD = false;
 	
 	public Material material;            // The material to use for the sprites
-	public WINDING_ORDER winding = WINDING_ORDER.CCW; // Which way to wind polygons
+	private UISpriteWindowOrder winding = UISpriteWindowOrder.CCW; // Which way to wind polygons
 	
 	protected bool meshIsDirty = false; // Flag that gets set if any of the following flags are set.  No updates will happen unless this is true
 	protected bool vertsChanged = false;    // Have changes been made to the vertices of the mesh since the last frame?
@@ -55,7 +54,7 @@ public class UISpriteManager : MonoBehaviour
 	
 	protected MeshFilter meshFilter;
 	protected MeshRenderer meshRenderer;
-	protected Mesh mesh;                    // Reference to our mesh (contained in the MeshFilter)
+	protected Mesh mesh;
 	[HideInInspector]
 	public Vector2 textureSize = Vector2.zero;
 	
@@ -312,7 +311,7 @@ public class UISpriteManager : MonoBehaviour
         for( int i = firstNewElement; i < sprites.Length; ++i )
         {
             // Init triangle indices:
-            if( winding == WINDING_ORDER.CCW )
+            if( winding == UISpriteWindowOrder.CCW )
             {   // Counter-clockwise winding
                 triIndices[i * 6 + 0] = i * 4 + 0;  //    0_ 2            0 ___ 3
                 triIndices[i * 6 + 1] = i * 4 + 1;  //  | /      Verts:  |   /|

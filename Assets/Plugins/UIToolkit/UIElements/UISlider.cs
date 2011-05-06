@@ -61,6 +61,23 @@ public class UISlider : UITouchableSprite
 	}
 
 
+    public override bool hidden
+    {
+        get { return ___hidden; }
+        set
+        {
+            // No need to do anything if we're already in this state:
+            if( value == ___hidden )
+                return;
+
+			base.hidden = value;
+			
+			// pass the call down to our knob
+			_sliderKnob.hidden = value;
+        }
+    }
+
+
 	public float value
 	{
 		get { return _value; }

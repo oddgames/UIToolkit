@@ -38,6 +38,23 @@ public class UIProgressBar : UISprite
 	}
 
 
+    public override bool hidden
+    {
+        get { return ___hidden; }
+        set
+        {
+            // No need to do anything if we're already in this state:
+            if( value == ___hidden )
+                return;
+			
+			base.hidden = value;
+			
+			// pass the call down to our bar
+			_bar.hidden = value;
+        }
+    }
+
+
 	public float value
 	{
 		get { return _value; }
@@ -63,5 +80,6 @@ public class UIProgressBar : UISprite
 		}
 	}
 
+	
 }
 

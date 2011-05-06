@@ -74,7 +74,7 @@ public class UISprite : System.Object
 	}
 
 
-    public bool hidden
+    public virtual bool hidden
     {
         get { return ___hidden; }
         set

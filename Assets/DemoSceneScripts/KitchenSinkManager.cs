@@ -74,7 +74,7 @@ public class KitchenSinkManager : MonoBehaviour
 		x = UIRelative.xPercentFrom( UIxAnchor.Right, .3f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, .35f );
 		var toggleButton = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", x, y );
-		toggleButton.onToggle += onToggleButtonChanged;
+		toggleButton.onToggle += ( sender, newValue ) => hSlider.hidden = !newValue;
 		toggleButton.selected = true;
 		
 
@@ -110,7 +110,7 @@ public class KitchenSinkManager : MonoBehaviour
 	}
 	
 	
-	#region CoRoutine animation tests that do not use the GUIAnimation system
+	#region Coroutine animation tests that do not use the UIAnimation system
 	
 	// Play coroutine that animates a button marquee style
 	private IEnumerator marqueePlayButton( UIButton playButton )
@@ -160,7 +160,7 @@ public class KitchenSinkManager : MonoBehaviour
 	#endregion;
 	
 	
-	#region GUIAnimations
+	#region UIAnimations
 
 	private IEnumerator animatePosition( UISprite sprite, Vector3 to, float duration )
 	{
@@ -236,25 +236,7 @@ public class KitchenSinkManager : MonoBehaviour
 	{
 		//Debug.Log( "onKnobChanged: " + value );
 	}
-		
 
-	// Slider callback
-	public void onHSliderChanged( UISlider sender, float value )
-	{
-		//Debug.Log( "onHSliderChanged to: " + value );
-	}
-	
-	
-	public void onVSliderChanged( UISlider sender, float value )
-	{
-		//Debug.Log( "onVSliderChanged to: " + value );
-	}
-
-	
-	public void onToggleButtonChanged( UIToggleButton sender, bool selected )
-	{
-		//Debug.Log( "onToggleButtonChanged to: " + selected );
-	}
 	
 	#endregion;
 

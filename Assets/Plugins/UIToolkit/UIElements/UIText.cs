@@ -303,9 +303,21 @@ public class UIText : System.Object
 
 	
 	// this will create a new UITextInstance and draw the text
-	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale = 1f, int depth = 1 )
+	public UITextInstance addTextInstance( string text, float xPos, float yPos )
 	{
-		return this.addTextInstance( text, xPos, yPos, scale, depth, Color.white );
+		return addTextInstance( text, xPos, yPos, 1f, 1 );
+	}
+	
+	
+	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale )
+	{
+		return addTextInstance( text, xPos, yPos, scale, 1 );
+	}
+	
+	
+	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth )
+	{
+		return addTextInstance( text, xPos, yPos, scale, depth, Color.white );
 	}
 
 	

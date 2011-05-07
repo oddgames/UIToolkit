@@ -188,7 +188,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
     {
         if( obj is UITouchableSprite )
         {
-            UITouchableSprite temp = obj as UITouchableSprite;
+            var temp = obj as UITouchableSprite;
             return position.z.CompareTo( temp.position.z );
         }
 		

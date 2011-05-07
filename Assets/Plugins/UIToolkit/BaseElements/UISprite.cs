@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-public class UISprite : System.Object
+public class UISprite : UIObject
 {
     public UISpriteManager manager = null; // Reference to the sprite manager in which this sprite resides
     public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
@@ -22,19 +22,12 @@ public class UISprite : System.Object
     public Vector3 v2 = new Vector3();
     public Vector3 v3 = new Vector3();
     public Vector3 v4 = new Vector3();
-	
-	private GameObject _client; // Reference to the client GameObject
-    public GameObject client
-    {
-    	get { return _client; }
-    }
+
 	protected UIUVRect _uvFrame; // UV coordinates and size for the sprite
 	
     protected Vector3[] meshVerts; // Pointer to the array of vertices in the mesh
     protected Vector2[] UVs; // Pointer to the array of UVs in the mesh
 	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
-	
-    protected Transform clientTransform; // Cached Transform of the client GameObject
 	
 	
 	public UISprite( Rect frame, int depth, UIUVRect uvFrame ):this( frame, depth, uvFrame, false )
@@ -43,18 +36,13 @@ public class UISprite : System.Object
 	}
 	
 
-    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter )
+    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base()
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
 		
 		// Setup our GO
-		_client = new GameObject( this.GetType().Name );
-		_client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
-		_client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
-		_client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
-
-		// Cache the clientTransform
-		clientTransform = _client.transform;
+		client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
+		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
 		
 		// Save these for later.  The manager will call initializeSize() when the UV's get setup
 		width = frame.width;
@@ -95,65 +83,59 @@ public class UISprite : System.Object
         }
     }
 	
-	
+
 	#region Transform passthrough properties so we can update necessary verts when changes occur
 	
-	public virtual Vector3 position
+	public override Vector3 position
 	{
 		get { return clientTransform.position; }
 		set
 		{
-			clientTransform.position = value;
+			base.position = value;
 			updateTransform();
 		}
 	}
 
 
-	public virtual Vector3 localPosition
+	public override Vector3 localPosition
 	{
 		get { return clientTransform.localPosition; }
 		set
 		{
-			clientTransform.localPosition = value;
+			base.localPosition = value;
 			updateTransform();
 		}
 	}
 	
 	
-	public virtual Vector3 eulerAngles
+	public override Vector3 eulerAngles
 	{
 		get { return clientTransform.eulerAngles; }
 		set
 		{
-			clientTransform.eulerAngles = value;
+			base.eulerAngles = value;
 			updateTransform();
 		}
 	}
 
 
-	public virtual Vector3 localScale
+	public override Vector3 localScale
 	{
 		get { return clientTransform.localScale; }
 		set
 		{
-			clientTransform.localScale = value;
-			updateTransform();
-		}
-	}
-	
-	
-	public Transform parent
-	{
-		get { return clientTransform.parent; }
-		set
-		{
-			clientTransform.parent = value;
+			base.localScale = value;
 			updateTransform();
 		}
 	}
 	
 	#endregion
-
+	
+	
+	public override void transformChanged()
+	{
+		updateTransform();
+	}
 
 	// This gets called by the manager just after the UV's get setup
 	public void initializeSize()
@@ -230,7 +212,7 @@ public class UISprite : System.Object
 	
 
     // Sets the specified color and automatically notifies the GUISpriteManager to update the colors
-	public Color color
+	public override Color color
 	{
 		get { return _color; }
 		set

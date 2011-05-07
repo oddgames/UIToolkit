@@ -12,13 +12,13 @@ public class JoystickManager : MonoBehaviour
 	void Start()
 	{
 		// bottom, left quadrant of screen
-		leftJoystick = UIJoystick.create( "joystickUp.png", new Rect( 0, 160, 240, 200 ), 240 / 2, -150 / 2 );
+		leftJoystick = UIJoystick.create( "joystickUp.png", new Rect( 0, Screen.height / 2, Screen.width / 2, 200 ), Screen.width / 4, -150 / 2 );
 		leftJoystick.deadZone = new Vector2( 0.6f, 0.6f );
 		leftJoystick.setJoystickHighlightedFilename( "joystickDown.png" );
 
 
 		// bottom, right quadrant of screen
-		rightJoystick = UIJoystick.create( "joystickUp.png", new Rect( 240, 160, 240, 200 ), 240 / 2, -150 / 2 );
+		rightJoystick = UIJoystick.create( "joystickUp.png", new Rect( Screen.width / 2, Screen.height / 2, Screen.width / 2, 200 ), Screen.width / 4, -150 / 2 );
 		rightJoystick.deadZone = new Vector2( 0.5f, 0.5f );
 		rightJoystick.setJoystickHighlightedFilename( "joystickDown.png" );	
 		rightJoystick.addBackgroundSprite( "joystickTrack.png" );

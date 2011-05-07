@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public enum UIAnimationProperty { Position, LocalScale, EulerAngles, Alpha };
+public enum UIAnimationProperty { Position, LocalScale, EulerAngles, Alpha, Color };
 
 public class UIAnimation
 {
 	// we store the currently running animations so that we don't run the same one twice
-	private static Dictionary<UISprite, List<UIAnimation>> _spriteAnimations = new Dictionary<UISprite, List<UIAnimation>>();
+	private static Dictionary<UIObject, List<UIAnimation>> _spriteAnimations = new Dictionary<UIObject, List<UIAnimation>>();
 	
 	private bool _running;
 	public bool running { get { return _running; } }
@@ -22,16 +22,20 @@ public class UIAnimation
 	public bool autoreverse;
 	
 	private float startTime;
-	private UISprite sprite;
+	private UIObject  sprite;
 	private float duration;
 	private System.Func<float, float> ease;
+	
+	// target properties of different types for the different animations
 	private Vector3 start;
 	private Vector3 target;
 	private float startFloat;
 	private float targetFloat;
+	private Color startColor;
+	private Color targetColor;
 	
 	
-	public UIAnimation( UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease )
+	public UIAnimation( UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease )
 	{
 		this.sprite = sprite;
 		this.duration = duration;
@@ -46,7 +50,7 @@ public class UIAnimation
 	}
 
 
-	public UIAnimation( UISprite sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease )
+	public UIAnimation( UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease )
 	{
 		this.sprite = sprite;
 		this.duration = duration;
@@ -59,7 +63,22 @@ public class UIAnimation
 		_running = true;
 		startTime = Time.time;
 	}
-	
+
+
+	public UIAnimation( UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease )
+	{
+		this.sprite = sprite;
+		this.duration = duration;
+		_aniProperty = aniProperty;
+		this.ease = ease;
+		
+		this.startColor = startColor;
+		this.targetColor = targetColor;
+		
+		_running = true;
+		startTime = Time.time;
+	}
+
 	
 	// CoRoutine that marshals the animation
 	public IEnumerator animate()
@@ -96,7 +115,7 @@ public class UIAnimation
 			switch( _aniProperty )
 			{
 				case UIAnimationProperty.Position:
-					sprite.position = Vector3.Lerp( start, target, easPos );
+					sprite.localPosition = Vector3.Lerp( start, target, easPos );
 					break;
 				case UIAnimationProperty.LocalScale:
 					sprite.localScale = Vector3.Lerp( start, target, easPos );
@@ -108,6 +127,9 @@ public class UIAnimation
 					Color currentColor = sprite.color;
 					currentColor.a = Mathf.Lerp( startFloat, targetFloat, easPos );
 					sprite.color = currentColor;
+					break;
+				case UIAnimationProperty.Color:
+					sprite.color = Color.Lerp( startColor, targetColor, easPos );
 					break;
 			}
 

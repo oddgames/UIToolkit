@@ -28,7 +28,7 @@ public class UIProgressBar : UISprite
 	{
 		// Save the bar and make it a child of the container/border for organization purposes
 		_bar = bar;
-		_bar.parent = this.clientTransform;
+		_bar.parentUIObject = this;
 		
 		// Save the bars original size
 		_barOriginalWidth = _bar.width;

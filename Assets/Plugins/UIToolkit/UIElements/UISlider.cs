@@ -43,8 +43,8 @@ public class UISlider : UITouchableSprite
 		
 		// save the sliderKnob and make it a child of the slider for organization purposes
 		_sliderKnob = sliderKnob;
-		_sliderKnob.parent = this.clientTransform;
-
+		_sliderKnob.parentUIObject = this;
+		
 		// setup the min/max position values for the sliderKnob
 		updateSliderKnobConstraints();
 		

@@ -55,7 +55,7 @@ public class UIJoystick : UITouchableSprite
 		
 		// Save the joystickSprite and make it a child of the us for organization purposes
 		_joystickSprite = joystickSprite;
-		_joystickSprite.parent = this.clientTransform;
+		_joystickSprite.parentUIObject = this;
 		
 		// Move the joystick to its default position after converting the offset to a vector3
 		_joystickOffset = new Vector3( xPos, yPos );
@@ -90,7 +90,7 @@ public class UIJoystick : UITouchableSprite
 	public void addBackgroundSprite( string filename )
 	{
 		var track = UI.instance.addSprite( filename, 0, 0, 2, true );
-		track.parent = this.clientTransform;
+		track.parentUIObject = this;
 		track.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
 	}
 	

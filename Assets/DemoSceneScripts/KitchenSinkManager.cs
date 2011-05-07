@@ -86,7 +86,14 @@ public class KitchenSinkManager : MonoBehaviour
 		StartCoroutine( marqueePlayButton( playButton ) );
 		StartCoroutine( animateProgressBar( progressBar ) );
 		StartCoroutine( pulseOptionButton( optionsButton ) );
-
+		
+		
+		// UIObjects can be used like panels to group other UIObjects
+		var panel = new UIObject();
+		scores.parentUIObject = panel;
+		optionsButton.parentUIObject = panel;
+		
+		StartCoroutine( animatePanel( panel ) );
 		
 		/*		
 		// Swipe detector view - big, giant touchbleSprite behind all others
@@ -94,6 +101,18 @@ public class KitchenSinkManager : MonoBehaviour
 		detector.action = onSwipe;
 		UI.instance.addTouchableSprite( detector );
 		*/
+	}
+	
+	
+	private IEnumerator animatePanel( UIObject sprite )
+	{
+		while( true )
+		{
+			yield return new WaitForSeconds( 2 );
+			
+			var ani = sprite.positionTo( 0.7f, new Vector3( 200f, 0, 1 ), Easing.Quartic.easeIn );
+			ani.autoreverse = true;
+		}
 	}
 	
 	
@@ -152,13 +171,14 @@ public class KitchenSinkManager : MonoBehaviour
 
 	private IEnumerator animatePosition( UISprite sprite, Vector3 to, float duration )
 	{
-		Vector3 originalPosition = sprite.position;
+		//Vector3 originalPosition = sprite.localPosition;
 		
 		// Go back and forth.  The chain() method will return when the animation is done
 		var ani = sprite.positionTo( duration, to, Easing.Quartic.easeInOut );
-		yield return ani.chain();
-
-		sprite.positionTo( duration, originalPosition, Easing.Quintic.easeIn );		
+		ani.autoreverse = true;
+		
+		yield return null;
+		//sprite.positionTo( duration, originalPosition, Easing.Quintic.easeIn );		
 	}
 
 

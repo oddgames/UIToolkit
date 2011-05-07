@@ -10,6 +10,7 @@ optionally provided and include:
 * automatic reconfiguration of UV coordinates and positions
 * automatic handling of double resolution UIFonts
 
+Check out an introduction video [here](http://www.youtube.com/watch?v=WeV1zbMpm5k)
 
 Included UI Components
 -----

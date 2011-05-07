@@ -12,23 +12,36 @@ public class UIKnob : UITouchableSprite
 	
 	public delegate void UIKnobChanged( UIKnob sender, float value );
 	public event UIKnobChanged onKnobChanged;
+	
+	
+	
+	public static UIKnob create( string filename, string highlightedFilename, int xPos, int yPos )
+	{
+		return create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+	}
+	
+	
+	public static UIKnob create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	{
+		return create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+	}
 
 
-	public static UIKnob create( string filename, string highlightedFilename, int xPos, int yPos, int depth = 1 )
+	public static UIKnob create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
 	{
 		// grab the texture details for the normal state
-		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var normalTI = manager.textureInfoForFilename( filename );
 		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
 		
 		// get the highlighted state
-		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
+		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		return new UIKnob( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		return new UIKnob( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect );
 	}
 
 	
-	public UIKnob( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, true )
+	public UIKnob( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, true )
 	{
 		_normalUVframe = uvFrame;
 		
@@ -38,7 +51,7 @@ public class UIKnob : UITouchableSprite
 		
 		this.highlightedUVframe = highlightedUVframe;
 		
-		UI.instance.addTouchableSprite( this );
+		manager.addTouchableSprite( this );
 	}
 
 	

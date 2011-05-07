@@ -14,15 +14,24 @@ public class UISwipeDetector : UITouchableSprite
 	public float minimumDistance = 40.0f;
 	public SwipeDirection swipesToDetect = SwipeDirection.All;
 	
+	
+	/// <summary>
+	/// Creates a swipe detector with no related UI
+	/// </summary>
+	public static UISwipeDetector create( Rect frame, int depth )
+	{
+		return create( UI.firstToolkit, frame, depth );
+	}
+	
 
 	/// <summary>
 	/// Creates a swipe detector with no related UI
 	/// </summary>
-	public static UISwipeDetector create( Rect frame, int depth = 1 )
+	public static UISwipeDetector create( UIToolkit manager, Rect frame, int depth )
 	{
 		// create the swipe detector
 		var detector = new UISwipeDetector( frame, depth, UIUVRect.zero );
-		UI.instance.addTouchableSprite( detector );
+		manager.addTouchableSprite( detector );
 		
 		return detector;
 	}
@@ -31,15 +40,15 @@ public class UISwipeDetector : UITouchableSprite
 	/// <summary>
 	/// Creates a swipe detector with a texture backing the hit area
 	/// </summary>
-	public static UISwipeDetector create( string filename, int xPos, int yPos, int depth = 1 )
+	public static UISwipeDetector create( UIToolkit manager, string filename, int xPos, int yPos, int depth )
 	{
 		// grab the texture details
-		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var normalTI = manager.textureInfoForFilename( filename );
 		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
 
 		// create the swipe detector
 		var detector = new UISwipeDetector( frame, depth, normalTI.uvRect );
-		UI.instance.addTouchableSprite( detector );
+		manager.addTouchableSprite( detector );
 		
 		return detector;
 	}

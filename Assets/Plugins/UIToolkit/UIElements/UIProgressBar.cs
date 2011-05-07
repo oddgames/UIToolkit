@@ -12,19 +12,26 @@ public class UIProgressBar : UISprite
 	private UIUVRect _barOriginalUVframe;
 	
 	
-	// the bars x/y coordinates should be relative to the borders
+	
 	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos )
 	{
-		var bar = UI.instance.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, 2 );
+		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos );
+	}
+
+	
+	// the bars x/y coordinates should be relative to the borders
+	public static UIProgressBar create( UIToolkit manager, string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos )
+	{
+		var bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, 2 );
 		
-		var borderTI = UI.instance.textureInfoForFilename( borderFilename );
+		var borderTI = manager.textureInfoForFilename( borderFilename );
 		var borderFrame = new Rect( borderxPos, borderyPos, borderTI.size.x, borderTI.size.y );
 		
-		return new UIProgressBar( borderFrame, 1, borderTI.uvRect, bar );
+		return new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
 	}
 	
 	
-	public UIProgressBar( Rect frame, int depth, UIUVRect uvFrame, UISprite bar ):base( frame, depth, uvFrame )
+	public UIProgressBar( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UISprite bar ):base( frame, depth, uvFrame )
 	{
 		// Save the bar and make it a child of the container/border for organization purposes
 		_bar = bar;
@@ -34,7 +41,7 @@ public class UIProgressBar : UISprite
 		_barOriginalWidth = _bar.width;
 		_barOriginalUVframe = _bar.uvFrame;
 		
-		UI.instance.addSprite( this );
+		manager.addSprite( this );
 	}
 
 

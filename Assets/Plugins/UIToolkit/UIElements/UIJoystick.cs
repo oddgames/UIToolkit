@@ -36,19 +36,26 @@ public class UIJoystick : UITouchableSprite
 	private Vector3 _joystickOffset;
 	private UIBoundary _joystickBoundary;
 	private float _maxJoystickMovement = 40.0f; // max distance from _joystickOffset that the joystick will move
-
-
-	// 
+	private UIToolkit _manager; // we need this for getting at texture details after the constructor
+	
+	
 	public static UIJoystick create( string joystickFilename, Rect hitAreaFrame, float xPos, float yPos )
 	{
-		// create a knob using our cacluated position
-		var joystick = UI.instance.addSprite( joystickFilename, 0, 0, 1, true );
-		
-		return new UIJoystick( hitAreaFrame, 1, joystick, xPos, yPos );
+		return create( UI.firstToolkit, joystickFilename, hitAreaFrame, xPos, yPos );
 	}
 
 	
-	public UIJoystick( Rect frame, int depth, UISprite joystickSprite, float xPos, float yPos ):base( frame, depth, UIUVRect.zero )
+	// 
+	public static UIJoystick create( UIToolkit manager, string joystickFilename, Rect hitAreaFrame, float xPos, float yPos )
+	{
+		// create the joystrick sprite
+		var joystick = manager.addSprite( joystickFilename, 0, 0, 1, true );
+		
+		return new UIJoystick( manager, hitAreaFrame, 1, joystick, xPos, yPos );
+	}
+
+	
+	public UIJoystick( UIToolkit manager, Rect frame, int depth, UISprite joystickSprite, float xPos, float yPos ):base( frame, depth, UIUVRect.zero )
 	{
 		// Save out the uvFrame for the sprite so we can highlight
 		_normalUVframe = joystickSprite.uvFrame;
@@ -65,7 +72,8 @@ public class UIJoystick : UITouchableSprite
 		
 		resetJoystick();
 		
-		UI.instance.addTouchableSprite( this );
+		manager.addTouchableSprite( this );
+		_manager = manager;
 	}
 	
 	
@@ -82,14 +90,14 @@ public class UIJoystick : UITouchableSprite
 
 	public void setJoystickHighlightedFilename( string filename )
 	{
-		var textureInfo = UI.instance.textureInfoForFilename( filename );
+		var textureInfo = _manager.textureInfoForFilename( filename );
 		highlightedUVframe = textureInfo.uvRect;
 	}
 	
 	
 	public void addBackgroundSprite( string filename )
 	{
-		var track = UI.instance.addSprite( filename, 0, 0, 2, true );
+		var track = _manager.addSprite( filename, 0, 0, 2, true );
 		track.parentUIObject = this;
 		track.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
 	}

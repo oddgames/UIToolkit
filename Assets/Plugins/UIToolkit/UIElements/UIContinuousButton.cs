@@ -11,22 +11,34 @@ public class UIContinuousButton : UIButton
 	
 	public bool onlyFireStartAndEndEvents = false;
 	
+	
+	public static new UIContinuousButton create( string filename, string highlightedFilename, int xPos, int yPos )
+	{
+		return create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+	}
 
-	public static new UIContinuousButton create( string filename, string highlightedFilename, int xPos, int yPos, int depth = 1 )
+	
+	public static new UIContinuousButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	{
+		return create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+	}
+	
+	
+	public static new UIContinuousButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
 	{
 		// grab the texture details for the normal state
-		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var normalTI = manager.textureInfoForFilename( filename );
 		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
 		
 		// get the highlighted state
-		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
+		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		return new UIContinuousButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		return new UIContinuousButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect );
 	}
 
 
-	public UIContinuousButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, highlightedUVframe )
+	public UIContinuousButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( manager, frame, depth, uvFrame, highlightedUVframe )
 	{
 	}
 

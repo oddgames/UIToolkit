@@ -13,14 +13,7 @@ public struct UIUVRect
 		get { return new UIUVRect(); }
 	}
 	
-	
-	// convenince constructor that uses the current GUISprietUI texture size
-	public UIUVRect( int x, int y, int width, int height ) : this( x, y, width, height, UI.instance.textureSize )
-	{
-		
-	}
 
-	
 	// Automatically converts coordinates to UV space as specified by textureSize
 	public UIUVRect( int x, int y, int width, int height, Vector2 textureSize )
 	{

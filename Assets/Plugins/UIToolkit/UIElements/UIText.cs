@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // addTextInstance returns one of these so we just need to do a .text on the instance to update it
 public struct UITextInstance
 {
-	private UIText parentText;
+	private UIText _parentText;
 	private string _text;
 	
 	public float xPos;
@@ -27,14 +27,14 @@ public struct UITextInstance
 		set
 		{
 			_text = value;
-			parentText.updateText( ref this );
+			_parentText.updateText( ref this );
 		}
 	}
 	
 	
 	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color )
 	{
-		this.parentText = parentText;
+		_parentText = parentText;
 		_text = text;
 		this.xPos = xPos;
 		this.yPos = yPos;
@@ -50,7 +50,7 @@ public struct UITextInstance
 		if( textIndex < 0 )
 			return;
 		
-		parentText.deleteText( textIndex );
+		_parentText.deleteText( textIndex );
 		_text = null;
 		textIndex = -1;
 	}
@@ -59,7 +59,7 @@ public struct UITextInstance
 	public void setColorForAllLetters( Color color )
 	{
 		this.color = color;
-		parentText.updateColorForTextInstance( ref this );
+		_parentText.updateColorForTextInstance( ref this );
 	}
 
 }
@@ -82,22 +82,29 @@ public class UIText : System.Object
 	
 	public float lineSpacing = 1.2f;
 	
- 	private UIFontCharInfo[] arrayFonts;
-	private List<UISprite[]> textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
-	private Vector2 textureOffset;
+ 	private UIFontCharInfo[] _fontDetails;
+	private List<UISprite[]> _textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
+	private Vector2 _textureOffset;
+	private UIToolkit _manager;
 
-
-	public UIText( string fontFilename, string textureFilename )
+	
+	public UIText( string fontFilename, string textureFilename ):this( UI.firstToolkit, fontFilename, textureFilename )
+	{	
+	}
+	
+	
+	public UIText( UIToolkit manager, string fontFilename, string textureFilename )
 	{
-		arrayFonts = new UIFontCharInfo[256];
-		for( int i = 0; i < arrayFonts.Length; i++ )
-			arrayFonts[i] = new UIFontCharInfo();
+		_manager = manager;
+		_fontDetails = new UIFontCharInfo[256];
+		for( int i = 0; i < _fontDetails.Length; i++ )
+			_fontDetails[i] = new UIFontCharInfo();
 		
 		loadConfigfile( fontFilename );
 		
 		// grab the texture offset from the UI
-		var rect = UI.instance.frameForFilename( textureFilename );
-		this.textureOffset = new Vector2( rect.x, rect.y );
+		var rect = _manager.frameForFilename( textureFilename );
+		this._textureOffset = new Vector2( rect.x, rect.y );
 	}
 
 	
@@ -131,50 +138,50 @@ public class UIText : System.Object
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
 						idNum = System.Int32.Parse( tmp );
-						arrayFonts[idNum].charID = new int();
-						arrayFonts[idNum].charID = idNum;
+						_fontDetails[idNum].charID = new int();
+						_fontDetails[idNum].charID = idNum;
 					}
 					else if( string.Equals( word1, "x" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].posX = new int();
-						arrayFonts[idNum].posX = System.Int32.Parse( tmp );
+						_fontDetails[idNum].posX = new int();
+						_fontDetails[idNum].posX = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "y" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].posY = new int();
-						arrayFonts[idNum].posY = System.Int32.Parse( tmp );
+						_fontDetails[idNum].posY = new int();
+						_fontDetails[idNum].posY = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "width" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].w = new int();
-						arrayFonts[idNum].w = System.Int32.Parse( tmp );
+						_fontDetails[idNum].w = new int();
+						_fontDetails[idNum].w = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "height" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].h = new int();
-						arrayFonts[idNum].h = System.Int32.Parse( tmp );
+						_fontDetails[idNum].h = new int();
+						_fontDetails[idNum].h = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "xoffset" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].offsetx = new int();
-						arrayFonts[idNum].offsetx = System.Int32.Parse(tmp);
+						_fontDetails[idNum].offsetx = new int();
+						_fontDetails[idNum].offsetx = System.Int32.Parse(tmp);
 					}
 					else if( string.Equals( word1, "yoffset" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].offsety = new int();
-						arrayFonts[idNum].offsety = System.Int32.Parse( tmp );
+						_fontDetails[idNum].offsety = new int();
+						_fontDetails[idNum].offsety = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "xadvance" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
-						arrayFonts[idNum].xadvance = new int();
-						arrayFonts[idNum].xadvance = System.Int32.Parse( tmp );
+						_fontDetails[idNum].xadvance = new int();
+						_fontDetails[idNum].xadvance = System.Int32.Parse( tmp );
 					}
 				} // end foreach
 			} // end foreach
@@ -210,37 +217,43 @@ public class UIText : System.Object
 				// calculate the size to center text on Y axis, based on its scale
 				// 77 is the "M" char usually big enough to get a proper spaced
 				// lineskip, use any other char if you want
-				fontLineSkip += (int)( arrayFonts[77].h * scale * lineSpacing );
+				fontLineSkip += (int)( _fontDetails[77].h * scale * lineSpacing );
 				dx = xPos;
 			}
 			else
 			{
 				// calculate the size to center text on Y axis, based on its scale
-				offsetY = arrayFonts[charId].offsety * scale;
+				offsetY = _fontDetails[charId].offsety * scale;
 				dy =  yPos + offsetY + fontLineSkip;
 			}
 
 			// add quads for each char
-			var uvRect = new UIUVRect( (int)textureOffset.x + arrayFonts[charId].posX, (int)textureOffset.y + arrayFonts[charId].posY, arrayFonts[charId].w, arrayFonts[charId].h );
-			sprites[i] = new UISprite( new Rect( dx, dy, arrayFonts[charId].w * scale, arrayFonts[charId].h * scale ), depth, uvRect, false );
-			UI.instance.addSprite( sprites[i] );
+			var uvRect = new UIUVRect( (int)_textureOffset.x + _fontDetails[charId].posX, (int)_textureOffset.y + _fontDetails[charId].posY, _fontDetails[charId].w, _fontDetails[charId].h, _manager.textureSize );
+			sprites[i] = new UISprite( new Rect( dx, dy, _fontDetails[charId].w * scale, _fontDetails[charId].h * scale ), depth, uvRect, false );
+			_manager.addSprite( sprites[i] );
 			sprites[i].color = color;
 
 			// calculate the size to advance, based on its scale
-			textWidth = arrayFonts[charId].xadvance * scale;
+			textWidth = _fontDetails[charId].xadvance * scale;
 		
 			// advance the position to draw the next letter
-			dx += textWidth + arrayFonts[charId].offsetx;
+			dx += textWidth + _fontDetails[charId].offsetx;
 		}
 		
 		// add all sprites at once to the array, we use this later to delete the strings
-		textSprites.Add( sprites );
+		_textSprites.Add( sprites );
 		
-		return textSprites.Count - 1;
+		return _textSprites.Count - 1;
 	}
 	
 	
-	public Vector2 sizeForText( string text, float scale = 1.0f )
+	public Vector2 sizeForText( string text )
+	{
+		return sizeForText( text, 1f );
+	}
+	
+	
+	public Vector2 sizeForText( string text, float scale )
 	{
 		float dx = 0;
 		float dxMax = 0;
@@ -261,31 +274,31 @@ public class UIText : System.Object
 				// calculate the size to center text on Y axis, based on its scale
 				// 77 is the "M" char usually big enough to get a proper spaced
 				// lineskip, use any other char if you want
-				fontLineSkip += (int)( arrayFonts[77].h * scale );
+				fontLineSkip += (int)( _fontDetails[77].h * scale );
 				
 				// add a small bit of spacing
-				fontLineSkip += (int)( arrayFonts[77].h * scale * lineSpacing );
+				fontLineSkip += (int)( _fontDetails[77].h * scale * lineSpacing );
 				dx = 0;
 			}
 			else
 			{
 				// calculate the size to center text on Y axis, based on its scale
-				offsetY = arrayFonts[charId].offsety * scale;
+				offsetY = _fontDetails[charId].offsety * scale;
 				dy =  0 + offsetY + fontLineSkip;
 			}
 
 			// calculate the size to advance, based on its scale
-			textWidth = arrayFonts[charId].xadvance * scale;
+			textWidth = _fontDetails[charId].xadvance * scale;
 		
 			// advance the position to draw the next letter
-			dx += textWidth + arrayFonts[charId].offsetx;
+			dx += textWidth + _fontDetails[charId].offsetx;
 			
 			// we want the longest line
 			if( dxMax < dx )
 				dxMax = dx;
 		}
 		
-		return new Vector2( dxMax > 0 ? dxMax : dx, dy + ( arrayFonts[77].h * scale ) );
+		return new Vector2( dxMax > 0 ? dxMax : dx, dy + ( _fontDetails[77].h * scale ) );
 	}
 
 	
@@ -316,39 +329,39 @@ public class UIText : System.Object
 	public void updateColorForTextInstance( ref UITextInstance textInstance )
 	{
 		// how many sprites are we updated?
-		int length = textSprites[textInstance.textIndex].Length;
+		int length = _textSprites[textInstance.textIndex].Length;
 
 		for( int i = 0; i < length; i++ )
-			textSprites[textInstance.textIndex][i].color = textInstance.color;
+			_textSprites[textInstance.textIndex][i].color = textInstance.color;
 	}
 	
 	
 	public void deleteText( int textIndex )
 	{
 		// bounds checker
-		if( textIndex < 0 || textIndex > textSprites.Count - 1 )
+		if( textIndex < 0 || textIndex > _textSprites.Count - 1 )
 			return;
 		
 		// how many sprites are we cleaning up?
-		int length = textSprites[textIndex].Length;
+		int length = _textSprites[textIndex].Length;
 
 		for( int i = 0; i < length; i++ )
 		{
-			UI.instance.removeElement( textSprites[textIndex][i] );
-			textSprites[textIndex][i] = null;
+			_manager.removeElement( _textSprites[textIndex][i] );
+			_textSprites[textIndex][i] = null;
 		}
 		
-		textSprites[textIndex] = null;
+		_textSprites[textIndex] = null;
 	}
 
 
 	// empty all the arrays
 	public void removeAllText()
 	{
-		for( var i = textSprites.Count - 1; i >= 0; i-- )
+		for( var i = _textSprites.Count - 1; i >= 0; i-- )
 			deleteText( i );
 		
-		textSprites.Clear();
+		_textSprites.Clear();
 	}
 
 }

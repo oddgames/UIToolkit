@@ -17,11 +17,18 @@ public class UISlider : UITouchableSprite
 	public event UISliderChanged onChange;
 	
 	
-	// the knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
+	
 	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
 	{
+		return create( UI.firstToolkit, knobFilename, trackFilename, trackxPos, trackyPos, layout );
+	}
+
+	
+	// the knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
+	public static UISlider create( UIToolkit manager, string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
+	{
 		// create the track first so we can use its dimensions to position the knob		
-		var trackTI = UI.instance.textureInfoForFilename( trackFilename );
+		var trackTI = manager.textureInfoForFilename( trackFilename );
 		var trackFrame = new Rect( trackxPos, trackyPos, trackTI.size.x, trackTI.size.y );
 		
 		// position the knob based on the knobs size, layout and the track size
@@ -31,13 +38,13 @@ public class UISlider : UITouchableSprite
 			trackxPos += (int)trackTI.size.x / 2;
 
 		// create a knob using our cacluated position
-		var knob = UI.instance.addSprite( knobFilename, trackxPos, trackyPos, 1, true );
+		var knob = manager.addSprite( knobFilename, trackxPos, trackyPos, 1, true );
 		
-		return new UISlider( trackFrame, 2, trackTI.uvRect, knob, layout );
+		return new UISlider( manager, trackFrame, 2, trackTI.uvRect, knob, layout );
 	}
 	
 
-	public UISlider( Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderLayout layout ):base( frame, depth, uvFrame )
+	public UISlider( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderLayout layout ):base( frame, depth, uvFrame )
 	{
 		this.layout = layout;
 		
@@ -48,7 +55,7 @@ public class UISlider : UITouchableSprite
 		// setup the min/max position values for the sliderKnob
 		updateSliderKnobConstraints();
 		
-		UI.instance.addTouchableSprite( this );
+		manager.addTouchableSprite( this );
 	}
 
 

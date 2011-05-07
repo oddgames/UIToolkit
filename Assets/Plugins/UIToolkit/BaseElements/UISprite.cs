@@ -41,7 +41,6 @@ public class UISprite : UIObject
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
 		
 		// Setup our GO
-		client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
 		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
 		
 		// Save these for later.  The manager will call initializeSize() when the UV's get setup
@@ -235,7 +234,7 @@ public class UISprite : UIObject
 		var uvRects = new List<UIUVRect>( filenames.Length );
 		
 		foreach( var filename in filenames )
-			uvRects.Add( UI.instance.uvRectForFilename( filename ) );
+			uvRects.Add( this.manager.uvRectForFilename( filename ) );
 		
 		var anim = new UISpriteAnimation( frameTime, uvRects );
 		spriteAnimations[name] = anim;

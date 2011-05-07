@@ -18,17 +18,23 @@ public class UIToggleButton : UITouchableSprite
 	
 	public static UIToggleButton create( string filename, string selectedFilename, string highlightedFilename, int xPos, int yPos )
 	{
-		var textureInfo = UI.instance.textureInfoForFilename( filename );
-		var frame = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
-		
-		var selectedTI = UI.instance.textureInfoForFilename( selectedFilename );
-		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
-		
-		return new UIToggleButton( frame, 1, textureInfo.uvRect, selectedTI.uvRect, highlightedTI.uvRect );
+		return create( UI.firstToolkit, filename, selectedFilename, highlightedFilename, xPos, yPos );
 	}
 	
 	
-	public UIToggleButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect selectedUVframe ):base( frame, depth, uvFrame )
+	public static UIToggleButton create( UIToolkit manager, string filename, string selectedFilename, string highlightedFilename, int xPos, int yPos )
+	{
+		var textureInfo = manager.textureInfoForFilename( filename );
+		var frame = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
+		
+		var selectedTI = manager.textureInfoForFilename( selectedFilename );
+		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
+		
+		return new UIToggleButton( manager, frame, 1, textureInfo.uvRect, selectedTI.uvRect, highlightedTI.uvRect );
+	}
+	
+	
+	public UIToggleButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect selectedUVframe, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
 	{
 		this.selectedUVframe = selectedUVframe;
 		
@@ -39,13 +45,7 @@ public class UIToggleButton : UITouchableSprite
 		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;
 		
-		UI.instance.addTouchableSprite( this );
-	}
-
-
-	public UIToggleButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect selectedUVframe, UIUVRect highlightedUVframe ):this( frame, depth, uvFrame, selectedUVframe )
-	{
-		this.highlightedUVframe = highlightedUVframe;
+		manager.addTouchableSprite( this );
 	}
 	
 	#endregion;

@@ -12,7 +12,7 @@ public class KitchenSinkManager : MonoBehaviour
 	{
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
 		var y = UIRelative.yPercentFrom( UIyAnchor.Top, .05f );
-		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, (int)y, 6 );
+		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, (int)y );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		playButton.onTouchUpInside += ( sender )  => Debug.Log( "clicked the button: " + sender );
 		
@@ -75,7 +75,7 @@ public class KitchenSinkManager : MonoBehaviour
 		
 		
 		// animated sprite
-		var animatedSprite = UI.instance.addSprite( "Gai_1.png", 0, 0, 1 );
+		var animatedSprite = UI.firstToolkit.addSprite( "Gai_1.png", 0, 0, 1 );
 		var anim = animatedSprite.addSpriteAnimation( "anim", 0.15f, "Gai_1.png", "Gai_2.png", "Gai_3.png", "Gai_4.png", "Gai_5.png", "Gai_6.png", "Gai_7.png", "Gai_8.png", "Gai_9.png", "Gai_10.png", "Gai_11.png", "Gai_12.png" );
 		animatedSprite.positionFromBottomRight( .0f, .25f );
 		anim.loopReverse = true; // optinally loop in reverse
@@ -94,13 +94,6 @@ public class KitchenSinkManager : MonoBehaviour
 		optionsButton.parentUIObject = panel;
 		
 		StartCoroutine( animatePanel( panel ) );
-		
-		/*		
-		// Swipe detector view - big, giant touchbleSprite behind all others
-		UISwipeDetector detector = new UISwipeDetector( new Rect( 0, 60f, Screen.width, Screen.height - 60f ), 10, new UIUVRect( 450, 50, 408, 306 ) );
-		detector.action = onSwipe;
-		UI.instance.addTouchableSprite( detector );
-		*/
 	}
 	
 	

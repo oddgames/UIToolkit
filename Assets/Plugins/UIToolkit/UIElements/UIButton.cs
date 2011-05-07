@@ -13,21 +13,33 @@ public class UIButton : UITouchableSprite
 	
 	#region Constructors/Destructor
 	
-	public static UIButton create( string filename, string highlightedFilename, int xPos, int yPos, int depth = 1 )
+	public static UIButton create( string filename, string highlightedFilename, int xPos, int yPos )
+	{
+		return UIButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+	}
+	
+	
+	public static UIButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	{
+		return UIButton.create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+	}
+
+	
+	public static UIButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
 	{
 		// grab the texture details for the normal state
-		var normalTI = UI.instance.textureInfoForFilename( filename );
+		var normalTI = manager.textureInfoForFilename( filename );
 		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
 		
 		// get the highlighted state
-		var highlightedTI = UI.instance.textureInfoForFilename( highlightedFilename );
+		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		return new UIButton( frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		return new UIButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect );
 	}
 
 
-	public UIButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
+	public UIButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
 	{
 		// Save a copy of our uvFrame here so that when highlighting turns off we have the original UVs
 		_normalUVframe = uvFrame;
@@ -38,7 +50,7 @@ public class UIButton : UITouchableSprite
 		
 		this.highlightedUVframe = highlightedUVframe;
 		
-		UI.instance.addTouchableSprite( this );
+		manager.addTouchableSprite( this );
 	}
 
 	#endregion;

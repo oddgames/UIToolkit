@@ -97,6 +97,7 @@ public class UIObject : System.Object
 	public virtual Transform parent
 	{
 		get { return clientTransform.parent; }
+		set { clientTransform.parent = value; }
 	}
 	
 
@@ -117,8 +118,24 @@ public class UIObject : System.Object
 			if( _parentUIObject != null )
 				_parentUIObject.onTransformChanged -= transformChanged;
 			
+			// reparent the UIObject in the same UIToolkit tree as it's children
+			//if( value != null && value.parent != parent )
+			//	value.parent = parent;
+						
 			_parentUIObject = value;
-			clientTransform.parent = _parentUIObject.clientTransform;
+			
+			// if we got a null value, then we are being removed from the UIObject so reparent to our manager
+			if( _parentUIObject != null )
+			{
+				clientTransform.parent = _parentUIObject.clientTransform;
+			}
+			else
+			{
+				if( this.GetType() == typeof( UISprite ) )
+					clientTransform.parent = ((UISprite)this).manager.transform;
+				else
+					clientTransform.parent = null;
+			}
 			
 			// add the new listener
 			_parentUIObject.onTransformChanged += transformChanged;

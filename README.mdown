@@ -1,3 +1,17 @@
+<div style="float: right">
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+	<input type="hidden" name="cmd" value="_donations">
+	<input type="hidden" name="business" value="desaro@gmail.com">
+	<input type="hidden" name="lc" value="US">
+	<input type="hidden" name="item_name" value="prime31 studios UIToolkit">
+	<input type="hidden" name="no_note" value="0">
+	<input type="hidden" name="currency_code" value="USD">
+	<input type="hidden" name="bn" value="PP-DonationsBF:btn_donate_LG.gif:NonHostedGuest">
+	<input type="image" src="https://www.paypalobjects.com/WEBSCR-640-20110429-1/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+	<img alt="" border="0" src="https://www.paypalobjects.com/WEBSCR-640-20110429-1/en_US/i/scr/pixel.gif" width="1" height="1">
+	</form>
+</div>
+
 UIToolkit for Unity
 =======
 
@@ -7,8 +21,9 @@ and it makes creating your own widgets extremely simple.  Some conveniences for 
 optionally provided and include:
 
 * automatic texture swapping to a double resolution texture for HD
-* automatic reconfiguration of UV coordinates and positions
+* automatic reconfiguration of UV coordinates
 * automatic handling of double resolution UIFonts
+* methods for relative positioning with offsets in pixels or percents
 
 Check out an introduction video [here](http://www.youtube.com/watch?v=WeV1zbMpm5k)
 
@@ -31,16 +46,32 @@ any Apple app on your iPhone with a button in it and touch your finger on it tha
 * **UIJoystick**: joystick control with configureable dead zone and background image
 * **UISwipeDetector**: control that is capable of detecting swipes in any combination of directions (up, down, left, right)
 
+
+License
+-----
+Coming soon, an actual license.  For any developers just wanting to use UIToolkit in their games go right ahead.  The license will fully allow UIToolkit
+to be used in any and all games either modified or unmodified.
+
+Feel free to include a "prime31 inside" logo on your about page, web page, splash page or anywhere else your game might show up if you would like.  
+<div style="text-align: center">
+<img src="http://prime31.com/assets/images/prime31Inside.png" /> or <img src="http://prime31.com/assets/images/prime31InsideSmall.png" />
+</div>
+
+
 Setup
 -----
 
-1. Create an empty object at 0, 0, 0.  Move this object to a new layer, which in the example is simply called "UILayer".
-2. Now add the UI.cs script to this object.  Be sure to set the UILayer that you chose in the previous step in the inspector.
-3. Go to the main camera and remove the UILayer (in this example "UILayer") from the Culling Mask so that your GUI doesn't get rendered twice.
-4. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer json config file is in the Assets/StreamingAssets
-directory and that your
-sprite atlases are in the Resources folder so they can be loaded at runtime.
-5. *Do not* try to create your UI in Awake as the UI may not be done initializing yet.  Use Start instead.
+1. [Create a new layer](http://unity3d.com/support/documentation/Components/Layers.html), which in the example scenes is named "UILayer".
+2. Create an empty GameObject and position it at 0, 0, 0.
+3. Now drag the UI.cs script to this object.  Be sure to set the UILayer that you chose in the previous step in the inspector in the UILayer slot.
+4. Go to the main camera and remove the UILayer (in this example "UILayer") from the Culling Mask so that your GUI doesn't get rendered twice.
+5. Create a new GameObject and set it as the child of the UI GameObject that was just created and drag the UIToolkit.cs script onto it.
+(You can create multiple UIToolkit child objects that each have their own texture atlas for when one isn't enough).  Your object hierarchy should look like this:<br />
+![](http://cl.ly/6Z6x/Screen_shot_2011-05-08_at_10.34.01_AM.png)
+<br />
+6. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer .txt config file your
+texture atlases are in the Resources folder so they can be loaded at runtime.
+7. *Do not* try to create your UI in Awake as the UI script may not be done initializing yet.  Use Start instead.
 
 
 Exporting Sprite Sheets with Texture Packer
@@ -52,7 +83,7 @@ and makes updating your atlases later a breeze.  To get things going with Textur
 1. Drag and drop all your images into Texture Packer's right pane.
 2. In the Output pane (bottom left) set the Data format to json, set the Data file to be in a Resources folder in your project and set the Texture
 file to be in the Assets/Resources folder (or any other Resources folder in your project)
-3. In the Geometry pane, you will need to uncheck Autosize and set the texture size as a power of 2, square texture.
+3. In the Geometry pane, you will need to uncheck Autosize and set the texture size as a power of 2, square texture.  Pick the smallest size that fits your sprites.
 4. Choose File -> Publish (Command-P) to export the json config file and the texture.  Make sure they both have the same name.  **Note**: you must rename
 the .json file to .txt.  Unity currently will not recognize .json files as TextAssets.
 
@@ -65,11 +96,11 @@ to for this to work.  First off, you will need to have a second texture that is 
 name with "2x" appended to it.  If you want to support both resolution types check the autoTextureSelectionForHD variable in the inspector of
 your UI game object.  You will also need a second Texture Packer config file with "2x" appended to it to go along with the double sized texture.
 
-There are also some methods available to assist with relative layout so you can code once and deploy on multiple resolutions.  The UI class has a
-static method (UI.relativeVec2) that lets you set your positions relative to the left/right and top/bottom of the screen.  For example, to make a
-button be in the bottom left corner on both the iPad and iPhone all you would need to do to get the position is:
+There are also some methods available to assist with relative layout so you can code once and deploy on multiple resolutions.  The UISprite class
+has extensions for positioning relatively from any screen corner. For example, to make a
+button be in the bottom left corner inset a bit from the corner on both the iPad and iPhone all you would need to do to get the position is:
 
-var yPosition = UIRelative.yPercentFrom( UIyAnchor.Top, .25f );
+button.positionFromBottomLeft( 0.05f, 0.05f, )
 
 
 Working with UIFonts

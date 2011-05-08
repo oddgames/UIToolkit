@@ -53,9 +53,8 @@ Coming soon, an actual license.  For any developers just wanting to use UIToolki
 to be used in any and all games either modified or unmodified.
 
 Feel free to include a "prime31 inside" logo on your about page, web page, splash page or anywhere else your game might show up if you would like.  
-<div style="text-align: center">
-<img src="http://prime31.com/assets/images/prime31Inside.png" /> or <img src="http://prime31.com/assets/images/prime31InsideSmall.png" />
-</div>
+[![](http://prime31.com/assets/images/prime31InsideSmall.png)](http://prime31.com/assets/images/prime31InsideSmall.png)  
+[![](http://prime31.com/assets/images/prime31InsideSmall.png)](http://prime31.com/assets/images/prime31InsideSmall.png)
 
 
 Setup
@@ -67,8 +66,7 @@ Setup
 4. Go to the main camera and remove the UILayer (in this example "UILayer") from the Culling Mask so that your GUI doesn't get rendered twice.
 5. Create a new GameObject and set it as the child of the UI GameObject that was just created and drag the UIToolkit.cs script onto it.
 (You can create multiple UIToolkit child objects that each have their own texture atlas for when one isn't enough).  Your object hierarchy should look like this:<br />
-![](http://cl.ly/6Z6x/Screen_shot_2011-05-08_at_10.34.01_AM.png)
-<br />
+[![](http://cl.ly/6Z6x/Screen_shot_2011-05-08_at_10.34.01_AM.png)](http://cl.ly/6Z6x/Screen_shot_2011-05-08_at_10.34.01_AM.png)  
 6. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer .txt config file your
 texture atlases are in the Resources folder so they can be loaded at runtime.
 7. *Do not* try to create your UI in Awake as the UI script may not be done initializing yet.  Use Start instead.

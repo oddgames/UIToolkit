@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class UISprite : UIObject
 {
-    public UISpriteManager manager = null; // Reference to the sprite manager in which this sprite resides
+    public UIToolkit manager = null; // Reference to the sprite manager in which this sprite resides
     public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
 
     public float width;  // Width and Height of the sprite in worldspace units. DO NOT SET THESE
@@ -136,6 +136,7 @@ public class UISprite : UIObject
 		updateTransform();
 	}
 
+
 	// This gets called by the manager just after the UV's get setup
 	public void initializeSize()
 	{
@@ -220,10 +221,18 @@ public class UISprite : UIObject
 			manager.updateColors( this );
 		}
 	}
-	
-	
+
+
+	// Removes the sprite from the mesh and destroys it's client GO
+	public void destroy()
+	{
+		manager.removeElement( this );
+	}
+
+
 	#region Sprite Animation methods
 	
+	// Adds a sprite animation that can later be referenced by name.  Filenames should be the actual names of the files added to Texture Packer.
 	public UISpriteAnimation addSpriteAnimation( string name, float frameTime, params string[] filenames )
 	{
 		// create the spriteAnimations dictionary on demand
@@ -242,7 +251,8 @@ public class UISprite : UIObject
 		return anim;
 	}
 	
-	
+
+	// Plays the sprite animation referenced by name
 	public void playSpriteAnimation( string name, int loopCount )
 	{
 #if UNITY_EDITOR
@@ -254,7 +264,8 @@ public class UISprite : UIObject
 		playSpriteAnimation( spriteAnimations[name], loopCount );
 	}
 	
-	
+
+	// Plays a sprite animation directly
 	public void playSpriteAnimation( UISpriteAnimation anim, int loopCount )
 	{
 		UI.instance.StartCoroutine( anim.play( this, loopCount ) );

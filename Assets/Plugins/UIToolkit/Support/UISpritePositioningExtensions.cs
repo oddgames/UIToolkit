@@ -74,8 +74,7 @@ public static class UISpritePositioningExtensions
 	}
 
 
-
-
+	#region Pixel offset methods
 
 	/// <summary>
 	/// Positions a sprite relatively from the top-left corner of the screen.  Values are pixels from the corner.
@@ -131,5 +130,7 @@ public static class UISpritePositioningExtensions
 		
 		sprite.position = pos;
 	}
+	
+	#endregion
 
 }

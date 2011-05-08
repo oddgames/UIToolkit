@@ -62,6 +62,7 @@ public class UIProgressBar : UISprite
     }
 
 
+	// Current value of the progress bar.  Value is always between 0 and 1.
 	public float value
 	{
 		get { return _value; }

@@ -1,4 +1,4 @@
-<a href="https://www.paypal.com/cgi-bin/webscr?business=desaro@gmail.com&cmd=_donations&lc=US&item_name=prime31+studios+UIToolkit&currency_code=USD">Donations welcome</a>
+<a href="https://www.paypal.com/cgi-bin/webscr?business=desaro@gmail.com&cmd=_donations&lc=US&item_name=prime31+studios+UIToolkit&currency_code=USD">Donations welcome.  Click to donate!</a>
 
 UIToolkit for Unity
 =======

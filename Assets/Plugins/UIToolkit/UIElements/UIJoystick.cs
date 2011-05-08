@@ -76,7 +76,7 @@ public class UIJoystick : UITouchableSprite
 		_manager = manager;
 	}
 	
-	
+
 	public float maxJoystickMovement
 	{
 		get { return _maxJoystickMovement; }
@@ -88,13 +88,15 @@ public class UIJoystick : UITouchableSprite
 	}
 
 
+	// Sets the image to be displayed when the joystick is highlighted
 	public void setJoystickHighlightedFilename( string filename )
 	{
 		var textureInfo = _manager.textureInfoForFilename( filename );
 		highlightedUVframe = textureInfo.uvRect;
 	}
 	
-	
+
+	// Sets the background image for display behind the joystick sprite
 	public void addBackgroundSprite( string filename )
 	{
 		var track = _manager.addSprite( filename, 0, 0, 2, true );

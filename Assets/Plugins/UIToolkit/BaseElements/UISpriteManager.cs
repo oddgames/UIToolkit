@@ -376,7 +376,7 @@ public class UISpriteManager : MonoBehaviour
 		_sprites[i] = sprite;
 		
         sprite.index = i;
-        sprite.manager = this;
+        sprite.manager = this as UIToolkit;
         sprite.parent = transform;
 
         sprite.setBuffers( vertices, UVs );

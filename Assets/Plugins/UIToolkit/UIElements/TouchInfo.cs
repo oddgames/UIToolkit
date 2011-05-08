@@ -11,7 +11,7 @@ public enum SwipeDirection
     Down 		= ( 1 << 4 ),
     Horizontal 	= ( Left | Right ),
     Vertical 	= ( Up | Down ),
-    All 			= ( Horizontal | Vertical )
+    All 		= ( Horizontal | Vertical )
 }
 
 public enum SwipeDetectionStatus

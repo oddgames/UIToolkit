@@ -18,13 +18,13 @@ public class UISlider : UITouchableSprite
 	
 	
 	
+	// The knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
 	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
 	{
 		return create( UI.firstToolkit, knobFilename, trackFilename, trackxPos, trackyPos, layout );
 	}
 
 	
-	// the knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
 	public static UISlider create( UIToolkit manager, string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
 	{
 		// create the track first so we can use its dimensions to position the knob		
@@ -76,6 +76,7 @@ public class UISlider : UITouchableSprite
     }
 
 
+	// Current value of the slier.  Will always be between 0 and 1.
 	public float value
 	{
 		get { return _value; }

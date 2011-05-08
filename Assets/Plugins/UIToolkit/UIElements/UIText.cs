@@ -17,7 +17,10 @@ public struct UITextInstance
 	public int textIndex;
 	public Color color;
 
-	
+
+	/// <summary>
+	/// Sets and draws the text string displayed on screen
+	/// </summary>
 	public string text
 	{
 		get
@@ -44,7 +47,10 @@ public struct UITextInstance
 		this.color = color;
 	}
 	
-	
+
+	/// <summary>
+	/// Clears the text from the screen
+	/// </summary>
 	public void clear()
 	{
 		if( textIndex < 0 )
@@ -55,7 +61,10 @@ public struct UITextInstance
 		textIndex = -1;
 	}
 	
-	
+
+	/// <summary>
+	/// Sets the color for the text.  All colors will be changed.
+	/// </summary>
 	public void setColorForAllLetters( Color color )
 	{
 		this.color = color;
@@ -87,7 +96,10 @@ public class UIText : System.Object
 	private Vector2 _textureOffset;
 	private UIToolkit _manager;
 
-	
+
+	/// <summary>
+	/// Creates a UIText instance which can then be used to create actual text sprites
+	/// </summary>
 	public UIText( string fontFilename, string textureFilename ):this( UI.firstToolkit, fontFilename, textureFilename )
 	{	
 	}
@@ -189,7 +201,9 @@ public class UIText : System.Object
 	}
 	
 	
-	// draw text on screen, create each quad and send it to the manager
+	/// <summary>
+	/// Draw text on screen, create each quad and send it to the manager
+	/// </summary>
 	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color color )
 	{		
 		float dx = xPos;
@@ -246,7 +260,10 @@ public class UIText : System.Object
 		return _textSprites.Count - 1;
 	}
 	
-	
+
+	/// <summary>
+	/// Returns the actual size that will be required to display the text
+	/// </summary>
 	public Vector2 sizeForText( string text )
 	{
 		return sizeForText( text, 1f );
@@ -301,8 +318,11 @@ public class UIText : System.Object
 		return new Vector2( dxMax > 0 ? dxMax : dx, dy + ( _fontDetails[77].h * scale ) );
 	}
 
-	
-	// this will create a new UITextInstance and draw the text
+
+	/// <summary>
+	/// Creates a new UITextInstance and draws the text at the given position.  The UITextInstance is mutable and can
+	/// be changed at any time
+	/// </summary>
 	public UITextInstance addTextInstance( string text, float xPos, float yPos )
 	{
 		return addTextInstance( text, xPos, yPos, 1f, 1 );
@@ -367,7 +387,9 @@ public class UIText : System.Object
 	}
 
 
-	// empty all the arrays
+	/// <summary>
+	/// Empty all the arrays of text sprites
+	/// </summary>
 	public void removeAllText()
 	{
 		for( var i = _textSprites.Count - 1; i >= 0; i-- )

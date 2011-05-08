@@ -86,7 +86,8 @@ public class UIKnob : UITouchableSprite
 		}
 	}
 
-
+	
+	// Gets or sets the current value of the UIKnob
 	public float value
 	{
 		get	{ return _value; }

@@ -84,6 +84,7 @@ public class UIToggleButton : UITouchableSprite
 	}
 
 
+	// Whether the toggle button is in the selected state
 	public bool selected
 	{
 		get { return _selected; }

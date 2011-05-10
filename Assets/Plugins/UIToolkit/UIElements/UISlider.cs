@@ -85,7 +85,7 @@ public class UISlider : UITouchableSprite
 			if( value != _value )
 			{
 				// Set the value being sure to clamp it to our min/max values
-				_value = Mathf.Clamp( value, 0, 1 );
+				_value = Mathf.Clamp( value, 0f, 1f );
 				
 				// Update the slider position
 				this.updateSliderKnobWithNormalizedValue( _value );

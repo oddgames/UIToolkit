@@ -44,6 +44,8 @@ public class UIToggleButton : UITouchableSprite
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;
+
+		this.highlightedUVframe = highlightedUVframe;
 		
 		manager.addTouchableSprite( this );
 	}

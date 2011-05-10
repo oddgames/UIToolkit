@@ -14,7 +14,7 @@ public class KitchenSinkManager : MonoBehaviour
 		var y = UIRelative.yPercentFrom( UIyAnchor.Top, .05f );
 		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, (int)y );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		playButton.onTouchUpInside += ( sender )  => Debug.Log( "clicked the button: " + sender );
+		playButton.onTouchUpInside += ( sender ) => Debug.Log( "clicked the button: " + sender );
 		
 		
 		// Scores button
@@ -49,8 +49,8 @@ public class KitchenSinkManager : MonoBehaviour
 		hSlider.highlightedTouchOffsets = new UIEdgeOffsets( 30, 20, 30, 20 );
 		hSlider.onChange += ( sender, val ) => Debug.Log( val );
 		hSlider.value = 0.6f;
-		
-		
+
+
 		// Vertical Slider
 		var vSlider = UISlider.create( "vSliderKnob.png", "vSlider.png", 0, 0, UISliderLayout.Vertical );
 		vSlider.positionFromTopRight( .17f, .05f );

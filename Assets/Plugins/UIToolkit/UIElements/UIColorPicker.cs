@@ -105,7 +105,7 @@ public class UIColorPicker : UITouchableSprite
 
 	public Color getColorForPixel( int xPos, int yPos )
 	{
-		Texture2D mainTex = manager.material.mainTexture as Texture2D;
+		var mainTex = manager.material.mainTexture as Texture2D;
 		return mainTex.GetPixel( xPos, yPos );
 	}
 

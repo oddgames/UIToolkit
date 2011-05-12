@@ -1,0 +1,35 @@
+{"frames": {
+
+"ColorButtonDown.png":
+{
+	"frame": {"x":0,"y":0,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"ColorButtonUp.png":
+{
+	"frame": {"x":64,"y":0,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"ColorPalette.png":
+{
+	"frame": {"x":128,"y":0,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+}
+}, 
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "colorPickerSheet.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":512}
+}
+}

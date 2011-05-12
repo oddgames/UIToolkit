@@ -476,12 +476,6 @@ public class UISpriteManager : MonoBehaviour
         vertsChanged = true;
 		meshIsDirty = true;
     }
-	
-	public Color GetColor(int xPos, int yPos)
-	{
-		Texture2D mainTex = material.mainTexture as Texture2D;
-		return mainTex.GetPixel(xPos, yPos);
-	}
 
 	#endregion;
 

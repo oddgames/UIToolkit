@@ -16,7 +16,8 @@ public class UIColorPicker : UITouchableSprite
 	{
 		return UIColorPicker.create( UI.firstToolkit, filename, xPos, yPos, depth );
 	}	
-	
+
+
 	public static UIColorPicker create( UIToolkit manager, string filename, int xPos, int yPos, int depth )
 	{
 		// grab the texture details for the normal state
@@ -39,7 +40,7 @@ public class UIColorPicker : UITouchableSprite
 
 	#endregion;
 	
-	public Color ColorPicked
+	public Color colorPicked
 	{
 		get { return _colorPicked; }
 		set
@@ -51,6 +52,7 @@ public class UIColorPicker : UITouchableSprite
 		}
 	}
 
+
 	// Touch handlers
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
@@ -60,13 +62,14 @@ public class UIColorPicker : UITouchableSprite
 	{
 		highlighted = true;
 		
-		Color oldColor = ColorPicked;
-		Vector2 textureCoord = GetTouchTextureCoords(touchPos);		
-		ColorPicked = manager.GetColor((int)textureCoord.x, (int)textureCoord.y );
+		Color oldColor = colorPicked;
+		Vector2 textureCoord = getTouchTextureCoords( touchPos );
+		colorPicked = getColorForPixel( (int)textureCoord.x, (int)textureCoord.y );
 		
 		if( onColorChangeBegan != null )
-			onColorChangeBegan( this, ColorPicked, oldColor);
+			onColorChangeBegan( this, colorPicked, oldColor );
 	}
+
 
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
@@ -74,30 +77,36 @@ public class UIColorPicker : UITouchableSprite
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
-		Color oldColor = ColorPicked;
-		Vector2 textureCoord = GetTouchTextureCoords(touchPos);	
-		ColorPicked = manager.GetColor((int)textureCoord.x, (int)textureCoord.y );
+		Color oldColor = colorPicked;
+		Vector2 textureCoord = getTouchTextureCoords(touchPos);	
+		colorPicked = getColorForPixel( (int)textureCoord.x, (int)textureCoord.y );
 		
 		if( onColorChange != null )
-			onColorChange( this, ColorPicked, oldColor);
+			onColorChange( this, colorPicked, oldColor );
 	}
-	
-	// Given a touch position, this method determines the relative position on 
-	// the actual texture in the texture atlas.
-	// Values are clamped to ensure the chosenColor is valid for a UIColorChooser
-	// with UIEdgeOffsets.
+
+
+	// Given a touch position, this method determines the relative position on  the actual texture in the texture atlas.
+	// Values are clamped to ensure the chosenColor is valid for a UIColorChooser with UIEdgeOffsets.
 	// The y-axis is flipped because the texture coordinate system is inverted.
-	private Vector2 GetTouchTextureCoords(Vector2 touchPos)
+	private Vector2 getTouchTextureCoords( Vector2 touchPos )
 	{
 		float xChange = touchPos.x - position.x;
-		xChange = Mathf.Clamp(xChange, 0, width - 1);
+		xChange = Mathf.Clamp( xChange, 0, width - 1 );
 		float xPos = textureCoords.x + xChange;
 				
-		float yChange = touchPos.y - -1*(position.y);
-		yChange = Mathf.Clamp(yChange, 1, height);
-		float yPos = manager.textureSize.y - (textureCoords.y + yChange);
+		float yChange = touchPos.y - -1 * ( position.y );
+		yChange = Mathf.Clamp( yChange, 1, height );
+		float yPos = manager.textureSize.y - ( textureCoords.y + yChange );
 		
-		return new Vector2(xPos, yPos);
+		return new Vector2( xPos, yPos );
+	}
+
+
+	public Color getColorForPixel( int xPos, int yPos )
+	{
+		Texture2D mainTex = manager.material.mainTexture as Texture2D;
+		return mainTex.GetPixel( xPos, yPos );
 	}
 
 

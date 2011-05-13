@@ -120,6 +120,14 @@ public class UISwipeDetector : UITouchableSprite
 			return false;
 		}
 		
+
+		// When dealing with standalones (non touch-based devices) we need to be careful what we examaine
+		// We filter out all touches (mouse movements really) that didnt move
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+		if( touch.deltaPosition.x != 0.0f || touch.deltaPosition.y != 0.0f )
+		{
+#endif
+
 		// Check the delta move positions.  We can rule out at least 2 directions
 		if( touch.deltaPosition.x > 0.0f )
 			touchInfo.swipeDetectionState &= ~SwipeDirection.Left;
@@ -130,6 +138,10 @@ public class UISwipeDetector : UITouchableSprite
 			touchInfo.swipeDetectionState &= ~SwipeDirection.Up;
 		else
 			touchInfo.swipeDetectionState &= ~SwipeDirection.Down;
+
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+		}
+#endif
 		
 		//Debug.Log( string.Format( "swipeStatus: {0}", touchInfo.swipeDetectionState ) );
 		

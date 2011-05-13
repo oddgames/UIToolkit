@@ -29,27 +29,27 @@ public struct UIFakeTouch
 		var fakeTouch = new UIFakeTouch();
 		fakeTouch.fingerId = 2;
 		
-		if( Input.GetMouseButtonDown( 0 ) )
+		// if we have a lastMousePosition use it to get a delta
+		if( lastMousePosition.HasValue )
+			fakeTouch.deltaPosition = Input.mousePosition - (Vector3)lastMousePosition;
+		
+		if( Input.GetMouseButtonDown( 0 ) ) // equivalent to touchBegan
 		{
 			fakeTouch.phase = TouchPhase.Began;
 			lastMousePosition = Input.mousePosition;
 		}
-		else if( Input.GetMouseButtonUp( 0 ) )
+		else if( Input.GetMouseButtonUp( 0 ) ) // equivalent to touchEnded
 		{
 			fakeTouch.phase = TouchPhase.Ended;
 			lastMousePosition = null;
 		}
-		else
+		else // equivalent to touchMoved/Stationary
 		{
 			fakeTouch.phase = TouchPhase.Moved;
 			lastMousePosition = Input.mousePosition;
 		}
 		
 		fakeTouch.position = new Vector2( Input.mousePosition.x, Input.mousePosition.y );
-		
-		// if we have a lastMousePosition use it to get a delta
-		if( lastMousePosition.HasValue )
-			fakeTouch.deltaPosition = Input.mousePosition - (Vector3)lastMousePosition.Value;
 		
 		return fakeTouch;
 	}

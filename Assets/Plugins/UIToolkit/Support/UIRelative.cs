@@ -12,7 +12,13 @@ public static class UIRelative
 	/// Percent to offset from the anchor.  If the anchor is right, the width will be used to make the offset
 	/// from the right-most point of the sprite.
 	/// </summary>
-	public static float xPercentFrom( UIxAnchor anchor, float percentOffset, float width = 0 )
+	public static float xPercentFrom( UIxAnchor anchor, float percentOffset )
+	{
+		return xPercentFrom( anchor, percentOffset, 0 );
+	}
+
+
+	public static float xPercentFrom( UIxAnchor anchor, float percentOffset, float width )
 	{
 		switch( anchor )
 		{
@@ -29,7 +35,13 @@ public static class UIRelative
 	/// Pixels to offset from the anchor.  If the anchor is right, the width will be used to make the offset
 	/// from the right-most point of the sprite.
 	/// </summary>
-	public static float xPixelsFrom( UIxAnchor anchor, int pixelOffset, float width = 0 )
+	public static float xPixelsFrom( UIxAnchor anchor, int pixelOffset )
+	{
+		return xPixelsFrom( anchor, pixelOffset, 0 );
+	}
+
+
+	public static float xPixelsFrom( UIxAnchor anchor, int pixelOffset, float width )
 	{
 		switch( anchor )
 		{
@@ -46,7 +58,13 @@ public static class UIRelative
 	/// Percent to offset from the anchor.  If the anchor is bottom, the height will be used to make the offset
 	/// from the height-most point of the sprite.
 	/// </summary>
-	public static float yPercentFrom( UIyAnchor anchor, float percentOffset, float height = 0 )
+	public static float yPercentFrom( UIyAnchor anchor, float percentOffset )
+	{
+		return yPercentFrom( anchor, percentOffset, 0 );
+	}
+
+
+	public static float yPercentFrom( UIyAnchor anchor, float percentOffset, float height )
 	{
 		switch( anchor )
 		{
@@ -63,7 +81,13 @@ public static class UIRelative
 	/// Pixels to offset from the anchor.  If the anchor is bottom, the height will be used to make the offset
 	/// from the bottom-most point of the sprite.
 	/// </summary>
-	public static float yPixelsFrom( UIyAnchor anchor, int pixelOffset, float height = 0 )
+	public static float yPixelsFrom( UIyAnchor anchor, int pixelOffset )
+	{
+		return yPixelsFrom( anchor, pixelOffset, 0 );
+	}
+
+
+	public static float yPixelsFrom( UIyAnchor anchor, int pixelOffset, float height )
 	{
 		switch( anchor )
 		{

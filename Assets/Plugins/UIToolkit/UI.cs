@@ -24,7 +24,6 @@ public class UI : MonoBehaviour
 	public bool autoTextureSelectionForHD = false;
 	public bool allowPod4GenHD = true; // if false, iPod touch 4G will not take part in HD mode
 	public int maxWidthOrHeightForSD = 960; // if the width/height of the screen equals or exceeds this size HD mode will be triggered
-	public string texturePackerConfigName;
 	[HideInInspector]
 	public bool isHD = false;
 	

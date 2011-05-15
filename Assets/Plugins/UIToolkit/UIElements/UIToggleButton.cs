@@ -25,7 +25,7 @@ public class UIToggleButton : UITouchableSprite
 	public static UIToggleButton create( UIToolkit manager, string filename, string selectedFilename, string highlightedFilename, int xPos, int yPos )
 	{
 		var textureInfo = manager.textureInfoForFilename( filename );
-		var frame = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
+		var frame = new Rect( xPos, yPos, textureInfo.frame.width, textureInfo.frame.height );
 		
 		var selectedTI = manager.textureInfoForFilename( selectedFilename );
 		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );

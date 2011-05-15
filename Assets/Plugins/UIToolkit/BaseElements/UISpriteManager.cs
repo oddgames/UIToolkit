@@ -14,7 +14,6 @@ using System.Collections.Generic;
 public struct UITextureInfo
 {
 	public UIUVRect uvRect;
-	public Vector2 size;
 	public Rect frame;
 }
 
@@ -112,7 +111,6 @@ public class UISpriteManager : MonoBehaviour
 		foreach( System.Collections.DictionaryEntry item in frames )
 		{
 			// extract the info we need from the TexturePacker json file.  mainly uvRect and size
-			var sourceSize = (Hashtable)((Hashtable)item.Value)["sourceSize"];
 			var frame = (Hashtable)((Hashtable)item.Value)["frame"];
 			var frameX = int.Parse( frame["x"].ToString() );
 			var frameY = int.Parse( frame["y"].ToString() );
@@ -121,7 +119,6 @@ public class UISpriteManager : MonoBehaviour
 		
 			var ti = new UITextureInfo();
 			ti.frame = new Rect( frameX, frameY, frameW, frameH );
-			ti.size = new Vector2( float.Parse( sourceSize["w"].ToString() ), float.Parse( sourceSize["h"].ToString() ) );
 			ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH, textureSize );
 		
 			textures.Add( item.Key.ToString(), ti );
@@ -334,7 +331,7 @@ public class UISpriteManager : MonoBehaviour
 			throw new Exception( "can't find texture details for texture packer sprite:" + name );
 #endif
 		var textureInfo = textureDetails[name];
-		var positionRect = new Rect( xPos, yPos, textureInfo.size.x, textureInfo.size.y );
+		var positionRect = new Rect( xPos, yPos, textureInfo.frame.width, textureInfo.frame.height );
 
 		return this.addSprite( positionRect, textureInfo.uvRect, depth, gameObjectOriginInCenter );
     }

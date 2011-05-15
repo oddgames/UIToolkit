@@ -25,7 +25,7 @@ public class UIProgressBar : UISprite
 		var bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, 2 );
 		
 		var borderTI = manager.textureInfoForFilename( borderFilename );
-		var borderFrame = new Rect( borderxPos, borderyPos, borderTI.size.x, borderTI.size.y );
+		var borderFrame = new Rect( borderxPos, borderyPos, borderTI.frame.width, borderTI.frame.height );
 		
 		return new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
 	}

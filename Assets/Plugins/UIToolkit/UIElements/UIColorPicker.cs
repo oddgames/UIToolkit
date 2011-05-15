@@ -24,7 +24,7 @@ public class UIColorPicker : UITouchableSprite
 		var normalTI = manager.textureInfoForFilename( filename );
 		Vector2 textureCoords = new Vector2(normalTI.frame.x, normalTI.frame.y);
 		
-		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
+		var frame = new Rect( xPos, yPos, normalTI.frame.width, normalTI.frame.height );
 		
 		// create the button
 		return new UIColorPicker( manager, frame, depth, normalTI.uvRect, textureCoords );

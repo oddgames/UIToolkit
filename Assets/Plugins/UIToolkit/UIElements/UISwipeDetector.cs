@@ -44,7 +44,7 @@ public class UISwipeDetector : UITouchableSprite
 	{
 		// grab the texture details
 		var normalTI = manager.textureInfoForFilename( filename );
-		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
+		var frame = new Rect( xPos, yPos, normalTI.frame.width, normalTI.frame.height );
 
 		// create the swipe detector
 		var detector = new UISwipeDetector( frame, depth, normalTI.uvRect );

@@ -29,13 +29,13 @@ public class UISlider : UITouchableSprite
 	{
 		// create the track first so we can use its dimensions to position the knob		
 		var trackTI = manager.textureInfoForFilename( trackFilename );
-		var trackFrame = new Rect( trackxPos, trackyPos, trackTI.size.x, trackTI.size.y );
+		var trackFrame = new Rect( trackxPos, trackyPos, trackTI.frame.width, trackTI.frame.height );
 		
 		// position the knob based on the knobs size, layout and the track size
 		if( layout == UISliderLayout.Horizontal )
-			trackyPos += (int)trackTI.size.y / 2;
+			trackyPos += (int)trackTI.frame.height / 2;
 		else
-			trackxPos += (int)trackTI.size.x / 2;
+			trackxPos += (int)trackTI.frame.width / 2;
 
 		// create a knob using our cacluated position
 		var knob = manager.addSprite( knobFilename, trackxPos, trackyPos, 1, true );

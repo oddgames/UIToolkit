@@ -31,7 +31,7 @@ public class UIKnob : UITouchableSprite
 	{
 		// grab the texture details for the normal state
 		var normalTI = manager.textureInfoForFilename( filename );
-		var frame = new Rect( xPos, yPos, normalTI.size.x, normalTI.size.y );
+		var frame = new Rect( xPos, yPos, normalTI.frame.width, normalTI.frame.height );
 		
 		// get the highlighted state
 		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );

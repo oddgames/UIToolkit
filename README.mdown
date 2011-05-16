@@ -35,6 +35,13 @@ any Apple app on your iPhone with a button in it and touch your finger on it tha
 * **UISwipeDetector**: control that is capable of detecting swipes in any combination of directions (up, down, left, right)
 
 
+Included UI Components
+-----
+
+* **UIHorizontalLayout**: lays out any children added to it horizontally.  Spacing between the elements is configureable.
+* **UIVerticalLayout**: lays out any children added to it vertically.  Spacing between the elements is configureable.
+
+
 License
 -----
 Coming soon, an actual license.  For any developers just wanting to use UIToolkit in their games go right ahead.  The license will fully allow UIToolkit

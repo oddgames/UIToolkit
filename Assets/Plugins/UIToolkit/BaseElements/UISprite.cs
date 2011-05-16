@@ -2,13 +2,15 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-public class UISprite : UIObject
+public class UISprite : UIObject, IPositionable
 {
     public UIToolkit manager = null; // Reference to the sprite manager in which this sprite resides
     public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
-
-    public float width;  // Width and Height of the sprite in worldspace units. DO NOT SET THESE
-    public float height; // THESE ARE PUBLIC TO AVOID THE GETTER PROPERTY OVERHEAD
+	
+	private float _width;
+    public float width { get { return _width; } }  // Width and Height of the sprite in worldspace units.
+    private float _height;
+    public float height { get { return _height; } } // THESE ARE PUBLIC TO AVOID THE GETTER PROPERTY OVERHEAD
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
     
     public Color _color; // The color to be used by all four vertices
@@ -44,8 +46,8 @@ public class UISprite : UIObject
 		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index
 		
 		// Save these for later.  The manager will call initializeSize() when the UV's get setup
-		width = frame.width;
-		height = frame.height;
+		_width = frame.width;
+		_height = frame.height;
 		
 		_uvFrame = uvFrame;
     }
@@ -148,8 +150,8 @@ public class UISprite : UIObject
     // Sets the physical dimensions of the sprite in the XY plane
     public void setSize( float width, float height )
     {
-        this.width = width;
-        this.height = height;
+        _width = width;
+        _height = height;
 		
 		if( gameObjectOriginInCenter )
 		{

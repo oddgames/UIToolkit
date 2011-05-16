@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
+
 public class KitchenSinkManager : MonoBehaviour
 {
-	public GUIText swipeText;
 	public AudioClip scoresSound;
 	public AudioClip optionsSound;
 	
@@ -205,13 +205,6 @@ public class KitchenSinkManager : MonoBehaviour
 
 	
 	#region Callbacks
-	
-	// Swipe callback
-	public void onSwipe( UISwipeDetector sender, SwipeDirection direction )
-	{
-		swipeText.text = direction.ToString();
-	}
-
 
 	// Button callback
 	public void onTouchUpInsideScoresButton( UIButton sender )

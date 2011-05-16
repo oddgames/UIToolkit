@@ -38,28 +38,29 @@ public class LayoutContainerManager : MonoBehaviour
 		
 		
 		// HorizontalLayout
-		var hBox = new HorizontalLayout( 20, 5 );
+		var hBox = new UIHorizontalLayout( 20, 5 );
 		hBox.addChild( playButton, scores, optionsButton );
 
 		
-		var hBox2 = new HorizontalLayout( 50, 0 );
-		hBox2.addChild( knob, toggleButton );
-		hBox2.positionCenter();
+		// VerticalLayout
+		var vBox = new UIVerticalLayout( 20, 0 );
+		vBox.addChild( knob, toggleButton );
+		vBox.pixelsFromBottomRight( 10, 10 );
 
 		
-		// Layouts can be animated like any sprite
+		// Layouts can be animated like any UIObject
 		StartCoroutine( animatePanel( hBox ) );
 	}
 	
 	
-	private IEnumerator animatePanel( UIObject sprite )
+	private IEnumerator animatePanel( UIObject obj )
 	{
-		var objectHeight = ((HorizontalLayout)sprite).height;
+		var objectHeight = ((UIHorizontalLayout)obj).height;
 		while( true )
 		{
 			yield return new WaitForSeconds( 3 );
 			
-			var ani = sprite.positionTo( 0.7f, new Vector3( sprite.position.x, -Screen.height + objectHeight, sprite.position.z ), Easing.Quartic.easeIn );
+			var ani = obj.positionTo( 0.7f, new Vector3( obj.position.x, -Screen.height + objectHeight, obj.position.z ), Easing.Quartic.easeIn );
 			ani.autoreverse = true;
 		}
 	}

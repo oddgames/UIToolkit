@@ -3,30 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public interface IPositionable
-{
-	float width { get; }
-	float height { get; }
-	Vector3 position { get; set; }
-}
-
-
-public class HorizontalLayout : UIObject, IPositionable
+public class UIHorizontalLayout : UIObject, IPositionable
 {
 	public int spacing; // spacing is the space between each object
 	public int padding; // padding is the space before the first element and after the last element
 	
-	private float _width;
+	protected float _width;
 	public float width { get { return _width; } }
 
-	private float _height;
+	protected float _height;
 	public float height { get { return _height; } }
 	
-	
-	private List<UISprite> _children = new List<UISprite>();
+	protected List<UISprite> _children = new List<UISprite>();
 
 	
-	public HorizontalLayout( int spacing, int padding )
+	public UIHorizontalLayout( int spacing, int padding )
 	{
 		this.spacing = spacing;
 		this.padding = padding;
@@ -64,9 +55,9 @@ public class HorizontalLayout : UIObject, IPositionable
 	
 
 	/// <summary>
-	/// 
+	/// Responsible for laying out the child UISprites
 	/// </summary>
-	private void layoutChildren()
+	protected virtual void layoutChildren()
 	{
 		// start with the padding, then add each object + spacing then end with padding
 		_width = padding;

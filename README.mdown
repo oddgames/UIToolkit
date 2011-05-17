@@ -45,7 +45,9 @@ Included UI Components
 License
 -----
 Coming soon, an actual license.  For any developers just wanting to use UIToolkit in their games go right ahead.  The license will fully allow UIToolkit
-to be used in any and all games either modified or unmodified.
+to be used in any and all games either modified or unmodified.  In order to keep the spirit of this open source project, the forthcoming license will
+absolutely not allow UIToolkit to be sold or distributed in any way outside of your games.  You can freely use it in as many games as you would like but you
+cannot distribute the source code either directly or compiled into a library outside of your game.
 
 Feel free to include a "prime31 inside" logo on your about page, web page, splash page or anywhere else your game might show up if you would like.  
 [small](http://prime31.com/assets/images/prime31InsideSmall.png) or 

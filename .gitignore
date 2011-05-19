@@ -15,3 +15,5 @@ Xcode/
 /UIToolkit.pidb
 /UIToolkit.userprefs
 Library/ScriptAssemblies/*
+/Library/ScriptAssemblies
+/Library/cache

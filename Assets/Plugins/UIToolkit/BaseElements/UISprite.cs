@@ -51,6 +51,12 @@ public class UISprite : UIObject, IPositionable
 		
 		_uvFrame = uvFrame;
     }
+	
+	
+	public virtual void SetSpriteImage( string filename )
+	{
+		uvFrame = manager.uvRectForFilename( filename );
+	}
 
 
 	public virtual UIUVRect uvFrame

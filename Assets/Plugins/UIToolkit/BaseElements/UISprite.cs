@@ -53,7 +53,7 @@ public class UISprite : UIObject, IPositionable
     }
 	
 	
-	public virtual void SetSpriteImage( string filename )
+	public virtual void setSpriteImage( string filename )
 	{
 		uvFrame = manager.uvRectForFilename( filename );
 	}

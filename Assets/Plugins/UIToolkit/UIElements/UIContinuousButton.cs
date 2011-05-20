@@ -6,8 +6,8 @@ public class UIContinuousButton : UIButton
 {
 	public delegate void UIContinousButtonDelegate( UIButton sender );
 	public event UIContinousButtonDelegate onTouchIsDown;
-	public event UIContinousButtonDelegate onTouchDown;
-	public event UIContinousButtonDelegate onTouchUp;
+	public event UIContinousButtonDelegate onActivationStarted;
+	public event UIContinousButtonDelegate onActivationEnded;
 	
 	public bool onlyFireStartAndEndEvents = false;
 	
@@ -52,8 +52,8 @@ public class UIContinuousButton : UIButton
 	{
 		base.onTouchBegan( touch, touchPos );
 
-		if( onlyFireStartAndEndEvents && onTouchDown != null )
-			onTouchDown( this );
+		if( onlyFireStartAndEndEvents && onActivationStarted != null )
+			onActivationStarted( this );
 	}
 
 	
@@ -77,7 +77,7 @@ public class UIContinuousButton : UIButton
 	{
 		base.onTouchEnded( touch, touchPos, touchWasInsideTouchFrame );
 		
-		if( onlyFireStartAndEndEvents && onTouchUp != null )
-			onTouchUp( this );
+		if( onlyFireStartAndEndEvents && onActivationEnded != null )
+			onActivationEnded( this );
 	}
 }

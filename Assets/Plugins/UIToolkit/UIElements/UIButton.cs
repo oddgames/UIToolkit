@@ -5,13 +5,16 @@ public class UIButton : UITouchableSprite
 {
 	public delegate void UIButtonTouchUpInside( UIButton sender );
 	public event UIButtonTouchUpInside onTouchUpInside;
-	
+
+	public delegate void UIButtonTouchDown( UIButton sender );
+	public event UIButtonTouchDown onTouchDown;
+
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
 	public AudioClip touchDownSound;
-	
-	public Vector2 touchedAtPosition;
-	
+	public Vector2 initialTouchPosition;
+
+
 	#region Constructors/Destructor
 	
 	public static UIButton create( string filename, string highlightedFilename, int xPos, int yPos )
@@ -97,10 +100,13 @@ public class UIButton : UITouchableSprite
 	{
 		highlighted = true;
 		
-		touchedAtPosition = touch.position;
+		initialTouchPosition = touch.position;
 		
 		if( touchDownSound != null )
 			UI.instance.playSound( touchDownSound );
+		
+		if( onTouchDown != null )
+			onTouchDown( this );
 	}
 
 

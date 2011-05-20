@@ -26,7 +26,8 @@ public static class IPositionablePositioningExtensions
 		var centerPos = UIRelative.center( sprite.width, sprite.height );
 		sprite.position =  new Vector2( centerPos.x, sprite.position.y );
 	}
-	
+
+
 	/// <summary>
 	/// Positions a sprite in the center on y axis
 	/// </summary

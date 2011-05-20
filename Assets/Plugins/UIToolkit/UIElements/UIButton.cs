@@ -10,6 +10,7 @@ public class UIButton : UITouchableSprite
 	public UIUVRect highlightedUVframe;
 	public AudioClip touchDownSound;
 	
+	public Vector2 touchedAtPosition;
 	
 	#region Constructors/Destructor
 	
@@ -95,6 +96,8 @@ public class UIButton : UITouchableSprite
 #endif
 	{
 		highlighted = true;
+		
+		touchedAtPosition = touch.position;
 		
 		if( touchDownSound != null )
 			UI.instance.playSound( touchDownSound );

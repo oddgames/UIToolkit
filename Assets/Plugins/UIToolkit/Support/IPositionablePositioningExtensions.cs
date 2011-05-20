@@ -16,6 +16,25 @@ public static class IPositionablePositioningExtensions
 		
 		sprite.position = pos;
 	}
+	
+	
+	/// <summary>
+	/// Positions a sprite in the center on x axis
+	/// </summary
+	public static void positionCenterX( this UISprite sprite )
+	{
+		var centerPos = UIRelative.center( sprite.width, sprite.height );
+		sprite.position =  new Vector2( centerPos.x, sprite.position.y );
+	}
+	
+	/// <summary>
+	/// Positions a sprite in the center on y axis
+	/// </summary
+	public static void positionCenterY( this UISprite sprite )
+	{
+		var centerPos = UIRelative.center( sprite.width, sprite.height );
+		sprite.position = new Vector2( sprite.position.x, -centerPos.y );
+	}
 
 
 	/// <summary>

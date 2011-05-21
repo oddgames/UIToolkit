@@ -17,3 +17,7 @@ Xcode/
 Library/ScriptAssemblies/*
 /Library/ScriptAssemblies
 /Library/cache
+/Assembly-CSharp-firstpass.csproj
+/Assembly-CSharp-firstpass.pidb
+/Assembly-CSharp.csproj
+/UIToolkit-csharp.sln

@@ -4,6 +4,7 @@
 using UnityEngine;
 
 
+#if UNITY_EDITOR
 public class UIControlTemplate : UITouchableSprite
 {
 	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
@@ -98,3 +99,4 @@ public class UIControlTemplate : UITouchableSprite
 
 
 }
+#endif

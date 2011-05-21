@@ -34,7 +34,7 @@ public class UIObject : System.Object
 	
 	#region Transform passthrough properties so we can update necessary verts when changes occur
 	
-	public float zIndex
+	public virtual float zIndex
 	{
 		get { return clientTransform.position.z; }
 		set

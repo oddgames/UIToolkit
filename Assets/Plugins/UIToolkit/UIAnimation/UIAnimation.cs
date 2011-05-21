@@ -22,7 +22,7 @@ public class UIAnimation
 	public bool autoreverse;
 	
 	private float startTime;
-	private UIObject  sprite;
+	private UIObject sprite;
 	private float duration;
 	private System.Func<float, float> ease;
 	
@@ -175,7 +175,8 @@ public class UIAnimation
 	// Used to chain animations.  This will return when the animation completes
 	public WaitForSeconds chain()
 	{
-		return new WaitForSeconds( startTime + duration - Time.time );
+		var multiplier = autoreverse ? 2 : 1;
+		return new WaitForSeconds( startTime + ( duration * multiplier ) - Time.time );
 	}
 	
 	

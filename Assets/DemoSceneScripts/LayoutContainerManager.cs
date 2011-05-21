@@ -38,12 +38,12 @@ public class LayoutContainerManager : MonoBehaviour
 		
 		
 		// HorizontalLayout
-		var hBox = new UIHorizontalLayout( 20, 5 );
+		var hBox = new UIHorizontalLayout( 20 );
 		hBox.addChild( playButton, scores, optionsButton );
 
 		
 		// VerticalLayout
-		var vBox = new UIVerticalLayout( 20, 0 );
+		var vBox = new UIVerticalLayout( 20 );
 		vBox.addChild( knob, toggleButton );
 		vBox.pixelsFromBottomRight( 10, 10 );
 
@@ -53,15 +53,31 @@ public class LayoutContainerManager : MonoBehaviour
 	}
 	
 	
-	private IEnumerator animatePanel( UIObject obj )
+	private IEnumerator animatePanel( UIAbstractContainer obj )
 	{
 		var objectHeight = ((UIHorizontalLayout)obj).height;
 		while( true )
 		{
-			yield return new WaitForSeconds( 3 );
+			// flip our orientation to show on the fly layout changes
+			obj.beginUpdates(); // more efficient way to change multiple properties wrapping the begin/endUpdates
+			obj.layoutType = UIAbstractContainer.UILayoutType.Horizontal;
+			obj.edgeInsets = new UIEdgeInsets( 0 );
+			obj.endUpdates();
+			
+			yield return new WaitForSeconds( 2 );
 			
 			var ani = obj.positionTo( 0.7f, new Vector3( obj.position.x, -Screen.height + objectHeight, obj.position.z ), Easing.Quartic.easeIn );
 			ani.autoreverse = true;
+			
+			yield return ani.chain();
+			
+			// flip our orientation to show on the fly layout changes
+			obj.beginUpdates();
+			obj.layoutType = UIAbstractContainer.UILayoutType.Vertical;
+			obj.edgeInsets = new UIEdgeInsets( 20 );
+			obj.endUpdates();
+			
+			yield return new WaitForSeconds( 2 );
 		}
 	}
 	

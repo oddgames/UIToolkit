@@ -162,11 +162,10 @@ public class UISprite : UIObject, IPositionable
 		if( gameObjectOriginInCenter )
 		{
 			// Some objects need to rotate so we set the origin at the center of the GO
-			Vector3 offset = Vector3.zero;
-			v1 = offset + new Vector3( -width / 2, height / 2, 0 );   // Upper-left
-			v2 = offset + new Vector3( -width / 2, -height / 2, 0 );  // Lower-left
-			v3 = offset + new Vector3( width / 2, -height / 2, 0 );   // Lower-right
-			v4 = offset + new Vector3( width / 2, height / 2, 0 );    // Upper-right
+			v1 = new Vector3( -width / 2, height / 2, 0 );   // Upper-left
+			v2 = new Vector3( -width / 2, -height / 2, 0 );  // Lower-left
+			v3 = new Vector3( width / 2, -height / 2, 0 );   // Lower-right
+			v4 = new Vector3( width / 2, height / 2, 0 );    // Upper-right
 		}
 		else
 		{

@@ -7,7 +7,7 @@ public class UIHorizontalLayout : UIAbstractContainer
 {
 	public UIHorizontalLayout( int spacing ) : base( UILayoutType.Horizontal )
 	{
-		this._spacing = spacing;
+		_spacing = spacing;
 	}
 
 

@@ -35,11 +35,10 @@ public class UIAbstractContainer : UIObject, IPositionable
 	}
 
 
-
 	/// <summary>
 	/// Adds a UISprite to the container and sets it to lay itself out
 	/// </summary>
-	public void addChild( params UISprite[] children )
+	public virtual void addChild( params UISprite[] children )
 	{
 		foreach( var child in children )
 		{
@@ -152,5 +151,11 @@ public class UIAbstractContainer : UIObject, IPositionable
 		_height += _edgeInsets.bottom;
 	}
 
+
+	public override void transformChanged()
+	{
+		Debug.Log( "transformChanged transformChanged transformChanged transformChanged" );
+		layoutChildren();
+	}
 
 }

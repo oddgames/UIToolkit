@@ -7,6 +7,6 @@ public class UIVerticalLayout : UIAbstractContainer
 {	
 	public UIVerticalLayout( int spacing ) : base( UILayoutType.Vertical )
 	{
-		this._spacing = spacing;
+		_spacing = spacing;
 	}
 }

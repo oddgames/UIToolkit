@@ -2,7 +2,7 @@
 
 "Gai_1.png":
 {
-	"frame": {"x":472,"y":2,"w":80,"h":104},
+	"frame": {"x":554,"y":2,"w":80,"h":104},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":11,"y":9,"w":80,"h":104},
@@ -26,7 +26,7 @@
 },
 "Gai_12.png":
 {
-	"frame": {"x":114,"y":2,"w":62,"h":100},
+	"frame": {"x":50,"y":2,"w":62,"h":100},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":23,"y":4,"w":62,"h":100},
@@ -58,7 +58,7 @@
 },
 "Gai_5.png":
 {
-	"frame": {"x":554,"y":2,"w":80,"h":88},
+	"frame": {"x":472,"y":2,"w":80,"h":88},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":30,"y":2,"w":80,"h":88},
@@ -66,7 +66,7 @@
 },
 "Gai_6.png":
 {
-	"frame": {"x":50,"y":2,"w":62,"h":88},
+	"frame": {"x":114,"y":2,"w":62,"h":88},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":27,"y":9,"w":62,"h":88},
@@ -122,7 +122,7 @@
 },
 "hSlider.png":
 {
-	"frame": {"x":404,"y":854,"w":504,"h":70},
+	"frame": {"x":2,"y":948,"w":504,"h":70},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":504,"h":70},
@@ -130,7 +130,7 @@
 },
 "knobDown.png":
 {
-	"frame": {"x":682,"y":508,"w":148,"h":150},
+	"frame": {"x":532,"y":508,"w":148,"h":150},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":148,"h":150},
@@ -138,7 +138,7 @@
 },
 "knobUp.png":
 {
-	"frame": {"x":532,"y":508,"w":148,"h":150},
+	"frame": {"x":682,"y":508,"w":148,"h":150},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":148,"h":150},
@@ -162,7 +162,7 @@
 },
 "playDown.png":
 {
-	"frame": {"x":282,"y":762,"w":278,"h":90},
+	"frame": {"x":2,"y":762,"w":278,"h":90},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":278,"h":90},
@@ -170,7 +170,7 @@
 },
 "playUp.png":
 {
-	"frame": {"x":2,"y":762,"w":278,"h":90},
+	"frame": {"x":282,"y":762,"w":278,"h":90},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":278,"h":90},
@@ -178,7 +178,7 @@
 },
 "progressBar.png":
 {
-	"frame": {"x":562,"y":762,"w":380,"h":28},
+	"frame": {"x":2,"y":906,"w":380,"h":28},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":380,"h":28},
@@ -186,7 +186,7 @@
 },
 "progressBarBorder.png":
 {
-	"frame": {"x":2,"y":854,"w":400,"h":40},
+	"frame": {"x":384,"y":906,"w":400,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":400,"h":40},
@@ -194,7 +194,7 @@
 },
 "scoresDown.png":
 {
-	"frame": {"x":254,"y":660,"w":250,"h":92},
+	"frame": {"x":2,"y":660,"w":250,"h":92},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":92},
@@ -202,7 +202,7 @@
 },
 "scoresUp.png":
 {
-	"frame": {"x":2,"y":660,"w":250,"h":92},
+	"frame": {"x":254,"y":660,"w":250,"h":92},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":92},
@@ -231,5 +231,37 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":2,"w":106,"h":134},
 	"sourceSize": {"w":110,"h":138}
+},
+"vertPanelBottom.png":
+{
+	"frame": {"x":338,"y":854,"w":334,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":334,"h":32},
+	"sourceSize": {"w":334,"h":32}
+},
+"vertPanelMiddle.png":
+{
+	"frame": {"x":562,"y":762,"w":334,"h":1},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":334,"h":1},
+	"sourceSize": {"w":334,"h":1}
+},
+"vertPanelTop.png":
+{
+	"frame": {"x":2,"y":854,"w":334,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":334,"h":50},
+	"sourceSize": {"w":334,"h":50}
 }
-}}
+}, 
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "kitchenSinkSheet2x.png",
+	"format": "RGBA8888",
+	"size": {"w":1024,"h":1024}
+}
+}

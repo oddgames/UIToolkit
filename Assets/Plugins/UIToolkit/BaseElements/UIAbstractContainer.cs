@@ -51,9 +51,10 @@ public class UIAbstractContainer : UIObject, IPositionable
 	
 
 	/// <summary>
-	/// Removes a child from the container
+	/// Removes a child from the container and optionally from it's manager.  If it is removed from
+	/// it's manager it is no longer in existance so be sure to null out any references to it.
 	/// </summary>
-	public void removeChild( UISprite child )
+	public void removeChild( UISprite child, bool removeFromManager )
 	{
 #if UNITY_EDITOR
 		// sanity check while we are in the editor
@@ -62,6 +63,9 @@ public class UIAbstractContainer : UIObject, IPositionable
 #endif
 		_children.Remove( child );
 		layoutChildren();
+		
+		if( removeFromManager )
+			child.manager.removeElement( child );
 	}
 
 
@@ -133,12 +137,13 @@ public class UIAbstractContainer : UIObject, IPositionable
 				
 				var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
 				var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
+				
 				item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.position.z );
 
 				// all items get their height added
 				_height += item.height;
 				
-				// width will just be the width of the tallest item
+				// width will just be the width of the widest item
 				if( _width < item.width )
 					_width = item.width;
 				

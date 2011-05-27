@@ -22,7 +22,7 @@ public class PanelManager : MonoBehaviour
 		var vPanel = UIVerticalPanel.create( "vertPanelTop.png", "vertPanelMiddle.png", "vertPanelBottom.png" );
 		vPanel.beginUpdates();
 		vPanel.spacing = 20;
-		vPanel.edgeInsets = new UIEdgeInsets( 60, 10, 30, 10 );
+		vPanel.edgeInsets = new UIEdgeInsets( 30, 10, 20, 10 );
 		vPanel.addChild( playButton, scores, optionsButton );
 		vPanel.endUpdates();
 		

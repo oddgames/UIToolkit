@@ -45,7 +45,8 @@ public class UIVerticalPanel : UIAbstractContainer
 		_topStripHeight = (int)texInfo.frame.height;
 		_width = texInfo.frame.width;
 		
-		_middleStrip = manager.addSprite( middleFilename, 0, _topStripHeight, 5 );
+		// we overlap the topStrip 1 pixel to ensure we get a good blend here
+		_middleStrip = manager.addSprite( middleFilename, 0, _topStripHeight - 1, 5 );
 		_middleStrip.parentUIObject = this;
 		
 		texInfo = manager.textureInfoForFilename( middleFilename );
@@ -58,7 +59,7 @@ public class UIVerticalPanel : UIAbstractContainer
 	/// <summary>
 	/// Override so that we can set the zIndex to be higher than our background sprites
 	/// </summary>
-	public void addChild( params UISprite[] children )
+	public new void addChild( params UISprite[] children )
 	{
 		foreach( var child in children )
 			child.zIndex = this.zIndex + 1;
@@ -80,11 +81,10 @@ public class UIVerticalPanel : UIAbstractContainer
 		if( _height > totalAvailableHeight )
 			totalAvailableHeight = (int)_height;
 
-		// now we move our sprites into position.  we have the proper height now so we can use that if sizeToFit
-		var leftoverHeight = totalAvailableHeight - _topStripHeight - _bottomStripHeight;
+		// now we move our sprites into position.  we have the proper height now so we can use that with a couple extra pixels to fill the gap
+		var leftoverHeight = totalAvailableHeight - _topStripHeight - _bottomStripHeight + 3;
 		
-		//_middleStrip.setSize( _middleStrip.width, leftoverHeight );
-		_middleStrip.localScale = new Vector3( 1, leftoverHeight, 1 );
+		_middleStrip.setSize( _middleStrip.width, leftoverHeight );
 		_bottomStrip.localPosition = new Vector3( _bottomStrip.localPosition.x, -_height - _bottomStripHeight, _bottomStrip.localPosition.z );
 	}
 

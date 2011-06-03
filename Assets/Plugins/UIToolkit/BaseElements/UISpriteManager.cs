@@ -30,6 +30,7 @@ public class UISpriteManager : MonoBehaviour
 	
 	public string texturePackerConfigName;
 	public Material material;
+	public int layer;
 	
 	protected bool meshIsDirty = false; // Flag that gets set if any of the following flags are set.  No updates will happen unless this is true
 	protected bool vertsChanged = false;    // Have changes been made to the vertices of the mesh since the last frame?
@@ -67,7 +68,8 @@ public class UISpriteManager : MonoBehaviour
         _mesh = _meshFilter.mesh;
 
         // Move the object to the origin so the objects drawn will not be offset from the objects they are intended to represent.
-        transform.position = Vector3.zero;
+        // Offset on z axis according to the specified layer
+        transform.position = new Vector3( 0, 0, layer );
         transform.rotation = Quaternion.identity;
     }
 	

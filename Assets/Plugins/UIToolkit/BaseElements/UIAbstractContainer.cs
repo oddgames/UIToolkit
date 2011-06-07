@@ -23,7 +23,29 @@ public class UIAbstractContainer : UIObject, IPositionable
 	
 	protected List<UISprite> _children = new List<UISprite>();
 	private bool _suspendUpdates; // when true, layoutChildren will do nothing
+	
+	
+#if DEBUG
+	/// <summary>
+	/// Hides the container and all of it's children
+	/// </summary>
+	private bool _hidden = false;
+    public virtual bool hidden
+    {
+        get { return _hidden; }
+        set
+        {
+            // No need to do anything if we're already in this state
+            if( value == _hidden )
+                return;
+			_hidden = value;
 
+			// apply state to the children
+			foreach( var child in _children )
+				child.hidden = value;
+        }
+    }
+#endif
 
 
 	/// <summary>

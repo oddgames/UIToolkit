@@ -23,6 +23,26 @@ public class UIVerticalPanel : UIAbstractContainer
 			layoutChildren();
 		}
 	}
+	
+#if DEBUG
+	/// <summary>
+	/// Hides the container and all of it's children along with the top, middle and bottom strip
+	/// </summary>
+    public override bool hidden
+    {
+        set
+        {
+            // No need to do anything if we're already in this state
+            if( value == hidden )
+                return;
+			
+			// let super handle hiding the children
+			base.hidden = value;
+
+			_topStrip.hidden = _middleStrip.hidden = _bottomStrip.hidden = value;
+        }
+    }
+#endif
 
 
 	public static UIVerticalPanel create( string topFilename, string middleFilename, string bottomFilename )

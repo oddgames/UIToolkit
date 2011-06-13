@@ -56,7 +56,7 @@ public class UISwipeDetector : UITouchableSprite
 
 	public UISwipeDetector( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
 	{
-		touchInfoArray = new TouchInfo[5];
+		touchInfoArray = new TouchInfo[12];
 	}
 	
 

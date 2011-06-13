@@ -28,8 +28,8 @@ public class UIToolkit : UISpriteManager
 		
 		base.Awake();
 
-		_spriteSelected = new UITouchableSprite[5];
-		for( int i = 0; i < 5; ++i )
+		_spriteSelected = new UITouchableSprite[12];
+		for( int i = 0; i < 12; ++i )
 			_spriteSelected[i] = null;
 	}
 

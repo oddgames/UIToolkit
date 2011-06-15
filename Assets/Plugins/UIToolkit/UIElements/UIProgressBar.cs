@@ -5,7 +5,7 @@ using System;
 public class UIProgressBar : UISprite
 {
 	public bool resizeTextureOnChange = false;
-	public bool reverse;
+	public bool rightToLeft;
 	
 	private float _value = 0;
 	private UISprite _bar;
@@ -14,33 +14,36 @@ public class UIProgressBar : UISprite
 	
 	
 	
-	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos , bool reverse )
+	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos )
 	{
-		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos , reverse );
+		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, false );
+	}
+
+
+	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft )
+	{
+		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, rightToLeft );
 	}
 
 	
 	// the bars x/y coordinates should be relative to the borders
-	public static UIProgressBar create( UIToolkit manager, string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos , bool reverse )
+	public static UIProgressBar create( UIToolkit manager, string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft )
 	{
-		
 		var borderTI = manager.textureInfoForFilename( borderFilename );
 	
 		var borderFrame = new Rect( borderxPos, borderyPos, borderTI.frame.width, borderTI.frame.height );
 		
 		UISprite bar;
 		
-		if(reverse){
-		
+		if( rightToLeft )
 			bar = manager.addSprite( barFilename, borderxPos - barxPos + ((int)borderTI.frame.width), borderyPos + baryPos, 2 );
-		
-		} else {
-		
+		else
 			bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, 2 );
-		
-		}
 
-			return new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
+		var progressBar = UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
+		progressBar.rightToLeft = rightToLeft;
+		
+		return progressBar;
 	}
 	
 	
@@ -52,10 +55,7 @@ public class UIProgressBar : UISprite
 		
 		// Save the bars original size
 		_barOriginalWidth = _bar.width;
-		
 		_barOriginalUVframe = _bar.uvFrame;
-		
-		if(_bar.width < 0){ 	reverse = true;		}
 		
 		manager.addSprite( this );
 	}
@@ -86,7 +86,6 @@ public class UIProgressBar : UISprite
 		{
 			if( value != _value )
 			{
-			
 				// Set the value being sure to clamp it to our min/max values
 				_value = Mathf.Clamp( value, 0, 1 );
 				
@@ -100,17 +99,10 @@ public class UIProgressBar : UISprite
 				}
 
 				// Update the bar size based on the value
-				if(reverse){
-				
-					_bar.setSize( _value * -_barOriginalWidth, _bar.height );
-					
-				}else{
-				
+				if( rightToLeft )
+					_bar.setSize( _value * -_barOriginalWidth, _bar.height );	
+				else
 					_bar.setSize( _value * _barOriginalWidth, _bar.height );
-				
-				}
-			
-				
 			}
 		}
 	}

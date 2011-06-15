@@ -1,3 +1,4 @@
 Eskema provided the base of the UIText component
 TaintedLemon provided the UIColorPicker
 matkins85 provided some helper methods for IPositionablePositioningExtensions and UISprite and layout per UIToolkit instance
+reissgrant provided the ability for a UIProgressBar to go from rightToLeft

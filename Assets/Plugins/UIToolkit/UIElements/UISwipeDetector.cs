@@ -13,6 +13,7 @@ public class UISwipeDetector : UITouchableSprite
 	public float allowedVariance = 35.0f;
 	public float minimumDistance = 40.0f;
 	public SwipeDirection swipesToDetect = SwipeDirection.All;
+	public float swipeVelocity = 0f;
 	
 	
 	/// <summary>
@@ -56,7 +57,7 @@ public class UISwipeDetector : UITouchableSprite
 
 	public UISwipeDetector( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
 	{
-		touchInfoArray = new TouchInfo[12];
+		touchInfoArray = new TouchInfo[5];
 	}
 	
 
@@ -157,6 +158,7 @@ public class UISwipeDetector : UITouchableSprite
 				if( yDeltaAbs < allowedVariance )
 				{
 					touchInfo.completedSwipeDirection = SwipeDirection.Left;
+					swipeVelocity = xDeltaAbs/timeToSwipe;
 					return true;
 				}
 				
@@ -173,6 +175,7 @@ public class UISwipeDetector : UITouchableSprite
 				if( yDeltaAbs < allowedVariance )
 				{
 					touchInfo.completedSwipeDirection = SwipeDirection.Right;
+					swipeVelocity = xDeltaAbs/timeToSwipe;
 					return true;
 				}
 				
@@ -189,6 +192,7 @@ public class UISwipeDetector : UITouchableSprite
 				if( xDeltaAbs < allowedVariance )
 				{
 					touchInfo.completedSwipeDirection = SwipeDirection.Up;
+					swipeVelocity = yDeltaAbs/timeToSwipe;
 					return true;
 				}
 				
@@ -205,6 +209,7 @@ public class UISwipeDetector : UITouchableSprite
 				if( xDeltaAbs < allowedVariance )
 				{
 					touchInfo.completedSwipeDirection = SwipeDirection.Down;
+					swipeVelocity = yDeltaAbs/timeToSwipe;
 					return true;
 				}
 				

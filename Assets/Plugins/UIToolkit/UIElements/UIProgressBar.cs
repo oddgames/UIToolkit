@@ -5,14 +5,12 @@ using System;
 public class UIProgressBar : UISprite
 {
 	public bool resizeTextureOnChange = false;
-	public bool reverse;
+	private bool doReverse;
 	
 	private float _value = 0;
 	private UISprite _bar;
 	private float _barOriginalWidth;
 	private UIUVRect _barOriginalUVframe;
-	
-	
 	
 	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos , bool reverse )
 	{
@@ -40,22 +38,21 @@ public class UIProgressBar : UISprite
 		
 		}
 
-			return new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
+			return new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar , reverse  );
 	}
 	
 	
-	public UIProgressBar( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UISprite bar ):base( frame, depth, uvFrame )
+	public UIProgressBar( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UISprite bar , bool reverse ):base( frame, depth, uvFrame )
 	{
 		// Save the bar and make it a child of the container/border for organization purposes
 		_bar = bar;
 		_bar.parentUIObject = this;
+		doReverse = reverse;
 		
 		// Save the bars original size
 		_barOriginalWidth = _bar.width;
 		
 		_barOriginalUVframe = _bar.uvFrame;
-		
-		if(_bar.width < 0){ 	reverse = true;		}
 		
 		manager.addSprite( this );
 	}
@@ -100,7 +97,7 @@ public class UIProgressBar : UISprite
 				}
 
 				// Update the bar size based on the value
-				if(reverse){
+				if(doReverse){
 				
 					_bar.setSize( _value * -_barOriginalWidth, _bar.height );
 					

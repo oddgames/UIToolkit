@@ -9,6 +9,24 @@ public enum UIyAnchor { Top, Bottom };
 public static class UIRelative
 {
 	/// <summary>
+	/// Determine if running in HD and multiply pixelOffsets accordingly.
+	/// </summary>
+
+	public static int x2() {
+	
+		int multiplier;
+		bool myUI = GameObject.Find("UI").GetComponent<UI>().isHD;
+		
+		if (myUI == true){
+			multiplier = 2;
+		} else {
+			multiplier = 1;
+		}
+		
+		return multiplier;
+	}
+	
+	/// <summary>
 	/// Percent to offset from the anchor.  If the anchor is right, the width will be used to make the offset
 	/// from the right-most point of the sprite.
 	/// </summary>
@@ -46,9 +64,9 @@ public static class UIRelative
 		switch( anchor )
 		{
 			case UIxAnchor.Left:
-				return pixelOffset;
+				return pixelOffset*x2();
 			case UIxAnchor.Right:
-				return Screen.width - pixelOffset - width;
+				return Screen.width - pixelOffset*x2() - width;
 		}
 		return 0f;
 	}
@@ -92,9 +110,9 @@ public static class UIRelative
 		switch( anchor )
 		{
 			case UIyAnchor.Top:
-				return pixelOffset;
+				return pixelOffset*x2();
 			case UIyAnchor.Bottom:
-				return Screen.height - pixelOffset - height;
+				return Screen.height - pixelOffset*x2() - height;
 		}
 		return 0f;
 	}

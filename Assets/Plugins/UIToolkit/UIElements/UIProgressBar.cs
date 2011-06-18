@@ -40,7 +40,7 @@ public class UIProgressBar : UISprite
 		else
 			bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, 2 );
 
-		var progressBar = UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
+		var progressBar = new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
 		progressBar.rightToLeft = rightToLeft;
 		
 		return progressBar;

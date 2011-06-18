@@ -11,20 +11,11 @@ public static class UIRelative
 	/// <summary>
 	/// Determine if running in HD and multiply pixelOffsets accordingly.
 	/// </summary>
-
-	public static int x2() {
-	
-		int multiplier;
-		bool myUI = GameObject.Find("UI").GetComponent<UI>().isHD;
-		
-		if (myUI == true){
-			multiplier = 2;
-		} else {
-			multiplier = 1;
-		}
-		
-		return multiplier;
+	public static int pixelDensityMultiplier()
+	{
+		return UI.instance.isHD ? 2 : 1;
 	}
+
 	
 	/// <summary>
 	/// Percent to offset from the anchor.  If the anchor is right, the width will be used to make the offset
@@ -64,9 +55,9 @@ public static class UIRelative
 		switch( anchor )
 		{
 			case UIxAnchor.Left:
-				return pixelOffset*x2();
+				return pixelOffset * pixelDensityMultiplier();
 			case UIxAnchor.Right:
-				return Screen.width - pixelOffset*x2() - width;
+				return Screen.width - pixelOffset*pixelDensityMultiplier() - width;
 		}
 		return 0f;
 	}
@@ -110,9 +101,9 @@ public static class UIRelative
 		switch( anchor )
 		{
 			case UIyAnchor.Top:
-				return pixelOffset*x2();
+				return pixelOffset * pixelDensityMultiplier();
 			case UIyAnchor.Bottom:
-				return Screen.height - pixelOffset*x2() - height;
+				return Screen.height - pixelOffset*pixelDensityMultiplier() - height;
 		}
 		return 0f;
 	}

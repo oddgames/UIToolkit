@@ -3,3 +3,4 @@ TaintedLemon provided the UIColorPicker
 matkins85 provided some helper methods for IPositionablePositioningExtensions and UISprite and layout per UIToolkit instance
 reissgrant provided the ability for a UIProgressBar to go from rightToLeft
 sidev provided a velocity parameter for completed swipes
+mspacemedia provided pixel doubling for UIRelative class when in HD mode

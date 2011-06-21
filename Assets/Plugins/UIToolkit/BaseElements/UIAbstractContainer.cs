@@ -25,7 +25,7 @@ public class UIAbstractContainer : UIObject, IPositionable
 	private bool _suspendUpdates; // when true, layoutChildren will do nothing
 	
 	
-#if DEBUG
+
 	/// <summary>
 	/// Hides the container and all of it's children
 	/// </summary>
@@ -45,7 +45,6 @@ public class UIAbstractContainer : UIObject, IPositionable
 				child.hidden = value;
         }
     }
-#endif
 
 
 	/// <summary>
@@ -181,7 +180,6 @@ public class UIAbstractContainer : UIObject, IPositionable
 
 	public override void transformChanged()
 	{
-		Debug.Log( "transformChanged transformChanged transformChanged transformChanged" );
 		layoutChildren();
 	}
 

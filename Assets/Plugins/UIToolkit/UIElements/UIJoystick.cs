@@ -33,10 +33,33 @@ public class UIJoystick : UITouchableSprite
 	public UIUVRect highlightedUVframe = UIUVRect.zero; // Highlighted UV's for the joystick
 	
 	private UISprite _joystickSprite;
+	private UISprite _backgroundSprite;
 	private Vector3 _joystickOffset;
 	private UIBoundary _joystickBoundary;
 	private float _maxJoystickMovement = 40.0f; // max distance from _joystickOffset that the joystick will move
 	private UIToolkit _manager; // we need this for getting at texture details after the constructor
+	
+	
+	/// <summary>
+	/// Hides the all joystick sprites
+	/// </summary>
+    public override bool hidden
+    {
+        set
+        {
+            // No need to do anything if we're already in this state
+            if( value == ___hidden )
+                return;
+			___hidden = value;
+
+			// apply state to the children
+			_joystickSprite.hidden = value;
+			
+			if( _backgroundSprite != null )
+				_backgroundSprite.hidden = value;
+			base.hidden = value;
+        }
+    }
 	
 	
 	public static UIJoystick create( string joystickFilename, Rect hitAreaFrame, float xPos, float yPos )
@@ -99,9 +122,9 @@ public class UIJoystick : UITouchableSprite
 	// Sets the background image for display behind the joystick sprite
 	public void addBackgroundSprite( string filename )
 	{
-		var track = _manager.addSprite( filename, 0, 0, 2, true );
-		track.parentUIObject = this;
-		track.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
+		_backgroundSprite = _manager.addSprite( filename, 0, 0, 2, true );
+		_backgroundSprite.parentUIObject = this;
+		_backgroundSprite.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, 2 );
 	}
 	
 	

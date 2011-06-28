@@ -9,6 +9,8 @@ public class TextManager : MonoBehaviour
 	private UITextInstance text3;
 	private UITextInstance text4;
 	
+	private UITextInstance textWrap1;
+	private UITextInstance textWrap2;
 
 	void Start()
 	{
@@ -43,6 +45,18 @@ public class TextManager : MonoBehaviour
 		var center = UIRelative.center( textSize.x, textSize.y );
 		text.addTextInstance( "Be sure to try this with\niPhone and iPad resolutions", center.x, center.y, 1f, 4, Color.red );
 		
+		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
+		var wrapText = new UIText( "prototype", "prototype.png");
+		wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
+		wrapText.lineWrapWidth = 200.0f;
+		textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.", x, y, 0.3f);
+		wrapText.lineWrapWidth = 100.0f;
+		wrapText.wrapMode = UITextLineWrapMode.AlwaysHyphenate;
+		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f, 200.0f );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
+		textWrap2 = wrapText.addTextInstance( "This should be hyphenated.", x, y, 0.5f );
+		
 		StartCoroutine( waitThenRemoveText() );
 	}
 	
@@ -62,6 +76,10 @@ public class TextManager : MonoBehaviour
 		yield return new WaitForSeconds( 1.0f );
 		text4.clear();
 		text2.clear();
+		
+		yield return new WaitForSeconds( 1.0f );
+		textWrap1.clear();
+		textWrap2.clear();
 	}
 
 }

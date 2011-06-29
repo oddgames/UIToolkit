@@ -130,9 +130,10 @@ public class UIText : System.Object
 		
 		// grab the texture offset from the UI
 		var rect = _manager.frameForFilename( textureFilename );
+		
 		// Since the font config data adjusts for padding, but TexturePacker trimming removes it,
 		// We need to sub out the trimmed amount coming back from the manager.
-		UITextureInfo info = _manager.textureInfoForFilename( textureFilename );
+		var info = _manager.textureInfoForFilename( textureFilename );
 		
 		this._textureOffset = new Vector2( rect.x - info.sourceSize.x, rect.y - info.sourceSize.y );
 	}
@@ -258,7 +259,6 @@ public class UIText : System.Object
 			}
 			else
 			{
-
 				// calculate the size to center text on Y axis, based on its scale
 				offsetY = _fontDetails[charId].offsety * scale;
 				dy =  yPos + offsetY + fontLineSkip;
@@ -266,7 +266,7 @@ public class UIText : System.Object
 
 			// add quads for each char
 			// Use curpos instead of i to compensate for line wrapping hyphenation
-			sprites[i] = spriteForCharId(charId, dx, dy, scale, depth);
+			sprites[i] = spriteForCharId( charId, dx, dy, scale, depth );
 			_manager.addSprite( sprites[i] );
 			sprites[i].color = color;
 			
@@ -281,98 +281,107 @@ public class UIText : System.Object
 		
 		return _textSprites.Count - 1;
 	}
+
 	
 	/// <summary>
 	/// Text-wrapping function performs function according to UIText wrapMode setting.
 	/// Beware, there are (minor) allocation and performance penalties to word wrapping!
 	/// </summary>
-	
-	private string wrapText(string text, float scale) 
+	private string wrapText( string text, float scale )
 	{
-		string newText = "";
+		var newText = string.Empty;
 		float dx = 0;
-		float dy = 0;
+		//float dy = 0;
 		int length = 0;
-		switch (wrapMode) 
+		
+		switch( wrapMode )
 		{
-			
-		case UITextLineWrapMode.None:
-			// No-op
-			newText = text;
-			break;
-		case UITextLineWrapMode.AlwaysHyphenate:
-			length = text.Length;
-			for ( int i=0; i<length; i++ ) 
+			case UITextLineWrapMode.None:
 			{
-				int charId = System.Convert.ToInt32( text[i] );	
-				float charWidth = _fontDetails[charId].xadvance;
-				if ( charId == ASCII_NEWLINE ) 
+				// No-op
+				newText = text;
+				break;
+			}
+			case UITextLineWrapMode.AlwaysHyphenate:
+			{
+				length = text.Length;
+				for( var i = 0; i < length; i++ ) 
 				{
-					newText += "\n";
-					dx = 0;	
-				}
-				else if ( dx > lineWrapWidth ) 
-				{
-					int prevCharId = ASCII_SPACE;
-					if (i > 1) 
+					var charId = System.Convert.ToInt32( text[i] );	
+					var charWidth = _fontDetails[charId].xadvance;
+				
+					if( charId == ASCII_NEWLINE ) 
 					{
-						prevCharId = text[i-1];
-					}
-					// Wrap here, unless this character or previous character is a space.
-					if ( charId == ASCII_SPACE ) 
-					{
-						// If this is a space, do a simple line break and skip the space.
 						newText += "\n";
-					} 
-					else if ( prevCharId == ASCII_SPACE )
-					{
-						// Add the character, but do not hyphenate line.
-						newText += "\n" + text[i];
+						dx = 0;	
 					}
+					else if( dx > lineWrapWidth ) 
+					{
+						int prevCharId = ASCII_SPACE;
+						if( i > 1 )
+						{
+							prevCharId = text[i-1];
+						}
+					
+						// Wrap here, unless this character or previous character is a space.
+						if( charId == ASCII_SPACE )
+						{
+							// If this is a space, do a simple line break and skip the space.
+							newText += "\n";
+						}
+						else if( prevCharId == ASCII_SPACE )
+						{
+							// Add the character, but do not hyphenate line.
+							newText += "\n" + text[i];
+						}
+						else 
+						{
+							// use ASCII hyphen-minus to wrap.
+							newText += "-\n" + text[i];
+						}
+					
+						// New line, break.
+						dx = 0;
+					} 
 					else 
 					{
-						// use ASCII hyphen-minus to wrap.
-						newText += "-\n" + text[i];
+						newText += text[i];	
 					}
-					// New line, break.
-					dx = 0;
-				} 
-				else 
-				{
-					newText += text[i];	
+					dx += charWidth;
 				}
-				dx += charWidth;
+				break;
 			}
-			break;
-		case UITextLineWrapMode.MinimumLength:
-			// Break text into words
-			string[] words = text.Split(" "[0]);
-			length = words.Length;
-			float spaceWidth = wordWidth(" ", scale);
-			float spaceLeft = lineWrapWidth;
-			for (int i=0; i<length; i++) 
+			case UITextLineWrapMode.MinimumLength:
 			{
-				float size = wordWidth(words[i], scale);
-				if ( size + spaceWidth > spaceLeft ) 
+				// Break text into words
+				var words = text.Split( new char[]{ ' ' } );
+				length = words.Length;
+				float spaceWidth = wordWidth( " ", scale );
+				float spaceLeft = lineWrapWidth;
+			
+				for( var i = 0; i < length; i++ )
 				{
-					// Insert line break before word.
-					newText +=  "\n" + words[i] + " ";
-					// Reset space left on line
-					spaceLeft = lineWrapWidth - size;
-				} 
-				else 
-				{
-					// Insert word
-					newText += words[i] + " ";
-					spaceLeft = spaceLeft - (size + spaceWidth);
+					var size = wordWidth( words[i], scale );
+					if( size + spaceWidth > spaceLeft ) 
+					{
+						// Insert line break before word.
+						newText +=  "\n" + words[i] + " ";
+					
+						// Reset space left on line
+						spaceLeft = lineWrapWidth - size;
+					} 
+					else 
+					{
+						// Insert word
+						newText += words[i] + " ";
+						spaceLeft = spaceLeft - (size + spaceWidth);
+					}
+					
 				}
-				
+				break;
 			}
-			break;
-		default:
-			Debug.LogError("Unrecognized UITextLineWrapMode!");
-			break;
-		}
+		} // end case
+		
 		return newText;
 	}
 
@@ -380,14 +389,13 @@ public class UIText : System.Object
 	/// <summary>
 	/// Convenience method to calculate width of a word.
 	/// </summary>
-	
-	private float wordWidth(string word, float scale) 
+	private float wordWidth( string word, float scale )
 	{
 		// Convert the word into char array.
-		float width = 0f;
-		foreach (char c in word) 
+		var width = 0f;
+		foreach( var c in word )
 		{
-			int charId = System.Convert.ToInt32(c);
+			var charId = System.Convert.ToInt32( c );
 			width += _fontDetails[charId].xadvance * scale;
 		}
 		return width;
@@ -397,11 +405,11 @@ public class UIText : System.Object
 	/// <summary>
 	/// Convenience method to instantiate a new UISprite for a font character.
 	/// </summary>
-	
-	private UISprite spriteForCharId(int charId, float xPos, float yPos, float scale, int depth) 
+	private UISprite spriteForCharId( int charId, float xPos, float yPos, float scale, int depth )
 	{
-			var uvRect = new UIUVRect( (int)_textureOffset.x + _fontDetails[charId].posX, (int)_textureOffset.y + _fontDetails[charId].posY, _fontDetails[charId].w, _fontDetails[charId].h, _manager.textureSize );
-		// @NOTE: This contains a bugfix from the previous version where offsetx was being used
+		var uvRect = new UIUVRect( (int)_textureOffset.x + _fontDetails[charId].posX, (int)_textureOffset.y + _fontDetails[charId].posY, _fontDetails[charId].w, _fontDetails[charId].h, _manager.textureSize );
+		
+		// NOTE: This contains a bugfix from the previous version where offsetx was being used
 		// in the wrong spot according to the angelcode spec. xadvance is the complete character width
 		// and offsetx is supposed to be used only during character rendering, not during cursor advance.
 		// Please note that yPos already has offsety built in.
@@ -437,8 +445,8 @@ public class UIText : System.Object
 		
 		// Simulated origin of 0, 0
 		
-		float xPos = 0;
-		float yPos = 0;
+		//float xPos = 0;
+		//float yPos = 0;
 		
 		for( var i = 0; i < text.Length; i++ )
 	    {

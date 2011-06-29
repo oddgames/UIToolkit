@@ -4,3 +4,4 @@ matkins85 provided some helper methods for IPositionablePositioningExtensions an
 reissgrant provided the ability for a UIProgressBar to go from rightToLeft
 sidev provided a velocity parameter for completed swipes
 mspacemedia provided pixel doubling for UIRelative class when in HD mode
+getluky provided UIText enhancements including bug fixes and alignment

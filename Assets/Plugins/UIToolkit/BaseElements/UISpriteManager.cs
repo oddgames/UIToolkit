@@ -15,6 +15,7 @@ public struct UITextureInfo
 {
 	public UIUVRect uvRect;
 	public Rect frame;
+	public Rect sourceSize;
 }
 
 
@@ -119,10 +120,18 @@ public class UISpriteManager : MonoBehaviour
 			var frameW = int.Parse( frame["w"].ToString() );
 			var frameH = int.Parse( frame["h"].ToString() );
 		
+			// for trimming support
+			var sourceSize = (Hashtable)((Hashtable)item.Value)["spriteSourceSize"];
+			var sourceSizeX = int.Parse( sourceSize["x"].ToString() );
+			var sourceSizeY = int.Parse( sourceSize["y"].ToString() );
+			var sourceSizeW = int.Parse( sourceSize["w"].ToString() );
+			var sourceSizeH = int.Parse( sourceSize["h"].ToString() );
+			
 			var ti = new UITextureInfo();
 			ti.frame = new Rect( frameX, frameY, frameW, frameH );
 			ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH, textureSize );
-		
+			ti.sourceSize = new Rect( sourceSizeX, sourceSizeY, sourceSizeW, sourceSizeH );
+			
 			textures.Add( item.Key.ToString(), ti );
 		}
 		

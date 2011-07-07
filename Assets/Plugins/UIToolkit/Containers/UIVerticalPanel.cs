@@ -24,7 +24,6 @@ public class UIVerticalPanel : UIAbstractContainer
 		}
 	}
 	
-#if DEBUG
 	/// <summary>
 	/// Hides the container and all of it's children along with the top, middle and bottom strip
 	/// </summary>
@@ -42,7 +41,6 @@ public class UIVerticalPanel : UIAbstractContainer
 			_topStrip.hidden = _middleStrip.hidden = _bottomStrip.hidden = value;
         }
     }
-#endif
 
 
 	public static UIVerticalPanel create( string topFilename, string middleFilename, string bottomFilename )
@@ -66,7 +64,7 @@ public class UIVerticalPanel : UIAbstractContainer
 		_width = texInfo.frame.width;
 		
 		// we overlap the topStrip 1 pixel to ensure we get a good blend here
-		_middleStrip = manager.addSprite( middleFilename, 0, _topStripHeight - 1, 5 );
+		_middleStrip = manager.addSprite( middleFilename, 0, _topStripHeight , 5 );
 		_middleStrip.parentUIObject = this;
 		
 		texInfo = manager.textureInfoForFilename( middleFilename );

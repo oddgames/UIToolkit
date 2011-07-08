@@ -48,6 +48,13 @@ public struct UITextInstance
 	}
 	
 
+	public UISprite[] getTextSprite(){
+	
+		return _parentText.returnTextSprite( ref this);
+	
+	}
+	
+	
 	/// <summary>
 	/// Clears the text from the screen
 	/// </summary>
@@ -61,7 +68,6 @@ public struct UITextInstance
 		textIndex = -1;
 	}
 	
-
 	/// <summary>
 	/// Sets the color for the text.  All colors will be changed.
 	/// </summary>
@@ -367,6 +373,12 @@ public class UIText : System.Object
 			_textSprites[textInstance.textIndex][i].color = textInstance.color;
 	}
 	
+	
+	public UISprite[] returnTextSprite( ref UITextInstance textInstance){
+	
+		return _textSprites[textInstance.textIndex];
+	
+	}
 	
 	public void deleteText( int textIndex )
 	{

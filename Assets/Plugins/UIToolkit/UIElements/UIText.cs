@@ -1,14 +1,17 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using UIEaseType = System.Func<float, float>;
+using System.Collections;
 
 
-public enum UITextLineWrapMode 
+public enum UITextLineWrapMode
 {
-	None=0,
+	None = 0,
 	AlwaysHyphenate,
 	MinimumLength
 };
+
 
 // addTextInstance returns one of these so we just need to do a .text on the instance to update it
 public struct UITextInstance
@@ -76,6 +79,45 @@ public struct UITextInstance
 		this.color = color;
 		_parentText.updateColorForTextInstance( ref this );
 	}
+	
+
+	/// <summary>
+	/// Moves the text from it's current position to a new position that is currentPosition + position
+	/// </summary>
+	public IEnumerator positionBy( float duration, Vector3 position, UIEaseType ease )
+	{
+		var textSprites = _parentText.textSprites[textIndex];
+		
+		// variables to handle the state of the animations
+		var running = true;
+		var startTime = Time.time;
+		var startPositions = new Vector3[textSprites.Length];
+		var targetPositions = new Vector3[textSprites.Length];
+		
+		// save off the start positions and calculate the targets for each sprite
+		for( var i = 0; i < textSprites.Length; i++ )
+		{
+			startPositions[i] = textSprites[i].localPosition;
+			targetPositions[i] = textSprites[i].localPosition + position;
+		}
+		
+		while( running )
+		{				
+			// Get our easing position
+			float easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
+			easPos = ease( easPos );
+			
+			// do the actual movement
+			for( var i = 0; i < textSprites.Length; i++ )
+				textSprites[i].localPosition = Vector3.Lerp( startPositions[i], targetPositions[i], easPos );
+			
+			// See if we are done with our animation yet
+			if( ( startTime + duration ) <= Time.time )
+				running = false;
+			else
+				yield return null;
+		} // end while
+	}
 
 }
 
@@ -103,13 +145,18 @@ public class UIText : System.Object
 	public float lineSpacing = 1.2f;
 	
  	private UIFontCharInfo[] _fontDetails;
-	private List<UISprite[]> _textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
 	private Vector2 _textureOffset;
 	private UIToolkit _manager;
 	
 	public UITextLineWrapMode wrapMode = UITextLineWrapMode.None;
 	public float lineWrapWidth = 500.0f;
-
+	
+	private List<UISprite[]> _textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
+	public List<UISprite[]> textSprites
+	{
+		get { return _textSprites; }
+	}
+	
 
 	/// <summary>
 	/// Creates a UIText instance which can then be used to create actual text sprites

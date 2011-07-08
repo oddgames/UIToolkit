@@ -57,14 +57,14 @@ public class TextManager : MonoBehaviour
 		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
 		textWrap2 = wrapText.addTextInstance( "This should be hyphenated.", x, y, 0.5f );
 		
-		StartCoroutine( waitThenRemoveText() );
+		StartCoroutine( modifyTextInstances() );
 	}
 	
 
-	IEnumerator waitThenRemoveText()
+	IEnumerator modifyTextInstances()
 	{
 		yield return new WaitForSeconds( 2.0f );
-		text1.clear();
+		StartCoroutine( text1.positionBy( 1, new Vector3( 100, -60, 0 ), Easing.Quartic.easeOut ) );
 		
 		yield return new WaitForSeconds( 1.0f );
 		text2.text = "gonna change the little text";

@@ -80,7 +80,7 @@ public class UIAnimation
 	}
 
 	
-	// CoRoutine that marshals the animation
+	// coroutine that marshals the animation
 	public IEnumerator animate()
 	{
 		// check for any previously running animations of this type.  we dont want them fighting

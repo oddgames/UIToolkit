@@ -7,7 +7,6 @@ using UnityEngine;
 #if UNITY_EDITOR
 public class UIControlTemplate : UITouchableSprite
 {
-	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
 
 	
@@ -24,7 +23,7 @@ public class UIControlTemplate : UITouchableSprite
 	public UIControlTemplate( Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
 	{
 		// Save a copy of our uvFrame here so that when highlighting turns off we have the original UVs
-		_normalUVframe = uvFrame;
+		_tempUVframe = uvFrame;
 		
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
@@ -43,7 +42,7 @@ public class UIControlTemplate : UITouchableSprite
 		set
 		{
 			_uvFrame = value;
-			_normalUVframe = value;
+			_tempUVframe = value;
 			manager.updateUV( this );
 		}
 	}
@@ -61,7 +60,7 @@ public class UIControlTemplate : UITouchableSprite
 				if ( value )
 					base.uvFrame = highlightedUVframe;
 				else
-					base.uvFrame = _normalUVframe;
+					base.uvFrame = _tempUVframe;
 			}
 		}
 	}

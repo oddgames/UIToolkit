@@ -28,8 +28,6 @@ public class UIJoystick : UITouchableSprite
 	public Vector2 joystickPosition;
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
 	public bool normalize = true; // Normalize output after the dead-zone?  If true, we start at 0 even though the joystick is moved deadZone pixels already
-	
-	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe = UIUVRect.zero; // Highlighted UV's for the joystick
 	
 	private UISprite _joystickSprite;
@@ -81,7 +79,7 @@ public class UIJoystick : UITouchableSprite
 	public UIJoystick( UIToolkit manager, Rect frame, int depth, UISprite joystickSprite, float xPos, float yPos ):base( frame, depth, UIUVRect.zero )
 	{
 		// Save out the uvFrame for the sprite so we can highlight
-		_normalUVframe = joystickSprite.uvFrame;
+		_tempUVframe = joystickSprite.uvFrame;
 		
 		// Save the joystickSprite and make it a child of the us for organization purposes
 		_joystickSprite = joystickSprite;
@@ -136,7 +134,7 @@ public class UIJoystick : UITouchableSprite
 		
 		// If we have a highlightedUVframe, swap the original back in
 		if( highlightedUVframe != UIUVRect.zero )
-			_joystickSprite.uvFrame = _normalUVframe;
+			_joystickSprite.uvFrame = _tempUVframe;
 	}
 	
 	

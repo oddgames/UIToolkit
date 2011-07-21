@@ -8,10 +8,7 @@ public struct UIUVRect
 
 
 	// Convenience function to return a UVRect of all zeros
-	public static UIUVRect zero
-	{
-		get { return new UIUVRect(); }
-	}
+	public static UIUVRect zero;
 	
 
 	// Automatically converts coordinates to UV space as specified by textureSize

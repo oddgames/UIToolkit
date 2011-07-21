@@ -7,7 +7,6 @@ public class UIKnob : UITouchableSprite
 	public bool continuous = false;
 	private float _value = 0;
 
-	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
 	
 	public delegate void UIKnobChanged( UIKnob sender, float value );
@@ -43,7 +42,7 @@ public class UIKnob : UITouchableSprite
 	
 	public UIKnob( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, true )
 	{
-		_normalUVframe = uvFrame;
+		_tempUVframe = uvFrame;
 		
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
@@ -62,7 +61,7 @@ public class UIKnob : UITouchableSprite
 		set
 		{
 			_uvFrame = value;
-			_normalUVframe = value;
+			_tempUVframe = value;
 			manager.updateUV( this );
 		}
 	}
@@ -81,7 +80,7 @@ public class UIKnob : UITouchableSprite
 				if ( value )
 					base.uvFrame = highlightedUVframe;
 				else
-					base.uvFrame = _normalUVframe;
+					base.uvFrame = _tempUVframe;
 			}
 		}
 	}

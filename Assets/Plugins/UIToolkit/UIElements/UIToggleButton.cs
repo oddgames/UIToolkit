@@ -7,7 +7,6 @@ public class UIToggleButton : UITouchableSprite
 	public delegate void UIToggleButtonChanged( UIToggleButton sender, bool selected );
 	public event UIToggleButtonChanged onToggle; // event for when we get a touchUpInside
 	
-	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UIUVRect highlightedUVframe;
 	public UIUVRect selectedUVframe;
 	
@@ -39,7 +38,7 @@ public class UIToggleButton : UITouchableSprite
 		this.selectedUVframe = selectedUVframe;
 		
 		// Save a copy of our uvFrame here so that when highlighting turns off we have the original UVs
-		_normalUVframe = uvFrame;
+		_tempUVframe = uvFrame;
 		
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
@@ -60,7 +59,7 @@ public class UIToggleButton : UITouchableSprite
 		set
 		{
 			_uvFrame = value;
-			_normalUVframe = value;
+			_tempUVframe = value;
 			manager.updateUV( this );
 		}
 	}
@@ -80,7 +79,7 @@ public class UIToggleButton : UITouchableSprite
 				else if( _selected )
 					base.uvFrame = selectedUVframe;
 				else
-					base.uvFrame = _normalUVframe;
+					base.uvFrame = _tempUVframe;
 			}
 		}
 	}
@@ -100,7 +99,7 @@ public class UIToggleButton : UITouchableSprite
 				if ( value )
 					base.uvFrame = selectedUVframe;
 				else
-					base.uvFrame = _normalUVframe;
+					base.uvFrame = _tempUVframe;
 			}
 		}
 	}

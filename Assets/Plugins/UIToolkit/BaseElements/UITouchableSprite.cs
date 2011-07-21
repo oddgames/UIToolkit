@@ -5,15 +5,18 @@ using System;
 public abstract class UITouchableSprite : UISprite, IComparable
 {
 	public int touchCount;
+	public UIUVRect disabledUVframe; // when disabled, this UV frame will be used if it is set
 	
 	protected UIEdgeOffsets _normalTouchOffsets;
 	protected UIEdgeOffsets _highlightedTouchOffsets;
 	protected Rect _highlightedTouchFrame;
 	protected Rect _normalTouchFrame;
+	protected UIUVRect _tempUVframe; // Holds a copy of the uvFrame while in either the highlighted or disabled state
 	
 	protected bool touchFrameIsDirty = true; // Indicates if the touchFrames need to be recalculated
 	
 	protected bool _highlighted;
+	protected bool _disabled;
 	
 	
 	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
@@ -21,7 +24,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	}
 	
 	
-	// constructor for when the need to have a centered UISprite arises (I'm looking at you UIKnob
+	// constructor for when the need to have a centered UISprite arises (I'm looking at you UIKnob)
 	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
 	{
 	}
@@ -84,6 +87,10 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	{
 		get
 		{
+			// if we are disabled, we have no touchFrame to touch
+			if( _disabled )
+				return UISprite._rectZero;
+
 			// If the frame is dirty, recalculate it
 			if( touchFrameIsDirty )
 			{
@@ -133,7 +140,27 @@ public abstract class UITouchableSprite : UISprite, IComparable
 		get { return _highlighted; }
 		set { _highlighted = value;	}
 	}
-
+	
+	
+	// a disabled UITouchableSprite will have a touchFrame of all zeros
+	public virtual bool disabled
+	{
+		get { return _disabled; }
+		set
+		{
+			if( _disabled != value )
+			{
+				_disabled = value;
+				
+				// if we have a disabledUVframe use it
+				if( value && !disabledUVframe.Equals( UIUVRect.zero ) )
+					uvFrame = disabledUVframe;
+				else
+					uvFrame = _tempUVframe;
+			}
+		}
+	}
+	
 
 	// Transforms a point to local coordinates (origin is top left)
 	protected Vector2 inverseTranformPoint( Vector2 point )
@@ -147,6 +174,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 		touchFrameIsDirty = true;
 		base.centerize();
 	}
+
 
 	#region Touch handlers
 	

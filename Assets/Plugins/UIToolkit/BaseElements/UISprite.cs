@@ -6,6 +6,7 @@ public class UISprite : UIObject, IPositionable
 {
     public UIToolkit manager = null; // Reference to the sprite manager in which this sprite resides
     public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
+	public static readonly Rect _rectZero = new Rect( 0, 0, 0, 0 ); // used for disabled touch frames
 	
 	private float _width;
     public float width { get { return _width; } }  // Width and Height of the sprite in worldspace units.

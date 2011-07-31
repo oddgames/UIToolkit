@@ -55,9 +55,26 @@ public class UIToolkit : UISpriteManager
 			// no touches. so check the mouse input if we are in the editor
 			if( Input.GetMouseButton( 0 ) || Input.GetMouseButtonUp( 0 ) )
 				lookAtTouch( UIFakeTouch.fromInput( ref lastMousePosition ) );
+			
+			// handle hover states
+			// if we have a previously hovered sprite unhover it
+			for( int i = 0, totalTouchables = _touchableSprites.Count; i < totalTouchables; i++ )
+			{
+				if( _touchableSprites[i].hoveredOver )
+					_touchableSprites[i].hoveredOver = false;
+			}
+			
+			var fixedMousePosition = new Vector2( Input.mousePosition.x, Screen.height - Input.mousePosition.y );
+			var hoveredSprite = getButtonForScreenPosition( fixedMousePosition );
+			if( hoveredSprite != null )
+			{
+				if( !hoveredSprite.highlighted )
+					hoveredSprite.hoveredOver = true;
+			}
 		}
 #endif
-
+		
+		
 		// take care of updating our UVs, colors or bounds if necessary
 		if( meshIsDirty )
 		{

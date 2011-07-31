@@ -6,6 +6,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 {
 	public int touchCount;
 	public UIUVRect disabledUVframe; // when disabled, this UV frame will be used if it is set
+	public UIUVRect hoveredUVframe; // when hovered over, this UV frame will be used if it is set
 	
 	protected UIEdgeOffsets _normalTouchOffsets;
 	protected UIEdgeOffsets _highlightedTouchOffsets;
@@ -17,10 +18,13 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	
 	protected bool _highlighted;
 	protected bool _disabled;
-	
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	protected bool _hoveredOver;
+#endif
 	
 	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
 	{
+		_tempUVframe = uvFrame;
 	}
 	
 	
@@ -141,6 +145,32 @@ public abstract class UITouchableSprite : UISprite, IComparable
 		set { _highlighted = value;	}
 	}
 	
+	
+	// indicates if the mouse pointer is hovering over this element
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	public virtual bool hoveredOver
+	{
+		get { return _hoveredOver; }
+		set
+		{
+			// no hovered UV? no continue
+			if( hoveredUVframe.Equals( UIUVRect.zero ) )
+				return;
+			
+			if( _hoveredOver != value )
+			{
+				_hoveredOver = value;
+
+				// if we have a hoveredUVframe use it
+				if( value )
+					uvFrame = hoveredUVframe;
+				else
+					uvFrame = _tempUVframe;
+			}
+		}
+	}
+#endif
+
 	
 	// a disabled UITouchableSprite will have a touchFrame of all zeros
 	public virtual bool disabled

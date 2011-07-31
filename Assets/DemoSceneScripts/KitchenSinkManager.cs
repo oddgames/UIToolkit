@@ -15,7 +15,11 @@ public class KitchenSinkManager : MonoBehaviour
 		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, (int)y );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		playButton.onTouchUpInside += ( sender ) => Debug.Log( "clicked the button: " + sender );
-		
+
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+		// hover state example for illustration purposes. the playButton will get the scoresDown image when hovered over
+		playButton.hoveredUVframe = UI.firstToolkit.uvRectForFilename( "scoresDown.png" );
+#endif
 		
 		// Scores button
 		var scores = UIContinuousButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );

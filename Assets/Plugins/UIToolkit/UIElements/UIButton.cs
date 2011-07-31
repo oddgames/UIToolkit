@@ -44,9 +44,6 @@ public class UIButton : UITouchableSprite
 
 	public UIButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
 	{
-		// Save a copy of our uvFrame here so that when highlighting turns off we have the original UVs
-		_tempUVframe = uvFrame;
-		
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;
@@ -66,7 +63,6 @@ public class UIButton : UITouchableSprite
 		set
 		{
 			_uvFrame = value;
-			_tempUVframe = value;
 			manager.updateUV( this );
 		}
 	}

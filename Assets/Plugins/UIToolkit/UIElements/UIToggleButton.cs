@@ -37,9 +37,6 @@ public class UIToggleButton : UITouchableSprite
 	{
 		this.selectedUVframe = selectedUVframe;
 		
-		// Save a copy of our uvFrame here so that when highlighting turns off we have the original UVs
-		_tempUVframe = uvFrame;
-		
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;

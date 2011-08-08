@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class UIAbstractContainer : UIObject, IPositionable
 {
-	public enum UILayoutType { Horizontal, Vertical };
+	public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, NoLayout };
 	private UILayoutType _layoutType;
 	public UILayoutType layoutType { get { return _layoutType; } set { _layoutType = value; layoutChildren(); } } // relayout when layoutType changes
 	
@@ -117,64 +117,85 @@ public class UIAbstractContainer : UIObject, IPositionable
 	{
 		if( _suspendUpdates )
 			return;
-
-		// start with the insets, then add each object + spacing then end with insets
-		_width = _edgeInsets.left;
-		_height = _edgeInsets.top;
+		// rules for vertical and horizontal layouts
+		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )
+		{
 			
-		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal )
-		{
-			var i = 0;
-			var lastIndex = _children.Count;
-			foreach( var item in _children )
+			// start with the insets, then add each object + spacing then end with insets
+			_width = _edgeInsets.left;
+			_height = _edgeInsets.top;
+				
+			if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal )
 			{
-				// we add spacing for all but the first and last
-				if( i != 0 && i != lastIndex )
-					_width += _spacing;
-				
-				var yPos = item.gameObjectOriginInCenter ? -item.height / 2 : 0;
-				var xPosModifier = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-				item.localPosition = new Vector3( _width + xPosModifier, _edgeInsets.top + yPos, item.position.z );
-
-				// all items get their width added
-				_width += item.width;
-				
-				// height will just be the height of the tallest item
-				if( _height < item.height )
-					_height = item.height;
-				
-				i++;
+				var i = 0;
+				var lastIndex = _children.Count;
+				foreach( var item in _children )
+				{
+					// we add spacing for all but the first and last
+					if( i != 0 && i != lastIndex )
+						_width += _spacing;
+					
+					var yPos = item.gameObjectOriginInCenter ? -item.height / 2 : 0;
+					var xPosModifier = item.gameObjectOriginInCenter ? item.width / 2 : 0;
+					item.localPosition = new Vector3( _width + xPosModifier, _edgeInsets.top + yPos, item.position.z );
+	
+					// all items get their width added
+					_width += item.width;
+					
+					// height will just be the height of the tallest item
+					if( _height < item.height )
+						_height = item.height;
+					
+					i++;
+				}
 			}
-		}
-		else // vertical alignment
-		{
-			var i = 0;
-			var lastIndex = _children.Count;
-			foreach( var item in _children )
+			else // vertical alignment
 			{
-				// we add spacing for all but the first and last
-				if( i != 0 && i != lastIndex )
-					_height += _spacing;
-				
-				var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-				var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
-				
-				item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.position.z );
-
-				// all items get their height added
-				_height += item.height;
-				
-				// width will just be the width of the widest item
-				if( _width < item.width )
-					_width = item.width;
-				
-				i++;
+				var i = 0;
+				var lastIndex = _children.Count;
+				foreach( var item in _children )
+				{
+					// we add spacing for all but the first and last
+					if( i != 0 && i != lastIndex )
+						_height += _spacing;
+					
+					var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
+					var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
+					
+					item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.position.z );
+	
+					// all items get their height added
+					_height += item.height;
+					
+					// width will just be the width of the widest item
+					if( _width < item.width )
+						_width = item.width;
+					
+					i++;
+				}
 			}
+			
+			// add the right and bottom edge inset to finish things off
+			_width += _edgeInsets.right;
+			_height += _edgeInsets.bottom;
 		}
 		
-		// add the right and bottom edge inset to finish things off
-		_width += _edgeInsets.right;
-		_height += _edgeInsets.bottom;
+		//rules for NoLayout
+		if( _layoutType == UIAbstractContainer.UILayoutType.NoLayout )
+		{
+		foreach( var item in _children )
+			{
+				item.localPosition = new Vector3( item.position.x, item.position.y, item.position.z );
+				
+				//find the width that contains the item with the largest offset/width
+				if( _width < item.localPosition.x + item.width)
+					_width = item.localPosition.x + item.width;
+				
+				//find the height that contains the item with the largest offset/height
+				if( _height < -item.localPosition.y + item.height)
+					_height = -item.localPosition.y + item.height;
+			}
+		}
 	}
 
 

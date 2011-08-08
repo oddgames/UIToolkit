@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class UIAbstractContainer : UIObject, IPositionable
 {
-	public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, NoLayout };
+	public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, AbsoluteLayout };
 	private UILayoutType _layoutType;
 	public UILayoutType layoutType { get { return _layoutType; } set { _layoutType = value; layoutChildren(); } } // relayout when layoutType changes
 	
@@ -180,19 +180,19 @@ public class UIAbstractContainer : UIObject, IPositionable
 			_height += _edgeInsets.bottom;
 		}
 		
-		//rules for NoLayout
-		if( _layoutType == UIAbstractContainer.UILayoutType.NoLayout )
+		// rules for AbsoluteLayout
+		if( _layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout )
 		{
-		foreach( var item in _children )
+			foreach( var item in _children )
 			{
 				item.localPosition = new Vector3( item.position.x, item.position.y, item.position.z );
 				
-				//find the width that contains the item with the largest offset/width
-				if( _width < item.localPosition.x + item.width)
+				// find the width that contains the item with the largest offset/width
+				if( _width < item.localPosition.x + item.width )
 					_width = item.localPosition.x + item.width;
 				
-				//find the height that contains the item with the largest offset/height
-				if( _height < -item.localPosition.y + item.height)
+				// find the height that contains the item with the largest offset/height
+				if( _height < -item.localPosition.y + item.height )
 					_height = -item.localPosition.y + item.height;
 			}
 		}

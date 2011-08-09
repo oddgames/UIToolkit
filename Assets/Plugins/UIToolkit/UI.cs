@@ -113,6 +113,13 @@ public class UI : MonoBehaviour
 		instance = null;
 		firstToolkit = null;
 	}
+	
+	
+	protected void OnDestroy()
+	{
+		instance = null;
+		firstToolkit = null;
+	}
 
 	#endregion
 

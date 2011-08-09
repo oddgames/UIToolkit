@@ -96,6 +96,7 @@ public class UIToolkit : UISpriteManager
 	protected void OnDestroy()
 	{
 		material.mainTexture = null;
+		instance = null;
 		Resources.UnloadUnusedAssets();
 	}
 	

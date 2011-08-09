@@ -52,6 +52,8 @@
      <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UISpriteAnimation.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UISpriteManager.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UITouchableSprite.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIAbsoluteLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIBackgroundLayout.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\Containers\UIHorizontalLayout.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\Containers\UIVerticalLayout.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\Containers\UIVerticalPanel.cs" />

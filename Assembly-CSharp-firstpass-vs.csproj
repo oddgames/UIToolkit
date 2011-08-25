@@ -77,6 +77,7 @@
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIKnob.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIProgressBar.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISlider.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIStateButton.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISwipeDetector.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIText.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIToggleButton.cs" />

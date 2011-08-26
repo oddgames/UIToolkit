@@ -6,3 +6,4 @@ sidev provided a velocity parameter for completed swipes
 mspacemedia provided pixel doubling for UIRelative class when in HD mode
 getluky provided UIText enhancements including bug fixes and alignment
 Oliver provided the NoLayout and BackgroundLayout containers
+zentuit provided the UIStateButton

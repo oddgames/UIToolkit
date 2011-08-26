@@ -74,52 +74,70 @@ public class UIStateButton : UIButton
 	/// <summary>
 	/// Flag whether state wraps back to 0 after last state hit
 	/// </summary>
-	public bool rollOverState {
+	public bool rollOverState
+	{
 		get { return _rollOverState; }
 		set { _rollOverState = value; }
 	}
 	
-	public int state {
+	
+	public int state
+	{
 		get { return _state; }
-		set {
-			if (_state == value) {
+		set
+		{
+			if( _state == value )
 				return ;
-			}
+
 			_state = value;
-			adjustForStateRollover(_state);	
-			setFramesForState(_state);
+			adjustForStateRollover( _state );	
+			setFramesForState( _state );
 		}
 	}
 	
-	public UIUVRect[] uvFrames {
+	
+	public UIUVRect[] uvFrames
+	{
 		get { return _uvFrames; }
 	}
 	
-	public UIUVRect[] uvHighlightFrames {
+	
+	public UIUVRect[] uvHighlightFrames
+	{
 		get { return _uvHighlightFrames; }
 	}
-
-	public void addFrames(string[] normal, string[] highlighted) {
-		var normals = loadFrames(normal);
-		var highlights = loadFrames(highlighted);
-		addFrames(normals, highlights);
+	
+	
+	public void addFrames( string[] normal, string[] highlighted )
+	{
+		var normals = loadFrames( normal );
+		var highlights = loadFrames( highlighted );
+		addFrames( normals, highlights );
 	}
 	
-	public void addFrames(UIUVRect[] normal, UIUVRect[] highlighted) {
+	
+	public void addFrames( UIUVRect[] normal, UIUVRect[] highlighted )
+	{
 		_uvFrames = normal;
 		maxState = _uvFrames.Length;
 		_state = 0;
 		
-		if (highlighted == null || highlighted.Length == 0) {
+		if( highlighted == null || highlighted.Length == 0 )
+		{
 			_uvHighlightFrames = normal;
-		} else if (normal.Length == highlighted.Length) {
+		}
+		else if( normal.Length == highlighted.Length )
+		{
 			_uvHighlightFrames = highlighted;
-		} else {
+		}
+		else
+		{
 			// don't have same number of highlighted as normal
-			Debug.LogError("Highlight frames count does not match normal frames count");
+			Debug.LogError( "Highlight frames count does not match normal frames count" );
 			_uvHighlightFrames = normal;
 		}
 	}
+	
 
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
@@ -127,41 +145,50 @@ public class UIStateButton : UIButton
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #endif
 	{
-		if (touchWasInsideTouchFrame) {
+		if( touchWasInsideTouchFrame )
+		{
 			_state++;
-			adjustForStateRollover(_state);
+			adjustForStateRollover( _state );
 		}
 		
-		base.onTouchEnded(touch, touchPos, touchWasInsideTouchFrame);
+		base.onTouchEnded( touch, touchPos, touchWasInsideTouchFrame );
 
-		if (touchWasInsideTouchFrame) {
-			setFramesForState(_state);
+		if( touchWasInsideTouchFrame )
+		{
+			setFramesForState( _state );
+			
 			// If the touch was inside our touchFrame and we have an action, call it
 			if( onStateChange != null )
 				onStateChange( this , _state);
 		}
-		
 	}
 	
-	private void adjustForStateRollover(int newState) {
-		if (_state >= maxState) {
-			if (_rollOverState) {
+	
+	private void adjustForStateRollover( int newState )
+	{
+		if( _state >= maxState )
+		{
+			if( _rollOverState )
 				_state = 0;
-			} else {
+			else
 				_state = maxState - 1;
-			}
 		}
 	}
 	
-	private void setFramesForState(int newState) {
+	
+	private void setFramesForState( int newState )
+	{
 		uvFrame = _uvFrames[newState];
 		highlightedUVframe = _uvHighlightFrames[newState];
 	}
-
-	private UIUVRect[] loadFrames(string[] filenames) {
+	
+	
+	private UIUVRect[] loadFrames( string[] filenames )
+	{
 		var frames = new UIUVRect[filenames.Length];
-		for (int i = 0; i < filenames.Length; i++) {
-			var uv = this.manager.textureInfoForFilename(filenames[i]).uvRect;
+		for( var i = 0; i < filenames.Length; i++ )
+		{
+			var uv = this.manager.textureInfoForFilename( filenames[i] ).uvRect;
 			frames[i] = uv;
 		}
 		return frames;

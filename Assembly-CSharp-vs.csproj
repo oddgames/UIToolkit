@@ -51,6 +51,7 @@
      <Compile Include="Assets\DemoSceneScripts\LayoutContainerManager.cs" />
      <Compile Include="Assets\DemoSceneScripts\MultipleAtlasManager.cs" />
      <Compile Include="Assets\DemoSceneScripts\PanelManager.cs" />
+     <Compile Include="Assets\DemoSceneScripts\StateButtonManager.cs" />
      <Compile Include="Assets\DemoSceneScripts\SwipeManager.cs" />
      <Compile Include="Assets\DemoSceneScripts\TextManager.cs" />
      <None Include="Assets\DemoAssets\Resources\textDemoSheet2x.txt" />

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 public class UIBackgroundLayout : UIAbstractContainer
 {	
-	public UIBackgroundLayout( string filename ) : base( UILayoutType.BackgroundLayout )
+	public UIBackgroundLayout( string filename ) : this(UI.firstToolkit, filename) {}
+
+	public UIBackgroundLayout( UIToolkit manager, string filename ) : base( UILayoutType.BackgroundLayout ) 
 	{
-		// grab the texture details for the background image
-		var manager = UI.firstToolkit;
 		int depth = 2;
 		var background = manager.addSprite( filename, 0, 0, depth);
 		addChild( background );

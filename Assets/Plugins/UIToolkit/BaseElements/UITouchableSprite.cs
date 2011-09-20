@@ -110,13 +110,24 @@ public abstract class UITouchableSprite : UISprite, IComparable
 					normalFrame.y -= height / 2;
 				}
 
-				_normalTouchFrame = _normalTouchOffsets.addToRect( normalFrame );
-				_highlightedTouchFrame = _highlightedTouchOffsets.addToRect( normalFrame );
+				_normalTouchFrame = addOffsetsAndClipToScreen( normalFrame, _normalTouchOffsets );
+				_highlightedTouchFrame = addOffsetsAndClipToScreen( normalFrame, _highlightedTouchOffsets );
 			}
 			
 			// Either return our highlighted or normal touch frame
 			return ( _highlighted ) ? _highlightedTouchFrame : _normalTouchFrame;
 		}
+	}
+	
+	Rect addOffsetsAndClipToScreen( Rect frame, UIEdgeOffsets offsets )
+	{
+		return Rect.MinMaxRect
+		(
+			 Mathf.Clamp( frame.x - offsets.left, 0, Screen.width ),
+			 Mathf.Clamp( frame.y - offsets.top, 0, Screen.height ),
+			 Mathf.Clamp( frame.x + frame.width + offsets.right, 0, Screen.width),
+			 Mathf.Clamp( frame.y + + frame.height + offsets.bottom, 0, Screen.height)
+		);
 	}
 
 

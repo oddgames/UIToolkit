@@ -116,15 +116,7 @@ public class UIToolkit : UISpriteManager
 	   
 		foreach( var item in _touchableSprites )
 		{
-			// touch position varies based on if we have the GO in the center
-			var pos = item.position;
-			if( !item.gameObjectOriginInCenter )
-			{
-				pos.x += item.width / 2;
-				pos.y -= item.height / 2;
-			}
-			
-			// we cant use the touchFrame.x/y directly because it's coordinate space is from the top left
+			var pos = new Vector3( item.touchFrame.x + item.touchFrame.width/2, -( item.touchFrame.y + item.touchFrame.height/2 ), 0 );
 			Gizmos.DrawWireCube( pos, new Vector3( item.touchFrame.width, item.touchFrame.height, 5 ) );
 		}
 		

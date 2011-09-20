@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class TextManager : MonoBehaviour
@@ -19,7 +20,8 @@ public class TextManager : MonoBehaviour
 	{
 		// setup our text instance which will parse our .fnt file and allow us to
 		var text = new UIText( "prototype", "prototype.png" );
-
+		
+		
 		// spawn new text instances showing off the relative positioning features by placing one text instance in each corner
 		var x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
 		var y = UIRelative.yPercentFrom( UIyAnchor.Top, 0f );
@@ -31,34 +33,44 @@ public class TextManager : MonoBehaviour
 		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y );
 		text2 = text.addTextInstance( "testing small bitmap fonts", x, y, 0.3f );
 		
+		
 		// Centering using alignment modes.
 		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0f );
 		text3 = text.addTextInstance( "with only\n1 draw call\nfor everything", x, y, 0.5f, 5, Color.yellow, UITextAlignMode.Right, UITextVerticalAlignMode.Top );
+		
 		
 		// High Ascii forcing crash demo. To test this, 
 		// Disable "Set Low ASCII Forcing Mode" in the TextManager inspector and see the crash.
 		// Not as handy if you don't need to paste in large amounts of text from word.
 		text.forceLowAscii = setLowAsciiForcingMode;
 		
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0, 0);
-		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0, 0);
+		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0, 0 );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0, 0 );
 		text4 = text.addTextInstance( highAsciiString, x, y, 0.4f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Bottom );
 		
-		// Centering using text size calculation offset
-		textSize = text.sizeForText( "Be sure to try this with\niPhone and iPad resolutions" );
+		
+		// Centering using text size calculation offset and per-char color
+		var centeredText = "Be sure to try this with\niPhone and iPad resolutions";
+		var colors = new List<Color>();
+		for( var i = 0; i < centeredText.Length; i++ )
+			colors.Add( Color.Lerp( Color.white, Color.magenta, (float)i / centeredText.Length ) );
+		
+		textSize = text.sizeForText( centeredText );
 		var center = UIRelative.center( textSize.x, textSize.y );
-		text.addTextInstance( "Be sure to try this with\niPhone and iPad resolutions", center.x, center.y, 1f, 4, Color.red );
+		text.addTextInstance( centeredText, center.x, center.y, 1f, 4, colors.ToArray(), UITextAlignMode.Left, UITextVerticalAlignMode.Top );
+		
 		
 		// Now center on right side.
-		x = UIRelative.xPercentFrom(UIxAnchor.Right, 0);
-		y = UIRelative.yPercentFrom(UIyAnchor.Top, 0.5f);
+		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0 );
+		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0.5f );
 		text.addTextInstance( "Vert-Centering on right side", x, y, 0.5f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Middle );
+		
 		
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
 
-		var wrapText = new UIText( "prototype", "prototype.png");
+		var wrapText = new UIText( "prototype", "prototype.png" );
 		wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
 		wrapText.lineWrapWidth = 100.0f;
 		
@@ -69,7 +81,7 @@ public class TextManager : MonoBehaviour
 		
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0.5f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f );
-		textWrap2 = wrapText.addTextInstance( "This should be hyphenated. Check baseline - tytyt", x, y, 0.5f, 1, Color.green, UITextAlignMode.Middle, UITextVerticalAlignMode.Bottom );
+		textWrap2 = wrapText.addTextInstance( "This should be hyphenated. Check baseline - tytyt", x, y, 0.5f, 1, Color.green, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
 		
 		StartCoroutine( modifyTextInstances() );
 	}

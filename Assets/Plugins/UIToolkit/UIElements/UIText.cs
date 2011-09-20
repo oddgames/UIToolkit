@@ -12,17 +12,20 @@ public enum UITextLineWrapMode
 	MinimumLength
 };
 
-public enum UITextAlignMode {
-	Left=0,
-	Middle,
+public enum UITextAlignMode
+{
+	Left = 0,
+	Center,
 	Right
 };
 
-public enum UITextVerticalAlignMode {
-	Top=0,
+public enum UITextVerticalAlignMode
+{
+	Top = 0,
 	Middle,
 	Bottom
 }
+
 
 // addTextInstance returns one of these so we just need to do a .text on the instance to update it
 public struct UITextInstance
@@ -37,7 +40,7 @@ public struct UITextInstance
 	public float scale;
 	public int depth;
 	public int textIndex;
-	public Color color;
+	public Color[] colors;
 
 	/// <summary>
 	/// Sets and draws the text string displayed on screen
@@ -55,35 +58,7 @@ public struct UITextInstance
 		}
 	}
 	
-	/// <summary>
-	/// Call the full constructor with default alignment modes brought from the parent UIText object.
-	/// </summary>
-	
-	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color ) : this(parentText, text, xPos, yPos, scale, depth, color, parentText.alignMode, parentText.verticalAlignMode)
-	{
-	}
-	
-	/// <summary>
-	/// Full constructor with per-instance alignment modes.
-	/// </summary>
-	
-	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
-	{
-		this.alignMode = alignMode;
-		this.verticalAlignMode = verticalAlignMode;
-		_parentText = parentText;
-		_text = text;
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.scale = scale;
-		this.depth = depth;
-		this.textIndex = -1;
-		this.color = color;
-		_hidden = false;
-	}
-	
 	private bool _hidden;
-	
 	public bool hidden 
 	{
 		get 
@@ -98,6 +73,33 @@ public struct UITextInstance
 	}
 	
 
+	
+	/// <summary>
+	/// Call the full constructor with default alignment modes brought from the parent UIText object.
+	/// </summary>
+	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color ) : this( parentText, text, xPos, yPos, scale, depth, new Color[] { color }, parentText.alignMode, parentText.verticalAlignMode )
+	{}
+	
+	
+	/// <summary>
+	/// Full constructor with per-instance alignment modes.
+	/// </summary>
+	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color[] colors, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
+	{
+		this.alignMode = alignMode;
+		this.verticalAlignMode = verticalAlignMode;
+		_parentText = parentText;
+		_text = text;
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.scale = scale;
+		this.depth = depth;
+		this.textIndex = -1;
+		this.colors = colors;
+		_hidden = false;
+	}
+
+	
 	/// <summary>
 	/// Clears the text from the screen
 	/// </summary>
@@ -117,10 +119,28 @@ public struct UITextInstance
 	/// </summary>
 	public void setColorForAllLetters( Color color )
 	{
-		this.color = color;
+		this.colors = new Color[] { color };
 		_parentText.updateColorForTextInstance( ref this );
 	}
-	
+
+
+	/// <summary>
+	/// Sets the color for each character in the text.  colors should contain at least the number of colors as there
+	/// are characters in the text.
+	/// </summary>
+	/// <param name="colors">
+	/// A <see cref="Color[]"/>
+	/// </param>
+	public void setColorPerLetter( Color[] colors )
+	{
+		// sanity check
+		if( colors.Length < _text.Length )
+			return;
+		
+		this.colors = colors;
+		_parentText.updateColorForTextInstance( ref this );
+	}
+
 
 	/// <summary>
 	/// Moves the text from it's current position to a new position that is currentPosition + position
@@ -165,7 +185,6 @@ public struct UITextInstance
 
 public class UIText : System.Object 
 {
-	
 	public static int ASCII_NEWLINE = 10;
 	public static int ASCII_SPACE = 32;
 	public static int ASCII_HYPHEN_MINUS = 45;
@@ -211,7 +230,7 @@ public class UIText : System.Object
 	/// <summary>
 	/// Creates a UIText instance which can then be used to create actual text sprites
 	/// </summary>
-	public UIText( string fontFilename, string textureFilename ):this( UI.firstToolkit, fontFilename, textureFilename )
+	public UIText( string fontFilename, string textureFilename ) : this( UI.firstToolkit, fontFilename, textureFilename )
 	{	
 	}
 	
@@ -333,9 +352,8 @@ public class UIText : System.Object
 	/// <summary>
 	/// Draw text on screen, create each quad and send it to the manager
 	/// </summary>
-	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
-	{		
-		
+	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color[] color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
+	{
 		float dx = xPos;
 		float dy = 0;
 		
@@ -389,7 +407,7 @@ public class UIText : System.Object
 			// Use curpos instead of i to compensate for line wrapping hyphenation
 			sprites[i] = spriteForCharId( charId, dx, dy + yPos, scale, depth );
 			_manager.addSprite( sprites[i] );
-			sprites[i].color = color;
+			sprites[i].color = color.Length == 1 ? color[0] : color[i];
 			
 			// See below @NOTE re: offsetx vs. xadvance bugfix.
 			// advance the position to draw the next letter
@@ -406,17 +424,17 @@ public class UIText : System.Object
 		return _textSprites.Count - 1;
 	}
 	
+	
 	/// <summary>
 	/// Performs horizontal alignment of each line independently.
 	/// </summary>
-	
 	void alignLine( UISprite[] sprites, int lineStartChar, int lineEndChar, float lineWidth, UITextAlignMode instanceAlignMode ) 
 	{
 		if ( instanceAlignMode == UITextAlignMode.Left )
 			return;
 		
 		
-		if ( instanceAlignMode == UITextAlignMode.Middle ) 
+		if ( instanceAlignMode == UITextAlignMode.Center ) 
 		{
 			
 			// Go from start character to end character, INCLUSIVE.
@@ -443,10 +461,11 @@ public class UIText : System.Object
 			
 		}
 	}
+	
+	
 	/// <summary>
 	/// Performs vertical alignment of entire paragraph to the positioning originally provided.
 	/// </summary>
-	
 	void verticalAlignText( UISprite[] sprites, float totalHeight, float charOffset, UITextVerticalAlignMode instanceVerticalAlignMode ) 
 	{
 		if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Top )
@@ -466,6 +485,7 @@ public class UIText : System.Object
 			}
 		}
 	}
+	
 	
 	/// <summary>
 	/// Text-wrapping function performs function according to UIText wrapMode setting.
@@ -704,13 +724,20 @@ public class UIText : System.Object
 		return addTextInstance( text, xPos, yPos, scale, depth, color, this.alignMode, this.verticalAlignMode );
 	}
 	
+	
 	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
 	{
-		if (forceLowAscii)
+		return addTextInstance( text, xPos, yPos, scale, depth, new Color[] { color }, alignMode, verticalAlignMode );
+	}
+	
+	
+	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth, Color[] colors, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
+	{
+		if( forceLowAscii )
 			forceLowAsciiString( ref text );
 		
-		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, color, alignMode, verticalAlignMode );
-		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, color, textInstance.alignMode, textInstance.verticalAlignMode );
+		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, colors, alignMode, verticalAlignMode );
+		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, colors, textInstance.alignMode, textInstance.verticalAlignMode );
 		
 		return textInstance;
 	}
@@ -720,8 +747,9 @@ public class UIText : System.Object
 	{
 		// kill the current text then draw some new text
 		deleteText( textInstance.textIndex );
-		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.color, textInstance.alignMode, textInstance.verticalAlignMode );
+		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
 	}
+
 	
 	public void setHiddenForTextInstance( ref UITextInstance textInstance, bool value )
 	{
@@ -738,9 +766,18 @@ public class UIText : System.Object
 	{
 		// how many sprites are we updated?
 		int length = _textSprites[textInstance.textIndex].Length;
-
-		for( int i = 0; i < length; i++ )
-			_textSprites[textInstance.textIndex][i].color = textInstance.color;
+		
+		// we either make all the letters the same color or each letter a different color
+		if( textInstance.colors.Length == 1 )
+		{
+			for( int i = 0; i < length; i++ )
+				_textSprites[textInstance.textIndex][i].color = textInstance.colors[0];
+		}
+		else
+		{
+			for( int i = 0; i < length; i++ )
+				_textSprites[textInstance.textIndex][i].color = textInstance.colors[i];
+		}
 	}
 	
 	

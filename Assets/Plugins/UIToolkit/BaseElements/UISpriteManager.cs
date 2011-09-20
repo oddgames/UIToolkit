@@ -108,7 +108,7 @@ public class UISpriteManager : MonoBehaviour
 			Debug.LogError( "Could not find Texture Packer json config file in Resources folder: " + filename );
 
 		var jsonString = asset.text;
-		var decodedHash = (Hashtable)MiniJSON.JsonDecode( jsonString );
+		var decodedHash = jsonString.hashtableFromJson();
 		var frames = (Hashtable)decodedHash["frames"];
 	
 		foreach( System.Collections.DictionaryEntry item in frames )

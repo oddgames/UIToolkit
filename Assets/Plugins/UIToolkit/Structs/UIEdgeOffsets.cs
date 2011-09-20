@@ -24,19 +24,4 @@ public struct UIEdgeOffsets
 		this.bottom = bottom * multiplier;
 		this.right = right * multiplier;
 	}
-
-
-	// Used to expand or contract a rect by this
-	public Rect addToRect( Rect frame )
-	{
-		// Clamp x and y to be greater than zero
-		return new Rect
-		(
-			 Mathf.Clamp( frame.x - left, 0, Screen.width ),
-			 Mathf.Clamp( frame.y - top, 0, Screen.height ),
-			 frame.width + right + left,
-			 frame.height + bottom + top
-		);
-	}
-	
 }

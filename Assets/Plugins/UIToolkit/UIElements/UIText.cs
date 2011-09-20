@@ -12,12 +12,25 @@ public enum UITextLineWrapMode
 	MinimumLength
 };
 
+public enum UITextAlignMode {
+	Left=0,
+	Middle,
+	Right
+};
+
+public enum UITextVerticalAlignMode {
+	Top=0,
+	Middle,
+	Bottom
+}
 
 // addTextInstance returns one of these so we just need to do a .text on the instance to update it
 public struct UITextInstance
 {
 	private UIText _parentText;
 	private string _text;
+	public UITextAlignMode alignMode;
+	public UITextVerticalAlignMode verticalAlignMode;
 	
 	public float xPos;
 	public float yPos;
@@ -25,7 +38,6 @@ public struct UITextInstance
 	public int depth;
 	public int textIndex;
 	public Color color;
-	
 
 	/// <summary>
 	/// Sets and draws the text string displayed on screen
@@ -43,9 +55,22 @@ public struct UITextInstance
 		}
 	}
 	
+	/// <summary>
+	/// Call the full constructor with default alignment modes brought from the parent UIText object.
+	/// </summary>
 	
-	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color )
+	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color ) : this(parentText, text, xPos, yPos, scale, depth, color, parentText.alignMode, parentText.verticalAlignMode)
 	{
+	}
+	
+	/// <summary>
+	/// Full constructor with per-instance alignment modes.
+	/// </summary>
+	
+	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
+	{
+		this.alignMode = alignMode;
+		this.verticalAlignMode = verticalAlignMode;
 		_parentText = parentText;
 		_text = text;
 		this.xPos = xPos;
@@ -54,6 +79,22 @@ public struct UITextInstance
 		this.depth = depth;
 		this.textIndex = -1;
 		this.color = color;
+		_hidden = false;
+	}
+	
+	private bool _hidden;
+	
+	public bool hidden 
+	{
+		get 
+		{ 
+			return _hidden; 
+		}
+		set 
+		{
+			_parentText.setHiddenForTextInstance( ref this, value );
+			_hidden = value;
+		}
 	}
 	
 
@@ -128,6 +169,8 @@ public class UIText : System.Object
 	public static int ASCII_NEWLINE = 10;
 	public static int ASCII_SPACE = 32;
 	public static int ASCII_HYPHEN_MINUS = 45;
+	// Break out the magic line height number into a static var.
+	public static int ASCII_LINEHEIGHT_REFERENCE = 77;
 	
 	private struct UIFontCharInfo
 	{	
@@ -140,7 +183,12 @@ public class UIText : System.Object
 		public int offsety;
 		public int xadvance;
 	}
-
+	
+	/// <summary>
+	///  Forces known High-ASCII values (common when pasting text from word) down to low ASCII. Incurs a performance penalty, but might be helpful.
+	/// </summary>
+	public bool forceLowAscii = false;
+	private bool hasLowAsciiQuotes = false;
 	
 	public float lineSpacing = 1.2f;
 	
@@ -148,6 +196,8 @@ public class UIText : System.Object
 	private Vector2 _textureOffset;
 	private UIToolkit _manager;
 	
+	public UITextAlignMode alignMode = UITextAlignMode.Left;
+	public UITextVerticalAlignMode verticalAlignMode = UITextVerticalAlignMode.Top;
 	public UITextLineWrapMode wrapMode = UITextLineWrapMode.None;
 	public float lineWrapWidth = 500.0f;
 	
@@ -213,51 +263,64 @@ public class UIText : System.Object
 				foreach( string word1 in wordsSplit )
        	 		{
 					if( string.Equals( word1, "id" ) )
-					{
+					{	
+						
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						idNum = System.Int32.Parse( tmp );
+						
+						if (idNum == 145 || idNum == 146 || idNum == 147 || idNum == 148)
+							hasLowAsciiQuotes = true;
+						
 						_fontDetails[idNum].charID = new int();
 						_fontDetails[idNum].charID = idNum;
 					}
 					else if( string.Equals( word1, "x" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].posX = new int();
 						_fontDetails[idNum].posX = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "y" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].posY = new int();
 						_fontDetails[idNum].posY = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "width" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].w = new int();
 						_fontDetails[idNum].w = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "height" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].h = new int();
 						_fontDetails[idNum].h = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "xoffset" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].offsetx = new int();
 						_fontDetails[idNum].offsetx = System.Int32.Parse(tmp);
 					}
 					else if( string.Equals( word1, "yoffset" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].offsety = new int();
 						_fontDetails[idNum].offsety = System.Int32.Parse( tmp );
 					}
 					else if( string.Equals( word1, "xadvance" ) )
 					{
 						string tmp = wordsSplit[1].Substring( 0, wordsSplit[1].Length );
+						forceLowAsciiChar( ref tmp );
 						_fontDetails[idNum].xadvance = new int();
 						_fontDetails[idNum].xadvance = System.Int32.Parse( tmp );
 					}
@@ -270,8 +333,9 @@ public class UIText : System.Object
 	/// <summary>
 	/// Draw text on screen, create each quad and send it to the manager
 	/// </summary>
-	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color color )
+	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
 	{		
+		
 		float dx = xPos;
 		float dy = 0;
 		
@@ -286,34 +350,44 @@ public class UIText : System.Object
 		// Perform word wrapping ahead of sprite allocation!
 		text = wrapText(text, scale);
 		
-		
 		int length = text.Length;
 		sprites = new UISprite[length];
 		
+		int lineStartChar = 0;
+		int lineEndChar = 0;
+		
+		float totalHeight = ( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
 		
 		for( var i = 0; i < text.Length; i++ )
 	    {
 	    	charId = System.Convert.ToInt32( text[i] );
-			
 			
 			if( charId == ASCII_NEWLINE )
 			{
 				// calculate the size to center text on Y axis, based on its scale
 				// 77 is the "M" char usually big enough to get a proper spaced
 				// lineskip, use any other char if you want
-				fontLineSkip += (int)( _fontDetails[77].h * scale * lineSpacing );
+				fontLineSkip += (int)( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
+				totalHeight += (int)( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
+				
+				alignLine( sprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
+				
+				lineStartChar = i+1;
+				
 				dx = xPos;
 			}
 			else
 			{
 				// calculate the size to center text on Y axis, based on its scale
 				offsetY = _fontDetails[charId].offsety * scale;
-				dy =  yPos + offsetY + fontLineSkip;
+				dy = offsetY + fontLineSkip;
 			}
+			// Extend end of line
+			lineEndChar = i;
 
 			// add quads for each char
 			// Use curpos instead of i to compensate for line wrapping hyphenation
-			sprites[i] = spriteForCharId( charId, dx, dy, scale, depth );
+			sprites[i] = spriteForCharId( charId, dx, dy + yPos, scale, depth );
 			_manager.addSprite( sprites[i] );
 			sprites[i].color = color;
 			
@@ -322,13 +396,76 @@ public class UIText : System.Object
 			dx += _fontDetails[charId].xadvance * scale;
 			
 		}
+		alignLine( sprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
+		
+		verticalAlignText( sprites, totalHeight, _fontDetails[ASCII_LINEHEIGHT_REFERENCE].offsety * scale * lineSpacing, instanceVerticalAlignMode );
 		
 		// add all sprites at once to the array, we use this later to delete the strings
 		_textSprites.Add( sprites );
 		
 		return _textSprites.Count - 1;
 	}
-
+	
+	/// <summary>
+	/// Performs horizontal alignment of each line independently.
+	/// </summary>
+	
+	void alignLine( UISprite[] sprites, int lineStartChar, int lineEndChar, float lineWidth, UITextAlignMode instanceAlignMode ) 
+	{
+		if ( instanceAlignMode == UITextAlignMode.Left )
+			return;
+		
+		
+		if ( instanceAlignMode == UITextAlignMode.Middle ) 
+		{
+			
+			// Go from start character to end character, INCLUSIVE.
+			
+			for ( var i=lineStartChar; i<=lineEndChar; i++ ) 
+			{
+				if ( i < sprites.Length && sprites[i] != null ) 
+				{
+					sprites[i].position = new Vector3(sprites[i].position.x - lineWidth/2.0f, sprites[i].position.y, sprites[i].position.z);
+				}
+			}
+		} 
+		else if ( instanceAlignMode == UITextAlignMode.Right ) 	
+		{
+			// Go from start character to end character, INCLUSIVE.
+			
+			for ( var i=lineStartChar; i<=lineEndChar; i++ ) 
+			{
+				if ( i < sprites.Length && sprites[i] != null ) 
+				{
+					sprites[i].position = new Vector3(sprites[i].position.x - lineWidth, sprites[i].position.y, sprites[i].position.z);
+				}
+			}
+			
+		}
+	}
+	/// <summary>
+	/// Performs vertical alignment of entire paragraph to the positioning originally provided.
+	/// </summary>
+	
+	void verticalAlignText( UISprite[] sprites, float totalHeight, float charOffset, UITextVerticalAlignMode instanceVerticalAlignMode ) 
+	{
+		if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Top )
+			return;
+		
+		
+		var numSprites = sprites.Length;
+		for ( int i=0; i<numSprites; i++ ) 
+		{
+			if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Middle ) 
+			{
+				sprites[i].position = new Vector3( sprites[i].position.x, sprites[i].position.y + totalHeight/2 + charOffset, sprites[i].position.z );
+			} 
+			else if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Bottom ) 
+			{
+				sprites[i].position = new Vector3( sprites[i].position.x, sprites[i].position.y + totalHeight + charOffset, sprites[i].position.z );
+			}
+		}
+	}
 	
 	/// <summary>
 	/// Text-wrapping function performs function according to UIText wrapMode setting.
@@ -340,6 +477,11 @@ public class UIText : System.Object
 		float dx = 0;
 		//float dy = 0;
 		int length = 0;
+		
+		// Use Double-size wrap length in HD mode.
+		float scaledWrapWidth = lineWrapWidth;
+		if (UI.instance.isHD)
+			scaledWrapWidth *= 2.0f;
 		
 		switch( wrapMode )
 		{
@@ -362,7 +504,7 @@ public class UIText : System.Object
 						newText += "\n";
 						dx = 0;	
 					}
-					else if( dx > lineWrapWidth ) 
+					else if( dx > scaledWrapWidth ) 
 					{
 						int prevCharId = ASCII_SPACE;
 						if( i > 1 )
@@ -404,7 +546,7 @@ public class UIText : System.Object
 				var words = text.Split( new char[]{ ' ' } );
 				length = words.Length;
 				float spaceWidth = wordWidth( " ", scale );
-				float spaceLeft = lineWrapWidth;
+				float spaceLeft = scaledWrapWidth;
 			
 				for( var i = 0; i < length; i++ )
 				{
@@ -443,6 +585,7 @@ public class UIText : System.Object
 		foreach( var c in word )
 		{
 			var charId = System.Convert.ToInt32( c );
+			
 			width += _fontDetails[charId].xadvance * scale;
 		}
 		return width;
@@ -486,7 +629,6 @@ public class UIText : System.Object
 		float offsetY;
 		int fontLineSkip = 0;
 		int charId = 0;
-		
 		// Simulate text wrapping
 		text = wrapText(text, scale);
 		
@@ -559,8 +701,16 @@ public class UIText : System.Object
 	
 	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth, Color color )
 	{
-		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, color );
-		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, color );
+		return addTextInstance( text, xPos, yPos, scale, depth, color, this.alignMode, this.verticalAlignMode );
+	}
+	
+	public UITextInstance addTextInstance( string text, float xPos, float yPos, float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
+	{
+		if (forceLowAscii)
+			forceLowAsciiString( ref text );
+		
+		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, color, alignMode, verticalAlignMode );
+		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, color, textInstance.alignMode, textInstance.verticalAlignMode );
 		
 		return textInstance;
 	}
@@ -570,9 +720,19 @@ public class UIText : System.Object
 	{
 		// kill the current text then draw some new text
 		deleteText( textInstance.textIndex );
-		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.color );
+		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.color, textInstance.alignMode, textInstance.verticalAlignMode );
 	}
 	
+	public void setHiddenForTextInstance( ref UITextInstance textInstance, bool value )
+	{
+		if (textInstance.textIndex < _textSprites.Count) 
+		{
+			int length = _textSprites[textInstance.textIndex].Length;
+			for ( int i = 0; i < length; i++ ) 
+				_textSprites[textInstance.textIndex][i].hidden = value;
+		}
+	}
+						
 	
 	public void updateColorForTextInstance( ref UITextInstance textInstance )
 	{
@@ -613,5 +773,45 @@ public class UIText : System.Object
 		
 		_textSprites.Clear();
 	}
-
+	
+	void forceLowAsciiChar( ref string character ) 
+	{
+		// Perform character conversions.
+		// NOTE: These will use the low-ASCII addresses for quotes and dashes to be safe.
+		if ( character == "8211" ) character = "150";
+		else if ( character == "8212" ) character = "151";
+		else if ( character == "8216" ) character = "145";
+		else if ( character == "8217" ) character = "146";
+		else if ( character == "8220" ) character = "147";
+		else if ( character == "8221" ) character = "148";
+		
+	}
+	
+	void forceLowAsciiString( ref string text ) 
+	{
+		text = text.Replace( char.ConvertFromUtf32( 8211 ), char.ConvertFromUtf32( 150 ) ); // Hyphen or En-Dash
+		text = text.Replace( char.ConvertFromUtf32( 8212 ), char.ConvertFromUtf32( 151 ) ); // Em-Dash
+		// NOTE: Convert to ASCII 0x27 for straight single quotes, but might have access to low values.
+		if ( hasLowAsciiQuotes ) 
+		{
+			text = text.Replace( char.ConvertFromUtf32( 8216 ), char.ConvertFromUtf32( 145 ) ); // Left Single Quotation Mark
+			text = text.Replace( char.ConvertFromUtf32( 8217 ), char.ConvertFromUtf32( 146 ) ); // Right Single Quotation Mark
+		}
+		else
+		{
+			text = text.Replace( char.ConvertFromUtf32( 8216 ), char.ConvertFromUtf32( 39 ) ); // Move to Straight Quotation Mark
+			text = text.Replace( char.ConvertFromUtf32( 8217 ), char.ConvertFromUtf32( 39 ) ); // Move to Straight Quotation Mark
+		}
+		// NOTE: Convert to ASCII 0x22 for straight double quotes
+		if ( hasLowAsciiQuotes ) 
+		{
+			text = text.Replace( char.ConvertFromUtf32( 8220 ), char.ConvertFromUtf32( 147 ) ); // Left Double Quotation Mark
+			text = text.Replace( char.ConvertFromUtf32( 8221 ), char.ConvertFromUtf32( 148 ) ); // Right Double Quotation Mark
+		}
+		else
+		{
+			text = text.Replace( char.ConvertFromUtf32( 8220 ), char.ConvertFromUtf32( 34 ) ); // Left Double Quotation Mark
+			text = text.Replace( char.ConvertFromUtf32( 8221 ), char.ConvertFromUtf32( 34 ) ); // Right Double Quotation Mark
+		}
+	}
 }

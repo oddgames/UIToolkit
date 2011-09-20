@@ -11,7 +11,10 @@ public class TextManager : MonoBehaviour
 	
 	private UITextInstance textWrap1;
 	private UITextInstance textWrap2;
-
+	
+	public bool setLowAsciiForcingMode = true;
+	public string highAsciiString = char.ConvertFromUtf32( 8220 ) + "Grand Central Station" + char.ConvertFromUtf32( 8221 );
+	
 	void Start()
 	{
 		// setup our text instance which will parse our .fnt file and allow us to
@@ -20,42 +23,53 @@ public class TextManager : MonoBehaviour
 		// spawn new text instances showing off the relative positioning features by placing one text instance in each corner
 		var x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
 		var y = UIRelative.yPercentFrom( UIyAnchor.Top, 0f );
-		text1 = text.addTextInstance( "hello man.  I have a line\nbreak", x, y );
-		
+		// Uses default color, scale, alignment, and depth.
+		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", x, y );
 		
 		var textSize = text.sizeForText( "testing small bitmap fonts", 0.3f );
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y );
 		text2 = text.addTextInstance( "testing small bitmap fonts", x, y, 0.3f );
 		
-		
-		textSize = text.sizeForText( "with only\n1 draw call\nfor everything", 0.5f );
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f, textSize.x );
+		// Centering using alignment modes.
+		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0f );
-		text3 = text.addTextInstance( "with only\n1 draw call\nfor everything", x, y, 0.5f, 5, Color.yellow );
+		text3 = text.addTextInstance( "with only\n1 draw call\nfor everything", x, y, 0.5f, 5, Color.yellow, UITextAlignMode.Right, UITextVerticalAlignMode.Top );
 		
+		// High Ascii forcing crash demo. To test this, 
+		// Disable "Set Low ASCII Forcing Mode" in the TextManager inspector and see the crash.
+		// Not as handy if you don't need to paste in large amounts of text from word.
+		text.forceLowAscii = setLowAsciiForcingMode;
 		
-		textSize = text.sizeForText( "kudos" );
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f, textSize.x );
-		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y );
-		text4 = text.addTextInstance( "kudos", x, y );
+		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0, 0);
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0, 0);
+		text4 = text.addTextInstance( highAsciiString, x, y, 0.4f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Bottom );
 		
-		
+		// Centering using text size calculation offset
 		textSize = text.sizeForText( "Be sure to try this with\niPhone and iPad resolutions" );
 		var center = UIRelative.center( textSize.x, textSize.y );
 		text.addTextInstance( "Be sure to try this with\niPhone and iPad resolutions", center.x, center.y, 1f, 4, Color.red );
 		
+		// Now center on right side.
+		x = UIRelative.xPercentFrom(UIxAnchor.Right, 0);
+		y = UIRelative.yPercentFrom(UIyAnchor.Top, 0.5f);
+		text.addTextInstance( "Vert-Centering on right side", x, y, 0.5f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Middle );
+		
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
 		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
+
 		var wrapText = new UIText( "prototype", "prototype.png");
 		wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
-		wrapText.lineWrapWidth = 200.0f;
-		textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.", x, y, 0.3f);
+		wrapText.lineWrapWidth = 100.0f;
+		
+		textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.\n\nAnd manual L/B.", x, y, 0.3f, 1, Color.white, UITextAlignMode.Left, UITextVerticalAlignMode.Bottom);
+		
 		wrapText.lineWrapWidth = 100.0f;
 		wrapText.wrapMode = UITextLineWrapMode.AlwaysHyphenate;
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f, 200.0f );
-		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
-		textWrap2 = wrapText.addTextInstance( "This should be hyphenated.", x, y, 0.5f );
+		
+		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0.5f );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f );
+		textWrap2 = wrapText.addTextInstance( "This should be hyphenated. Check baseline - tytyt", x, y, 0.5f, 1, Color.green, UITextAlignMode.Middle, UITextVerticalAlignMode.Bottom );
 		
 		StartCoroutine( modifyTextInstances() );
 	}

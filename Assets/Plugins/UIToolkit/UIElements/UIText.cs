@@ -577,7 +577,7 @@ public class UIText : System.Object
 						newText +=  "\n" + words[i] + " ";
 					
 						// Reset space left on line
-						spaceLeft = lineWrapWidth - size;
+						spaceLeft = scaledWrapWidth - size;
 					} 
 					else 
 					{

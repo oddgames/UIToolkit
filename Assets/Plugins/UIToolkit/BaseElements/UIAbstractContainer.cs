@@ -21,11 +21,17 @@ public class UIAbstractContainer : UIObject, IPositionable
 	protected float _height;
 	public float height { get { return _height; } }
 	
+	// Hacky way to handle text sprites differently than regular sprites.
+	protected Dictionary<UISprite,UITextInstance> _textInstancePlaceholders = new Dictionary<UISprite, UITextInstance>();
+	
 	protected List<UISprite> _children = new List<UISprite>();
+	public IList<UISprite> children 
+	{
+		get { return _children.AsReadOnly(); }
+	}
+	
 	private bool _suspendUpdates; // when true, layoutChildren will do nothing
 	
-	
-
 	/// <summary>
 	/// Hides the container and all of it's children
 	/// </summary>
@@ -42,7 +48,19 @@ public class UIAbstractContainer : UIObject, IPositionable
 
 			// apply state to the children
 			foreach( var child in _children )
+			{
+				// @TODO: Hide any child textinstances
 				child.hidden = value;
+			}
+			
+			foreach( var instance in _textInstancePlaceholders.Values )
+			{
+				for ( int i=1; i<instance.textSprites.Length; i++ )
+				{
+					
+					instance.textSprites[i].hidden = value;
+				}
+			}
         }
     }
 
@@ -70,7 +88,6 @@ public class UIAbstractContainer : UIObject, IPositionable
 		layoutChildren();
 	}
 	
-
 	/// <summary>
 	/// Removes a child from the container and optionally from it's manager.  If it is removed from
 	/// it's manager it is no longer in existance so be sure to null out any references to it.
@@ -82,12 +99,89 @@ public class UIAbstractContainer : UIObject, IPositionable
 		if( !_children.Contains( child ) )
 			throw new System.Exception( "could not find child in UIAbstractContainer: " + child );
 #endif
+		child.parentUIObject = null; // Clear out event listener and pointer
 		_children.Remove( child );
 		layoutChildren();
 		
 		if( removeFromManager )
 			child.manager.removeElement( child );
 	}
+
+	
+	public void addTextInstanceChild( UITextInstance instance ) 
+	{
+		instance.onTextWillChange += TextInstanceChildWillChange;
+		instance.onTextDidChange += TextInstanceChildDidChange;
+		
+		if ( instance.textSprites.Length == 0 )
+			return;
+		
+		_textInstancePlaceholders.Add( instance.textSprites[0], instance );
+		
+		// Add sprites to panel as children
+		addChild( instance.textSprites[0] );
+		// Set the parent of the rest to inherit position
+		for ( int i=1; i<instance.textSprites.Length; i++ ) 
+		{
+			instance.textSprites[i].parentUIObject = this;
+		}
+	}
+	
+	public void removeTextInstanceChild( UITextInstance instance, bool deleteText ) 
+	{
+		instance.onTextDidChange -= TextInstanceChildDidChange;
+		instance.onTextWillChange -= TextInstanceChildWillChange;
+		
+		if ( instance.textSprites.Length == 0 )
+			return;
+		
+		if ( _textInstancePlaceholders.ContainsKey( instance.textSprites[0] ) )
+			_textInstancePlaceholders.Remove( instance.textSprites[0] );
+		removeChild( instance.textSprites[0], deleteText );
+		// Set the parent of the rest to inherit position
+		for ( int i=1; i<instance.textSprites.Length; i++ ) 
+		{
+			instance.textSprites[i].parentUIObject = null;
+		}
+	}	
+	
+	void TextInstanceChildWillChange( UITextInstance instance )
+	{
+		if ( instance.textSprites.Length == 0 )
+			return;
+		
+		
+		if ( _textInstancePlaceholders.ContainsKey( instance.textSprites[0] ) )
+			_textInstancePlaceholders.Remove( instance.textSprites[0] );
+		
+		removeChild( instance.textSprites[0], false );	
+		for ( int i=1; i<instance.textSprites.Length; i++ ) 
+		{
+			instance.textSprites[i].parentUIObject = null;
+		}
+	}
+	
+	void TextInstanceChildDidChange( UITextInstance instance )
+	{	
+		if ( instance.textSprites.Length == 0 )
+			return;
+		
+		_textInstancePlaceholders.Add( instance.textSprites[0], instance );
+		addChild( instance.textSprites[0] );
+		for ( int i=1; i<instance.textSprites.Length; i++ ) 
+		{
+			instance.textSprites[i].parentUIObject = this;
+		}
+		// Now that everything is reparented, we have to reapply the clientTransform of the abstract container.
+		
+		instance.position = new Vector3( position.x + instance.localPosition.x, 
+		                                position.y + instance.localPosition.y, 
+		                                position.z + instance.localPosition.z);
+
+		
+		layoutChildren();
+	}
+	
 
 
 	/// <summary>
@@ -117,6 +211,7 @@ public class UIAbstractContainer : UIObject, IPositionable
 	{
 		if( _suspendUpdates )
 			return;
+		
 		// rules for vertical and horizontal layouts
 		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )
 		{
@@ -132,19 +227,40 @@ public class UIAbstractContainer : UIObject, IPositionable
 				foreach( var item in _children )
 				{
 					// we add spacing for all but the first and last
-					if( i != 0 && i != lastIndex )
+					if( i != 0 && i != lastIndex)
 						_width += _spacing;
 					
-					var yPos = item.gameObjectOriginInCenter ? -item.height / 2 : 0;
-					var xPosModifier = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-					item.localPosition = new Vector3( _width + xPosModifier, _edgeInsets.top + yPos, item.position.z );
-	
-					// all items get their width added
-					_width += item.width;
-					
-					// height will just be the height of the tallest item
-					if( _height < item.height )
-						_height = item.height;
+					if ( _textInstancePlaceholders.ContainsKey( item ) )
+					{
+						
+						UITextInstance instance = _textInstancePlaceholders[ item ];
+						Vector2 size = instance.size;
+						
+						// Simulate parent position inheritance since this doesn't have a client transform
+						instance.localPosition = new Vector2( _width, 
+						                                      -_edgeInsets.top );
+						
+						_height += size.y;
+						// width will just be the width of the widest item
+						if( _width < size.x )
+							_width = size.x;
+						
+					} 
+					else
+					{
+						
+						var yPos = item.gameObjectOriginInCenter ? -item.height / 2 : 0;
+						var xPosModifier = item.gameObjectOriginInCenter ? item.width / 2 : 0;
+						
+						item.localPosition = new Vector3( _width + xPosModifier, _edgeInsets.top + yPos, item.localPosition.z );
+						// all items get their width added
+						_width += item.width;
+						
+						// height will just be the height of the tallest item
+						if( _height < item.height )
+							_height = item.height;
+						
+					}
 					
 					i++;
 				}
@@ -159,17 +275,39 @@ public class UIAbstractContainer : UIObject, IPositionable
 					if( i != 0 && i != lastIndex )
 						_height += _spacing;
 					
-					var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-					var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
+					if ( _textInstancePlaceholders.ContainsKey( item ) )
+					{
+						var xPos = 0;
+						var yPosModifier = 0;
+						
+						UITextInstance instance = _textInstancePlaceholders[ item ];
+						Vector2 size = instance.size;
+						
+						// Simulate parent position inheritance since this doesn't have a client transform
+						instance.localPosition = new Vector2( _edgeInsets.left + xPos, 
+						                                      - ( _height + yPosModifier ) );
+						
+						_height += size.y;
+						// width will just be the width of the widest item
+						if( _width < size.x )
+							_width = size.x;
 					
-					item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.position.z );
-	
-					// all items get their height added
-					_height += item.height;
+					} 
+					else
+					{
+						
+						var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
+						var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
 					
-					// width will just be the width of the widest item
-					if( _width < item.width )
-						_width = item.width;
+						item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.localPosition.z );
+						// all items get their height added
+						_height += item.height;
+						// width will just be the width of the widest item
+						if( _width < item.width )
+							_width = item.width;
+					
+					}
+					
 					
 					i++;
 				}
@@ -179,10 +317,10 @@ public class UIAbstractContainer : UIObject, IPositionable
 			_width += _edgeInsets.right;
 			_height += _edgeInsets.bottom;
 		}
-		
 		// rules for AbsoluteLayout
-		if( _layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout )
+		else if( _layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout )
 		{
+			var i=0;
 			foreach( var item in _children )
 			{
 				item.localPosition = new Vector3( item.position.x, item.position.y, item.position.z );

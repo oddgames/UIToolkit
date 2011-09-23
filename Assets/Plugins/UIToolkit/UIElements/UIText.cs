@@ -28,20 +28,31 @@ public enum UITextVerticalAlignMode
 
 
 // addTextInstance returns one of these so we just need to do a .text on the instance to update it
-public struct UITextInstance
+public class UITextInstance : System.Object
 {
+	public delegate void UITextInstanceTextChangeEvent( UITextInstance instance );
+	public event UITextInstanceTextChangeEvent onTextWillChange;
+	public event UITextInstanceTextChangeEvent onTextDidChange;
+	
 	private UIText _parentText;
 	private string _text;
 	public UITextAlignMode alignMode;
 	public UITextVerticalAlignMode verticalAlignMode;
 	
-	public float xPos;
-	public float yPos;
+	private Vector3 _position;
+	private Vector3 _localPosition;
 	public float scale;
 	public int depth;
 	public int textIndex;
 	public Color[] colors;
-
+	
+	public Vector2 size 
+	{
+		get { 
+			return _parentText.sizeForText( _text, scale );
+		}
+	}
+	
 	/// <summary>
 	/// Sets and draws the text string displayed on screen
 	/// </summary>
@@ -53,8 +64,14 @@ public struct UITextInstance
 		}
 		set
 		{
+			if (onTextWillChange != null)
+				onTextWillChange( this );
+			
 			_text = value;
-			_parentText.updateText( ref this );
+			_parentText.updateText( this );
+			
+			if (onTextDidChange != null)
+				onTextDidChange( this );
 		}
 	}
 	
@@ -67,11 +84,18 @@ public struct UITextInstance
 		}
 		set 
 		{
-			_parentText.setHiddenForTextInstance( ref this, value );
+			_parentText.setHiddenForTextInstance( this, value );
 			_hidden = value;
 		}
 	}
 	
+	public UISprite[] textSprites
+	{
+		get
+		{
+			return _parentText.textSprites[textIndex];
+		}
+	}
 
 	
 	/// <summary>
@@ -90,13 +114,15 @@ public struct UITextInstance
 		this.verticalAlignMode = verticalAlignMode;
 		_parentText = parentText;
 		_text = text;
-		this.xPos = xPos;
-		this.yPos = yPos;
+		_position = new Vector3( xPos, yPos, 0 );
+		_localPosition = new Vector3( xPos, yPos, 0 );
 		this.scale = scale;
 		this.depth = depth;
 		this.textIndex = -1;
 		this.colors = colors;
 		_hidden = false;
+		onTextDidChange = null;
+		onTextWillChange = null;
 	}
 
 	
@@ -120,7 +146,7 @@ public struct UITextInstance
 	public void setColorForAllLetters( Color color )
 	{
 		this.colors = new Color[] { color };
-		_parentText.updateColorForTextInstance( ref this );
+		_parentText.updateColorForTextInstance( this );
 	}
 
 
@@ -138,9 +164,55 @@ public struct UITextInstance
 			return;
 		
 		this.colors = colors;
-		_parentText.updateColorForTextInstance( ref this );
+		_parentText.updateColorForTextInstance( this );
 	}
-
+	
+	public Vector3 position 
+	{
+		get { return _position; }
+		set 
+		{
+			
+			// Need to calculate differences between sprite position and current pos.
+			Vector3 delta = new Vector3(value.x - _position.x,
+			                            value.y - _position.y,
+			                            value.z - _position.z);
+			 
+			for ( var i=0; i<textSprites.Length; i++ )
+			{
+				textSprites[i].position = new Vector3(textSprites[i].position.x + delta.x, 
+				                                      textSprites[i].position.y + delta.y, 
+				                                      textSprites[i].position.z + delta.z);
+			}
+			_position = value;
+		}
+	}
+	public Vector3 localPosition
+	{
+		get {
+			return _localPosition;
+		}
+		set {
+			
+			var textSprites = _parentText.textSprites[textIndex];
+			
+			// Need to calculate differences between sprite position and current pos.
+			Vector3 delta = new Vector3(value.x - _localPosition.x,
+			                            value.y - _localPosition.y,
+			                            value.z - _localPosition.z);
+			
+			for ( var i = 0; i < textSprites.Length; i++ )
+			{
+				textSprites[i].localPosition = new Vector3( textSprites[i].localPosition.x + delta.x, 
+				                                            textSprites[i].localPosition.y + delta.y,
+				                                            textSprites[i].localPosition.z  + delta.z);
+			}
+			
+			
+			
+			_localPosition = value;
+		}
+	}
 
 	/// <summary>
 	/// Moves the text from it's current position to a new position that is currentPosition + position
@@ -375,6 +447,7 @@ public class UIText : System.Object
 		int lineEndChar = 0;
 		
 		float totalHeight = ( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
+		string firstWord = text.Split(" "[0])[0];
 		
 		for( var i = 0; i < text.Length; i++ )
 	    {
@@ -606,7 +679,7 @@ public class UIText : System.Object
 		{
 			var charId = System.Convert.ToInt32( c );
 			
-			width += _fontDetails[charId].xadvance * scale;
+			width += _fontDetails[charId].xadvance * scale;	
 		}
 		return width;
 	}
@@ -743,15 +816,15 @@ public class UIText : System.Object
 	}
 
 	
-	public void updateText( ref UITextInstance textInstance )
+	public void updateText( UITextInstance textInstance )
 	{
 		// kill the current text then draw some new text
 		deleteText( textInstance.textIndex );
-		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
+		textInstance.textIndex = drawText( textInstance.text, textInstance.position.x, textInstance.position.y, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
 	}
 
 	
-	public void setHiddenForTextInstance( ref UITextInstance textInstance, bool value )
+	public void setHiddenForTextInstance( UITextInstance textInstance, bool value )
 	{
 		if (textInstance.textIndex < _textSprites.Count) 
 		{
@@ -762,7 +835,7 @@ public class UIText : System.Object
 	}
 						
 	
-	public void updateColorForTextInstance( ref UITextInstance textInstance )
+	public void updateColorForTextInstance( UITextInstance textInstance )
 	{
 		// how many sprites are we updated?
 		int length = _textSprites[textInstance.textIndex].Length;

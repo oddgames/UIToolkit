@@ -118,6 +118,10 @@ public class UIAbstractContainer : UIObject, IPositionable
 		
 		_textInstancePlaceholders.Add( instance.textSprites[0], instance );
 		
+		for ( int i=0; i<instance.textSprites.Length; i++ )
+		{
+			instance.textSprites[i].position = clientTransform.TransformPoint( instance.textSprites[i].position + instance.localPosition );
+		}
 		// Add sprites to panel as children
 		addChild( instance.textSprites[0] );
 		// Set the parent of the rest to inherit position
@@ -125,6 +129,7 @@ public class UIAbstractContainer : UIObject, IPositionable
 		{
 			instance.textSprites[i].parentUIObject = this;
 		}
+		
 	}
 	
 	public void removeTextInstanceChild( UITextInstance instance, bool deleteText ) 
@@ -167,19 +172,21 @@ public class UIAbstractContainer : UIObject, IPositionable
 			return;
 		
 		_textInstancePlaceholders.Add( instance.textSprites[0], instance );
+		
+	
+		for ( int i=0; i<instance.textSprites.Length; i++ )
+		{
+			instance.textSprites[i].position = clientTransform.TransformPoint( instance.textSprites[i].position + instance.localPosition );
+		}
+		
 		addChild( instance.textSprites[0] );
 		for ( int i=1; i<instance.textSprites.Length; i++ ) 
 		{
 			instance.textSprites[i].parentUIObject = this;
 		}
-		// Now that everything is reparented, we have to reapply the clientTransform of the abstract container.
-		
-		instance.position = new Vector3( position.x + instance.localPosition.x, 
-		                                position.y + instance.localPosition.y, 
-		                                position.z + instance.localPosition.z);
-
 		
 		layoutChildren();
+
 	}
 	
 

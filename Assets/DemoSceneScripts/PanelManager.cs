@@ -59,10 +59,10 @@ public class PanelManager : MonoBehaviour
 		
 		bLayout = new UIBackgroundLayout( "playUp.png" );
 		
+		bLayout.position = new Vector3( Screen.width - bLayout.width, -( Screen.height - bLayout.height ), 0 );
 		bLayout.addTextInstanceChild( bTextInstance );
 		bTextInstance.localPosition = new Vector3( 10, -15, 0 );
 		
-		bLayout.position = new Vector3( Screen.width - bLayout.width, -( Screen.height - bLayout.height ), 0 );
 		
 		StartCoroutine( "AnimatePanels" );
 	}
@@ -77,6 +77,7 @@ public class PanelManager : MonoBehaviour
 		vPanel.scaleTo( 3.0f, new Vector3( 1.2f, 1.2f, 1 ), Easing.Quartic.easeOut );
 		
 		bTextInstance.text = "Going up...";
+		bTextInstance.text = "Going up 2";
 		bLayout.positionTo( 3.0f, new Vector3( bLayout.position.x, bLayout.position.y + 100, bLayout.position.z ), Easing.Quartic.easeInOut );
 		
 		yield return new WaitForSeconds( 3.0f );
@@ -88,8 +89,6 @@ public class PanelManager : MonoBehaviour
 	{
 		
 		vPanel.positionTo( 0.5f, new Vector3( Screen.width * 2, vPanel.position.y, 0 ), Easing.Quartic.easeOut );
-		                  
-		bLayout.positionTo( 0.5f, new Vector3( -Screen.width * 2, bLayout.position.y, 0), Easing.Quartic.easeOut );
-		
+		bTextInstance.text = "Done moving.";
 	}
 }

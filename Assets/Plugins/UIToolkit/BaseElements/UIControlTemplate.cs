@@ -4,7 +4,7 @@
 using UnityEngine;
 
 
-#if UNITY_EDITOR
+#if DONE_COMPILE_ME
 public class UIControlTemplate : UITouchableSprite
 {
 	public UIUVRect highlightedUVframe;

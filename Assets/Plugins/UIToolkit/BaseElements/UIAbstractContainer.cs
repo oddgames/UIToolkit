@@ -16,10 +16,10 @@ public class UIAbstractContainer : UIObject, IPositionable
 	public UIEdgeInsets edgeInsets { get { return _edgeInsets; } set { _edgeInsets = value; layoutChildren(); } } // relayout when edgeInsets changes
 	
 	protected float _width;
-	public float width { get { return _width; } }
+	public new float width { get { return _width; } }
 
 	protected float _height;
-	public float height { get { return _height; } }
+	public new float height { get { return _height; } }
 	
 	protected List<UISprite> _children = new List<UISprite>();
 	private bool _suspendUpdates; // when true, layoutChildren will do nothing
@@ -117,10 +117,10 @@ public class UIAbstractContainer : UIObject, IPositionable
 	{
 		if( _suspendUpdates )
 			return;
+
 		// rules for vertical and horizontal layouts
 		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )
 		{
-			
 			// start with the insets, then add each object + spacing then end with insets
 			_width = _edgeInsets.left;
 			_height = _edgeInsets.top;
@@ -179,9 +179,7 @@ public class UIAbstractContainer : UIObject, IPositionable
 			_width += _edgeInsets.right;
 			_height += _edgeInsets.bottom;
 		}
-		
-		// rules for AbsoluteLayout
-		if( _layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout )
+		else if( _layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout )
 		{
 			foreach( var item in _children )
 			{

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 
-public class UIObject : System.Object
+public class UIObject : System.Object, IPositionable
 {
 	public delegate void UIObjectTransormChagedDelegate();
 	public event UIObjectTransormChagedDelegate onTransformChanged;
@@ -147,7 +147,24 @@ public class UIObject : System.Object
 	
 	public virtual void transformChanged()
 	{
-
+		
 	}
+	
+	
+	#region IPositionable implementation
+	
+	// subclasses should implement these methods if they want to take part in positioning!
+	public float width
+	{
+		get { throw new System.NotImplementedException(); }
+	}
+	
+	
+	public float height
+	{
+		get { throw new System.NotImplementedException(); }
+	}
+	
+	#endregion
 
 }

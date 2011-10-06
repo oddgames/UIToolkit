@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_3_4_0;UNITY_3_4;UNITY_EDITOR;ENABLE_PROFILER;UNITY_IOS;UNITY_IPHONE;ENABLE_GENERICS;ENABLE_TERRAIN;ENABLE_NETWORK;ENABLE_WWW</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_3_4_1;UNITY_3_4;UNITY_EDITOR;ENABLE_PROFILER;UNITY_IOS;UNITY_IPHONE;ENABLE_GENERICS;ENABLE_TERRAIN;ENABLE_NETWORK;ENABLE_WWW</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -80,6 +80,7 @@
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIStateButton.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISwipeDetector.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIText.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UITextInstance.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIToggleButton.cs" />
      <Compile Include="Assets\Plugins\UIToolkit\UIToolkit.cs" />
      <None Include="Assets\DemoAssets\Resources\textDemoSheet2x.txt" />

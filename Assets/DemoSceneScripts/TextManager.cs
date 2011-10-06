@@ -89,9 +89,6 @@ public class TextManager : MonoBehaviour
 
 	IEnumerator modifyTextInstances()
 	{
-		yield return new WaitForSeconds( 2.0f );
-		StartCoroutine( text1.positionBy( 1, new Vector3( 100, -60, 0 ), Easing.Quartic.easeOut ) );
-		
 		yield return new WaitForSeconds( 1.0f );
 		text2.text = "gonna change the little text";
 		text2.setColorForAllLetters( Color.green );

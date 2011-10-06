@@ -9,9 +9,9 @@ public class UISprite : UIObject, IPositionable
 	public static readonly Rect _rectZero = new Rect( 0, 0, 0, 0 ); // used for disabled touch frames
 	
 	private float _width;
-    public float width { get { return _width; } }  // Width and Height of the sprite in worldspace units.
+    public new float width { get { return _width; } }  // Width and Height of the sprite in worldspace units.
     private float _height;
-    public float height { get { return _height; } } // THESE ARE PUBLIC TO AVOID THE GETTER PROPERTY OVERHEAD
+    public new float height { get { return _height; } }
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
     
     public Color _color; // The color to be used by all four vertices
@@ -33,13 +33,11 @@ public class UISprite : UIObject, IPositionable
 	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
 	
 	
-	public UISprite( Rect frame, int depth, UIUVRect uvFrame ):this( frame, depth, uvFrame, false )
-	{
-		
-	}
+	public UISprite( Rect frame, int depth, UIUVRect uvFrame ) : this( frame, depth, uvFrame, false )
+	{}
 	
 
-    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base()
+    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ) : base()
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
 		

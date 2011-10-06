@@ -27,160 +27,6 @@ public enum UITextVerticalAlignMode
 }
 
 
-// addTextInstance returns one of these so we just need to do a .text on the instance to update it
-public struct UITextInstance
-{
-	private UIText _parentText;
-	private string _text;
-	public UITextAlignMode alignMode;
-	public UITextVerticalAlignMode verticalAlignMode;
-	
-	public float xPos;
-	public float yPos;
-	public float scale;
-	public int depth;
-	public int textIndex;
-	public Color[] colors;
-
-	/// <summary>
-	/// Sets and draws the text string displayed on screen
-	/// </summary>
-	public string text
-	{
-		get
-		{
-			return _text;
-		}
-		set
-		{
-			_text = value;
-			_parentText.updateText( ref this );
-		}
-	}
-	
-	private bool _hidden;
-	public bool hidden 
-	{
-		get 
-		{ 
-			return _hidden; 
-		}
-		set 
-		{
-			_parentText.setHiddenForTextInstance( ref this, value );
-			_hidden = value;
-		}
-	}
-	
-
-	
-	/// <summary>
-	/// Call the full constructor with default alignment modes brought from the parent UIText object.
-	/// </summary>
-	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color color ) : this( parentText, text, xPos, yPos, scale, depth, new Color[] { color }, parentText.alignMode, parentText.verticalAlignMode )
-	{}
-	
-	
-	/// <summary>
-	/// Full constructor with per-instance alignment modes.
-	/// </summary>
-	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color[] colors, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
-	{
-		this.alignMode = alignMode;
-		this.verticalAlignMode = verticalAlignMode;
-		_parentText = parentText;
-		_text = text;
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.scale = scale;
-		this.depth = depth;
-		this.textIndex = -1;
-		this.colors = colors;
-		_hidden = false;
-	}
-
-	
-	/// <summary>
-	/// Clears the text from the screen
-	/// </summary>
-	public void clear()
-	{
-		if( textIndex < 0 )
-			return;
-		
-		_parentText.deleteText( textIndex );
-		_text = null;
-		textIndex = -1;
-	}
-	
-
-	/// <summary>
-	/// Sets the color for the text.  All colors will be changed.
-	/// </summary>
-	public void setColorForAllLetters( Color color )
-	{
-		this.colors = new Color[] { color };
-		_parentText.updateColorForTextInstance( ref this );
-	}
-
-
-	/// <summary>
-	/// Sets the color for each character in the text.  colors should contain at least the number of colors as there
-	/// are characters in the text.
-	/// </summary>
-	/// <param name="colors">
-	/// A <see cref="Color[]"/>
-	/// </param>
-	public void setColorPerLetter( Color[] colors )
-	{
-		// sanity check
-		if( colors.Length < _text.Length )
-			return;
-		
-		this.colors = colors;
-		_parentText.updateColorForTextInstance( ref this );
-	}
-
-
-	/// <summary>
-	/// Moves the text from it's current position to a new position that is currentPosition + position
-	/// </summary>
-	public IEnumerator positionBy( float duration, Vector3 position, UIEaseType ease )
-	{
-		var textSprites = _parentText.textSprites[textIndex];
-		
-		// variables to handle the state of the animations
-		var running = true;
-		var startTime = Time.time;
-		var startPositions = new Vector3[textSprites.Length];
-		var targetPositions = new Vector3[textSprites.Length];
-		
-		// save off the start positions and calculate the targets for each sprite
-		for( var i = 0; i < textSprites.Length; i++ )
-		{
-			startPositions[i] = textSprites[i].localPosition;
-			targetPositions[i] = textSprites[i].localPosition + position;
-		}
-		
-		while( running )
-		{				
-			// Get our easing position
-			float easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
-			easPos = ease( easPos );
-			
-			// do the actual movement
-			for( var i = 0; i < textSprites.Length; i++ )
-				textSprites[i].localPosition = Vector3.Lerp( startPositions[i], targetPositions[i], easPos );
-			
-			// See if we are done with our animation yet
-			if( ( startTime + duration ) <= Time.time )
-				running = false;
-			else
-				yield return null;
-		} // end while
-	}
-
-}
 
 
 public class UIText : System.Object 
@@ -352,24 +198,21 @@ public class UIText : System.Object
 	/// <summary>
 	/// Draw text on screen, create each quad and send it to the manager
 	/// </summary>
-	private int drawText( string text, float xPos, float yPos, float scale, int depth, Color[] color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
+	private int drawText( UITextInstance textInstance, float xPos, float yPos, float scale, int depth, Color[] color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
 	{
 		float dx = xPos;
 		float dy = 0;
-		
 		float offsetY;
-		
 		int fontLineSkip = 0;
-			
 		int charId = 0;
 		
-		UISprite[] sprites = null;
-		
+
 		// Perform word wrapping ahead of sprite allocation!
-		text = wrapText(text, scale);
+		var text = textInstance.text;
+		text = wrapText( text, scale );
 		
 		int length = text.Length;
-		sprites = new UISprite[length];
+		var sprites = new UISprite[length];
 		
 		int lineStartChar = 0;
 		int lineEndChar = 0;
@@ -390,7 +233,7 @@ public class UIText : System.Object
 				
 				alignLine( sprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
 				
-				lineStartChar = i+1;
+				lineStartChar = i + 1;
 				
 				dx = xPos;
 			}
@@ -407,6 +250,7 @@ public class UIText : System.Object
 			// Use curpos instead of i to compensate for line wrapping hyphenation
 			sprites[i] = spriteForCharId( charId, dx, dy + yPos, scale, depth );
 			_manager.addSprite( sprites[i] );
+			sprites[i].parentUIObject = textInstance;
 			sprites[i].color = color.Length == 1 ? color[0] : color[i];
 			
 			// See below @NOTE re: offsetx vs. xadvance bugfix.
@@ -428,35 +272,28 @@ public class UIText : System.Object
 	/// <summary>
 	/// Performs horizontal alignment of each line independently.
 	/// </summary>
-	void alignLine( UISprite[] sprites, int lineStartChar, int lineEndChar, float lineWidth, UITextAlignMode instanceAlignMode ) 
+	private void alignLine( UISprite[] sprites, int lineStartChar, int lineEndChar, float lineWidth, UITextAlignMode instanceAlignMode ) 
 	{
-		if ( instanceAlignMode == UITextAlignMode.Left )
+		if( instanceAlignMode == UITextAlignMode.Left )
 			return;
 		
 		
-		if ( instanceAlignMode == UITextAlignMode.Center ) 
+		if( instanceAlignMode == UITextAlignMode.Center )
 		{
-			
 			// Go from start character to end character, INCLUSIVE.
-			
-			for ( var i=lineStartChar; i<=lineEndChar; i++ ) 
+			for ( var i = lineStartChar; i <= lineEndChar; i++ )
 			{
-				if ( i < sprites.Length && sprites[i] != null ) 
-				{
-					sprites[i].position = new Vector3(sprites[i].position.x - lineWidth/2.0f, sprites[i].position.y, sprites[i].position.z);
-				}
+				if( i < sprites.Length && sprites[i] != null )
+					sprites[i].position = new Vector3( sprites[i].position.x - lineWidth/2.0f, sprites[i].position.y, sprites[i].position.z );
 			}
 		} 
-		else if ( instanceAlignMode == UITextAlignMode.Right ) 	
+		else if( instanceAlignMode == UITextAlignMode.Right )
 		{
 			// Go from start character to end character, INCLUSIVE.
-			
-			for ( var i=lineStartChar; i<=lineEndChar; i++ ) 
+			for ( var i = lineStartChar; i <= lineEndChar; i++ )
 			{
-				if ( i < sprites.Length && sprites[i] != null ) 
-				{
-					sprites[i].position = new Vector3(sprites[i].position.x - lineWidth, sprites[i].position.y, sprites[i].position.z);
-				}
+				if ( i < sprites.Length && sprites[i] != null )
+					sprites[i].position = new Vector3( sprites[i].position.x - lineWidth, sprites[i].position.y, sprites[i].position.z );
 			}
 			
 		}
@@ -466,23 +303,19 @@ public class UIText : System.Object
 	/// <summary>
 	/// Performs vertical alignment of entire paragraph to the positioning originally provided.
 	/// </summary>
-	void verticalAlignText( UISprite[] sprites, float totalHeight, float charOffset, UITextVerticalAlignMode instanceVerticalAlignMode ) 
+	private void verticalAlignText( UISprite[] sprites, float totalHeight, float charOffset, UITextVerticalAlignMode instanceVerticalAlignMode ) 
 	{
 		if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Top )
 			return;
 		
 		
 		var numSprites = sprites.Length;
-		for ( int i=0; i<numSprites; i++ ) 
+		for( int i = 0; i < numSprites; i++ ) 
 		{
-			if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Middle ) 
-			{
+			if( instanceVerticalAlignMode == UITextVerticalAlignMode.Middle )
 				sprites[i].position = new Vector3( sprites[i].position.x, sprites[i].position.y + totalHeight/2 + charOffset, sprites[i].position.z );
-			} 
-			else if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Bottom ) 
-			{
+			else if( instanceVerticalAlignMode == UITextVerticalAlignMode.Bottom )
 				sprites[i].position = new Vector3( sprites[i].position.x, sprites[i].position.y + totalHeight + charOffset, sprites[i].position.z );
-			}
 		}
 	}
 	
@@ -500,7 +333,7 @@ public class UIText : System.Object
 		
 		// Use Double-size wrap length in HD mode.
 		float scaledWrapWidth = lineWrapWidth;
-		if (UI.instance.isHD)
+		if( UI.instance.isHD )
 			scaledWrapWidth *= 2.0f;
 		
 		switch( wrapMode )
@@ -623,11 +456,11 @@ public class UIText : System.Object
 		// in the wrong spot according to the angelcode spec. xadvance is the complete character width
 		// and offsetx is supposed to be used only during character rendering, not during cursor advance.
 		// Please note that yPos already has offsety built in.
-			return new UISprite( new Rect( xPos + _fontDetails[charId].offsetx * scale,
-				                              yPos, 
-				                              _fontDetails[charId].w * scale, 
-				                              _fontDetails[charId].h * scale ),
-				                    depth, uvRect, false );
+		var rect = new Rect( xPos + _fontDetails[charId].offsetx * scale,
+				             yPos, 
+				             _fontDetails[charId].w * scale, 
+				             _fontDetails[charId].h * scale );
+		return new UISprite( rect, depth, uvRect, false );
 	}
 	
 
@@ -664,7 +497,6 @@ public class UIText : System.Object
 			
 			if( charId == ASCII_NEWLINE )
 			{
-
 				// calculate the size to center text on Y axis, based on its scale
 				// 77 is the "M" char usually big enough to get a proper spaced
 				// lineskip, use any other char if you want
@@ -737,32 +569,32 @@ public class UIText : System.Object
 			forceLowAsciiString( ref text );
 		
 		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, colors, alignMode, verticalAlignMode );
-		textInstance.textIndex = drawText( text, xPos, yPos, scale, depth, colors, textInstance.alignMode, textInstance.verticalAlignMode );
+		textInstance.textIndex = drawText( textInstance, xPos, yPos, scale, depth, colors, textInstance.alignMode, textInstance.verticalAlignMode );
 		
 		return textInstance;
 	}
 
 	
-	public void updateText( ref UITextInstance textInstance )
+	public void updateText( UITextInstance textInstance )
 	{
 		// kill the current text then draw some new text
 		deleteText( textInstance.textIndex );
-		textInstance.textIndex = drawText( textInstance.text, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
+		textInstance.textIndex = drawText( textInstance, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
 	}
 
 	
-	public void setHiddenForTextInstance( ref UITextInstance textInstance, bool value )
+	public void setHiddenForTextInstance( UITextInstance textInstance, bool value )
 	{
-		if (textInstance.textIndex < _textSprites.Count) 
+		if( textInstance.textIndex < _textSprites.Count )
 		{
 			int length = _textSprites[textInstance.textIndex].Length;
-			for ( int i = 0; i < length; i++ ) 
+			for( int i = 0; i < length; i++ )
 				_textSprites[textInstance.textIndex][i].hidden = value;
 		}
 	}
 						
 	
-	public void updateColorForTextInstance( ref UITextInstance textInstance )
+	public void updateColorForTextInstance( UITextInstance textInstance )
 	{
 		// how many sprites are we updated?
 		int length = _textSprites[textInstance.textIndex].Length;
@@ -811,6 +643,7 @@ public class UIText : System.Object
 		_textSprites.Clear();
 	}
 	
+	
 	void forceLowAsciiChar( ref string character ) 
 	{
 		// Perform character conversions.
@@ -823,6 +656,7 @@ public class UIText : System.Object
 		else if ( character == "8221" ) character = "148";
 		
 	}
+	
 	
 	void forceLowAsciiString( ref string text ) 
 	{
@@ -851,4 +685,5 @@ public class UIText : System.Object
 			text = text.Replace( char.ConvertFromUtf32( 8221 ), char.ConvertFromUtf32( 34 ) ); // Right Double Quotation Mark
 		}
 	}
+
 }

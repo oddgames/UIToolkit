@@ -142,8 +142,14 @@ public class UIJoystick : UITouchableSprite
 	{
 		// Clamp the new position based on the boundaries we have set.  Dont forget to reverse the Y axis!
 		Vector3 newPosition = Vector3.zero;
-		newPosition.x = Mathf.Clamp( localTouchPosition.x, _joystickBoundary.minX, _joystickBoundary.maxX );
-		newPosition.y = Mathf.Clamp( -localTouchPosition.y, _joystickBoundary.minY, _joystickBoundary.maxY );
+		
+		//adjust the touches with the scale
+		float X = localTouchPosition.x * _joystickSprite.localScale.x;
+		float Y = localTouchPosition.y * _joystickSprite.localScale.y;
+		
+		//fixed to adjust the touches to the scale of the image
+		newPosition.x = Mathf.Clamp( localTouchPosition.x + X, _joystickBoundary.minX, _joystickBoundary.maxX );
+		newPosition.y = Mathf.Clamp( -(localTouchPosition.y + Y), _joystickBoundary.minY, _joystickBoundary.maxY );
 		
 		// Set the new position and update the transform		
 		_joystickSprite.localPosition = newPosition;

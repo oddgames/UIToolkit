@@ -7,7 +7,7 @@ public class ExtendedTextManager : MonoBehaviour
 {
 	private UITextInstance text1;
 	private UITextInstance text2;
-	private int _counter = 1000;
+	private int _counter = 0;
 
 
 	void Start()

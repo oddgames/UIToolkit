@@ -7,6 +7,7 @@ public class ExtendedTextManager : MonoBehaviour
 {
 	private UITextInstance text1;
 	private UITextInstance text2;
+	private int _counter = 1000;
 
 
 	void Start()
@@ -15,15 +16,22 @@ public class ExtendedTextManager : MonoBehaviour
 		var text = new UIText( "prototype", "prototype.png" );
 		text.alignMode = UITextAlignMode.Center;
 		
-		
 		// add a text instance that we will animate later
 		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", Screen.width / 2, 0 );
-
-		StartCoroutine( modifyTextInstances() );
+		text2 = text.addTextInstance( _counter.ToString(), Screen.width, 35, 1, 5, Color.black, UITextAlignMode.Right, UITextVerticalAlignMode.Middle );
+		
+		StartCoroutine( modifyTextInstance() );
 	}
 	
-
-	IEnumerator modifyTextInstances()
+	
+	void Update()
+	{
+		_counter++;
+		text2.text = _counter.ToString();
+	}
+	
+	
+	IEnumerator modifyTextInstance()
 	{
 		while( true )
 		{

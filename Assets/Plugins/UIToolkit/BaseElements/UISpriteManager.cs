@@ -412,7 +412,7 @@ public class UISpriteManager : MonoBehaviour
 		
 		// This should happen when the sprite dies!!
 		Destroy( sprite.client );
-		
+
         vertsChanged = true;
 		meshIsDirty = true;
     }

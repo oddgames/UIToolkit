@@ -60,17 +60,12 @@ public class UIText : System.Object
  	private UIFontCharInfo[] _fontDetails;
 	private Vector2 _textureOffset;
 	private UIToolkit _manager;
+	public UIToolkit manager { get { return _manager; } }
 	
 	public UITextAlignMode alignMode = UITextAlignMode.Left;
 	public UITextVerticalAlignMode verticalAlignMode = UITextVerticalAlignMode.Top;
 	public UITextLineWrapMode wrapMode = UITextLineWrapMode.None;
 	public float lineWrapWidth = 500.0f;
-	
-	private List<UISprite[]> _textSprites = new List<UISprite[]>(); // all the sprites that make up each string we are showing
-	public List<UISprite[]> textSprites
-	{
-		get { return _textSprites; }
-	}
 	
 
 	/// <summary>
@@ -198,7 +193,7 @@ public class UIText : System.Object
 	/// <summary>
 	/// Draw text on screen, create each quad and send it to the manager
 	/// </summary>
-	private int drawText( UITextInstance textInstance, float xPos, float yPos, float scale, int depth, Color[] color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
+	private void drawText( UITextInstance textInstance, float xPos, float yPos, float scale, int depth, Color[] color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
 	{
 		float dx = xPos;
 		float dy = 0;
@@ -210,9 +205,6 @@ public class UIText : System.Object
 		// Perform word wrapping ahead of sprite allocation!
 		var text = textInstance.text;
 		text = wrapText( text, scale );
-		
-		int length = text.Length;
-		var sprites = new UISprite[length];
 		
 		int lineStartChar = 0;
 		int lineEndChar = 0;
@@ -231,7 +223,7 @@ public class UIText : System.Object
 				fontLineSkip += (int)( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
 				totalHeight += (int)( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
 				
-				alignLine( sprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
+				alignLine( textInstance.textSprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
 				
 				lineStartChar = i + 1;
 				
@@ -248,31 +240,33 @@ public class UIText : System.Object
 
 			// add quads for each char
 			// Use curpos instead of i to compensate for line wrapping hyphenation
-			sprites[i] = spriteForCharId( charId, dx, dy + yPos, scale, depth );
-			_manager.addSprite( sprites[i] );
-			sprites[i].parentUIObject = textInstance;
-			sprites[i].color = color.Length == 1 ? color[0] : color[i];
+			// reuse a UISprite if we have one. if we don't, we need to set it's parent and add it to the textInstance's list
+			var currentTextSprite = textInstance.textSpriteAtIndex( i );
+			var addingNewTextSprite = currentTextSprite == null;
+			
+			currentTextSprite = configureSpriteForCharId( currentTextSprite, charId, dx, dy + yPos, scale, depth );
+			
+			if( addingNewTextSprite )
+			{
+				currentTextSprite.color = color.Length == 1 ? color[0] : color[i];
+				currentTextSprite.parentUIObject = textInstance;
+				textInstance.textSprites.Add( currentTextSprite );
+			}
 			
 			// See below @NOTE re: offsetx vs. xadvance bugfix.
 			// advance the position to draw the next letter
 			dx += _fontDetails[charId].xadvance * scale;
-			
 		}
-		alignLine( sprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
 		
-		verticalAlignText( sprites, totalHeight, _fontDetails[ASCII_LINEHEIGHT_REFERENCE].offsety * scale * lineSpacing, instanceVerticalAlignMode );
-		
-		// add all sprites at once to the array, we use this later to delete the strings
-		_textSprites.Add( sprites );
-		
-		return _textSprites.Count - 1;
+		alignLine( textInstance.textSprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
+		verticalAlignText( textInstance.textSprites, totalHeight, _fontDetails[ASCII_LINEHEIGHT_REFERENCE].offsety * scale * lineSpacing, instanceVerticalAlignMode );
 	}
 	
 	
 	/// <summary>
 	/// Performs horizontal alignment of each line independently.
 	/// </summary>
-	private void alignLine( UISprite[] sprites, int lineStartChar, int lineEndChar, float lineWidth, UITextAlignMode instanceAlignMode ) 
+	private void alignLine( List<UISprite> sprites, int lineStartChar, int lineEndChar, float lineWidth, UITextAlignMode instanceAlignMode ) 
 	{
 		if( instanceAlignMode == UITextAlignMode.Left )
 			return;
@@ -283,7 +277,7 @@ public class UIText : System.Object
 			// Go from start character to end character, INCLUSIVE.
 			for ( var i = lineStartChar; i <= lineEndChar; i++ )
 			{
-				if( i < sprites.Length && sprites[i] != null )
+				if( sprites[i] != null )
 					sprites[i].position = new Vector3( sprites[i].position.x - lineWidth/2.0f, sprites[i].position.y, sprites[i].position.z );
 			}
 		} 
@@ -292,7 +286,7 @@ public class UIText : System.Object
 			// Go from start character to end character, INCLUSIVE.
 			for ( var i = lineStartChar; i <= lineEndChar; i++ )
 			{
-				if ( i < sprites.Length && sprites[i] != null )
+				if ( i < sprites.Count && sprites[i] != null )
 					sprites[i].position = new Vector3( sprites[i].position.x - lineWidth, sprites[i].position.y, sprites[i].position.z );
 			}
 			
@@ -303,13 +297,13 @@ public class UIText : System.Object
 	/// <summary>
 	/// Performs vertical alignment of entire paragraph to the positioning originally provided.
 	/// </summary>
-	private void verticalAlignText( UISprite[] sprites, float totalHeight, float charOffset, UITextVerticalAlignMode instanceVerticalAlignMode ) 
+	private void verticalAlignText( List<UISprite> sprites, float totalHeight, float charOffset, UITextVerticalAlignMode instanceVerticalAlignMode ) 
 	{
 		if ( instanceVerticalAlignMode == UITextVerticalAlignMode.Top )
 			return;
 		
 		
-		var numSprites = sprites.Length;
+		var numSprites = sprites.Count;
 		for( int i = 0; i < numSprites; i++ ) 
 		{
 			if( instanceVerticalAlignMode == UITextVerticalAlignMode.Middle )
@@ -446,9 +440,9 @@ public class UIText : System.Object
 
 	
 	/// <summary>
-	/// Convenience method to instantiate a new UISprite for a font character.
+	/// Convenience method to configure and optionally instantiate a new UISprite for a font character.
 	/// </summary>
-	private UISprite spriteForCharId( int charId, float xPos, float yPos, float scale, int depth )
+	private UISprite configureSpriteForCharId( UISprite sprite, int charId, float xPos, float yPos, float scale, int depth )
 	{
 		var uvRect = new UIUVRect( (int)_textureOffset.x + _fontDetails[charId].posX, (int)_textureOffset.y + _fontDetails[charId].posY, _fontDetails[charId].w, _fontDetails[charId].h, _manager.textureSize );
 		
@@ -460,7 +454,20 @@ public class UIText : System.Object
 				             yPos, 
 				             _fontDetails[charId].w * scale, 
 				             _fontDetails[charId].h * scale );
-		return new UISprite( rect, depth, uvRect, false );
+		
+		if( sprite == null )
+		{
+			sprite = new UISprite( rect, depth, uvRect, false );
+			_manager.addSprite( sprite );
+		}
+		else
+		{
+			sprite.uvFrame = uvRect;
+			sprite.position = new Vector3( rect.x, -rect.y, depth );
+			sprite.setSize( rect.width, rect.height );
+		}
+		
+		return sprite;
 	}
 	
 
@@ -569,7 +576,7 @@ public class UIText : System.Object
 			forceLowAsciiString( ref text );
 		
 		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, colors, alignMode, verticalAlignMode );
-		textInstance.textIndex = drawText( textInstance, xPos, yPos, scale, depth, colors, textInstance.alignMode, textInstance.verticalAlignMode );
+		drawText( textInstance, xPos, yPos, scale, depth, colors, textInstance.alignMode, textInstance.verticalAlignMode );
 		
 		return textInstance;
 	}
@@ -578,69 +585,7 @@ public class UIText : System.Object
 	public void updateText( UITextInstance textInstance )
 	{
 		// kill the current text then draw some new text
-		deleteText( textInstance.textIndex );
-		textInstance.textIndex = drawText( textInstance, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
-	}
-
-	
-	public void setHiddenForTextInstance( UITextInstance textInstance, bool value )
-	{
-		if( textInstance.textIndex < _textSprites.Count )
-		{
-			int length = _textSprites[textInstance.textIndex].Length;
-			for( int i = 0; i < length; i++ )
-				_textSprites[textInstance.textIndex][i].hidden = value;
-		}
-	}
-						
-	
-	public void updateColorForTextInstance( UITextInstance textInstance )
-	{
-		// how many sprites are we updated?
-		int length = _textSprites[textInstance.textIndex].Length;
-		
-		// we either make all the letters the same color or each letter a different color
-		if( textInstance.colors.Length == 1 )
-		{
-			for( int i = 0; i < length; i++ )
-				_textSprites[textInstance.textIndex][i].color = textInstance.colors[0];
-		}
-		else
-		{
-			for( int i = 0; i < length; i++ )
-				_textSprites[textInstance.textIndex][i].color = textInstance.colors[i];
-		}
-	}
-	
-	
-	public void deleteText( int textIndex )
-	{
-		// bounds checker
-		if( textIndex < 0 || textIndex > _textSprites.Count - 1 )
-			return;
-		
-		// how many sprites are we cleaning up?
-		int length = _textSprites[textIndex].Length;
-
-		for( int i = 0; i < length; i++ )
-		{
-			_manager.removeElement( _textSprites[textIndex][i] );
-			_textSprites[textIndex][i] = null;
-		}
-		
-		_textSprites[textIndex] = null;
-	}
-
-
-	/// <summary>
-	/// Empty all the arrays of text sprites
-	/// </summary>
-	public void removeAllText()
-	{
-		for( var i = _textSprites.Count - 1; i >= 0; i-- )
-			deleteText( i );
-		
-		_textSprites.Clear();
+		drawText( textInstance, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
 	}
 	
 	

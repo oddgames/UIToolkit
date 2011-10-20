@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class TextManager : MonoBehaviour
 {
-	private UITextInstance text1;
 	private UITextInstance text2;
 	private UITextInstance text3;
 	private UITextInstance text4;
@@ -26,7 +25,7 @@ public class TextManager : MonoBehaviour
 		var x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
 		var y = UIRelative.yPercentFrom( UIyAnchor.Top, 0f );
 		// Uses default color, scale, alignment, and depth.
-		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", x, y );
+		text.addTextInstance( "hello man.  I have a line\nbreak.", x, y );
 		
 		var textSize = text.sizeForText( "testing small bitmap fonts", 0.3f );
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );

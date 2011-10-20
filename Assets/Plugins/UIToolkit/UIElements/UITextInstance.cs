@@ -1,6 +1,7 @@
 using UnityEngine;
 using UIEaseType = System.Func<float, float>;
 using System.Collections;
+using System.Collections.Generic;
 
 
 // addTextInstance (from the UIText class) returns one of these so we just need to do a .text on the instance to update it's text
@@ -15,8 +16,8 @@ public class UITextInstance : UIObject
 	public float yPos;
 	public float scale;
 	public int depth;
-	public int textIndex;
 	public Color[] colors;
+	public List<UISprite> textSprites = new List<UISprite>(); // all the sprites that make up the string
 
 	/// <summary>
 	/// Sets and draws the text string displayed on screen
@@ -30,6 +31,18 @@ public class UITextInstance : UIObject
 		set
 		{
 			_text = value;
+			
+			// cleanse our textSprites of any excess that we dont need
+			if( _text.Length > textSprites.Count )
+			{
+				for( var i = textSprites.Count - 1; i > _text.Length; i-- )
+				{
+					var sprite = textSprites[i];
+					textSprites.RemoveAt( i );
+					_parentText.manager.removeElement( sprite );
+				}
+			}
+			
 			_parentText.updateText( this );
 		}
 	}
@@ -43,8 +56,10 @@ public class UITextInstance : UIObject
 		}
 		set 
 		{
-			_parentText.setHiddenForTextInstance( this, value );
 			_hidden = value;
+			
+			foreach( var sprite in textSprites )
+				sprite.hidden = _hidden;
 		}
 	}
 	
@@ -72,23 +87,52 @@ public class UITextInstance : UIObject
 		this.yPos = yPos;
 		this.scale = scale;
 		this.depth = depth;
-		this.textIndex = -1;
 		this.colors = colors;
 		_hidden = false;
 	}
-
+	
+	
+	private void applyColorToSprites()
+	{
+		// how many sprites are we updated?
+		var length = textSprites.Count;
+		
+		// we either make all the letters the same color or each letter a different color
+		if( colors.Length == 1 )
+		{
+			for( int i = 0; i < length; i++ )
+				textSprites[i].color = colors[0];
+		}
+		else
+		{
+			for( int i = 0; i < length; i++ )
+				textSprites[i].color = colors[i];
+		}
+	}
+	
+	
+	/// <summary>
+	/// Returns either the sprite at the given index (if it exists) or null
+	/// </summary>
+	public UISprite textSpriteAtIndex( int index )
+	{
+		if( textSprites.Count > index )
+			return textSprites[index];
+		return null;
+	}
+	
 	
 	/// <summary>
 	/// Clears the text from the screen
 	/// </summary>
 	public void clear()
 	{
-		if( textIndex < 0 )
-			return;
-		
-		_parentText.deleteText( textIndex );
 		_text = null;
-		textIndex = -1;
+		
+		foreach( var sprite in textSprites )
+			_parentText.manager.removeElement( sprite );
+		
+		textSprites.Clear();
 	}
 	
 
@@ -98,7 +142,7 @@ public class UITextInstance : UIObject
 	public void setColorForAllLetters( Color color )
 	{
 		this.colors = new Color[] { color };
-		_parentText.updateColorForTextInstance( this );
+		applyColorToSprites();
 	}
 
 
@@ -116,7 +160,7 @@ public class UITextInstance : UIObject
 			return;
 		
 		this.colors = colors;
-		_parentText.updateColorForTextInstance( this );
+		applyColorToSprites();
 	}
 
 	
@@ -125,7 +169,7 @@ public class UITextInstance : UIObject
 	/// </summary>
 	public override void transformChanged()
 	{
-		Debug.Log( "wtf, transformChanged()" );
+		
 	}
 
 }

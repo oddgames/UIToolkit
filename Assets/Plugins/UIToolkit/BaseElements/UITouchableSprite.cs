@@ -102,7 +102,9 @@ public abstract class UITouchableSprite : UISprite, IComparable
 				
 				// grab the normal frame of the sprite then add the offsets to get our touch frames
 				// remembering to offset if we have our origin in the center
-				Rect normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width, height );
+				//Rect normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width, height );
+				//fixed to take into consideration the scale if changed
+				Rect normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width * localScale.x , height * localScale.y );
 				
 				if( gameObjectOriginInCenter )
 				{

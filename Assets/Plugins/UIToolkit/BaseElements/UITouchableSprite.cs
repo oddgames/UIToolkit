@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 
 
-public abstract class UITouchableSprite : UISprite, IComparable
+public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 {
 	public int touchCount;
 	public UIUVRect disabledUVframe; // when disabled, this UV frame will be used if it is set
@@ -121,7 +121,8 @@ public abstract class UITouchableSprite : UISprite, IComparable
 		}
 	}
 	
-	Rect addOffsetsAndClipToScreen( Rect frame, UIEdgeOffsets offsets )
+	
+	private Rect addOffsetsAndClipToScreen( Rect frame, UIEdgeOffsets offsets )
 	{
 		return Rect.MinMaxRect
 		(
@@ -144,7 +145,9 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	#endregion;
 
 
-	// Tests if a point is inside the current touchFrame
+	/// <summary>
+	/// Tests if a point is inside the current touchFrame
+	/// </summary>
 	public bool hitTest( Vector2 point )
 	{
 		return touchFrame.Contains( point );

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 {
-	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 7;
-	private const float SCROLL_DECELERATION_MODIFIER = 0.95f; // how fast should we slow down
+	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 3;
+	private const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
 	private bool _isDragging;
 	private Stack<float> _velocities = new Stack<float>( TOTAL_VELOCITY_SAMPLE_COUNT );
 	
@@ -49,6 +49,31 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	}
 	
 	
+	private IEnumerator scrollToInset( int target )
+	{
+		var start = _edgeInsets.top;
+		var startTime = Time.time;
+		var duration = 0.4f;
+		var running = true;
+		
+		while( !_isDragging && running )
+		{
+			// Get our easing position
+			var easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
+			easPos = Easing.Quartic.easeOut( easPos );
+			
+			_edgeInsets.top = (int)Mathf.Lerp( start, target, easPos );
+			layoutChildren();
+			
+			if( ( startTime + duration ) <= Time.time )
+				running = false;
+		
+			yield return null;
+		}
+		layoutChildren();
+	}
+
+	
 	private ITouchable getButtonForScreenPosition( Vector2 touchPosition )
 	{
 		for( int i = 0, totalChildren = _children.Count; i < totalChildren; i++ )
@@ -83,8 +108,29 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 			}
 			else if( topContained || bottomContained )
 			{
+				// wrap the changes in a call to beginUpdates to avoid changing verts more than once
+				child.beginUpdates();
+				
 				child.hidden = false;
-				child.uvFrameClipped = child.uvFrame.rectClippedToBounds( _manager.textureSize );
+				
+				// are we clipping the top or bottom?
+				if( topContained ) // clipping the bottom
+				{
+					var clippedHeight = child.position.y + touchFrame.yMax;
+					
+					child.uvFrameClipped = child.uvFrame.rectClippedToBounds( child.width, clippedHeight, false, child.manager.textureSize );
+					child.setClippedSize( child.width, clippedHeight, false );
+				}
+				else // clipping the top, so we need to adjust the position.y as well
+				{
+					var clippedHeight = child.height - child.position.y - touchFrame.yMin;
+					
+					child.uvFrameClipped = child.uvFrame.rectClippedToBounds( child.width, clippedHeight, true, child.manager.textureSize );
+					child.setClippedSize( child.width, clippedHeight, true );
+				}
+				
+				// commit the changes
+				child.endUpdates();
 			}
 			else
 			{
@@ -93,6 +139,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 			}
 		}
 	}
+	
 	
 	#region ITouchable
 
@@ -114,19 +161,18 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
+		Debug.Log( "delta: " + touch.deltaPosition.y );
 		int newTop = _edgeInsets.top - (int)touch.deltaPosition.y;
 		if( newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y )
 		{
 			_edgeInsets.top = newTop;
 			layoutChildren();
 		}
-		
+
 		// pop any extra velocities and push the current velocity onto the stack
 		if( _velocities.Count == TOTAL_VELOCITY_SAMPLE_COUNT )
 			_velocities.Pop();
 		_velocities.Push( touch.deltaPosition.y / Time.deltaTime );
-		
-		//Debug.Log( "ed.top: " + newTop + ", maxEdge: " + _maxEdgeInset.y + ", minEdge: " + _minEdgeInset.y );
 	}
 
 
@@ -148,5 +194,22 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		base.layoutChildren();
 		clipToBounds();
 	}
-
+	
+	
+	/// <summary>
+	/// Scrolls to the newTop (using the edgeInsets so 0 is the top and scrolling goes towards negatives)
+	/// </summary>
+	public void scrollTo( int newTop, bool animated )
+	{
+		if( animated )
+		{
+			_manager.StartCoroutine( scrollToInset( newTop ) );
+		}
+		else
+		{
+			_edgeInsets.top = newTop;
+			layoutChildren();
+		}
+	}
+	
 }

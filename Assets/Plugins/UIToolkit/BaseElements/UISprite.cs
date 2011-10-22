@@ -7,11 +7,14 @@ public class UISprite : UIObject, IPositionable
     public UIToolkit manager = null; // Reference to the sprite manager in which this sprite resides
     public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
 	public static readonly Rect _rectZero = new Rect( 0, 0, 0, 0 ); // used for disabled touch frames
+	private bool _suspendUpdates; // when true, updateTransform and updateVertPositions will do nothing until endUpdates is called
 	
 	private float _width;
     public new float width { get { return _width; } }  // Width and Height of the sprite in worldspace units.
     private float _height;
     public new float height { get { return _height; } }
+	private float _clippedWidth;
+	private float _clippedHeight;
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
     
     public Color _color; // The color to be used by all four vertices
@@ -29,9 +32,10 @@ public class UISprite : UIObject, IPositionable
 	protected UIUVRect _uvFrame; // UV coordinates and size for the sprite
 	protected UIUVRect _uvFrameClipped; // alternate UV coordinatest for when a sprite it clipped
 	protected bool _clipped; // set to true when the sprite is clipped so the clipped uvFrame is used
+	private float _clippedTopYOffset;
 	
     protected Vector3[] meshVerts; // Pointer to the array of vertices in the mesh
-    protected Vector2[] UVs; // Pointer to the array of UVs in the mesh
+    protected Vector2[] uvs; // Pointer to the array of UVs in the mesh
 	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
 	
 	
@@ -59,10 +63,13 @@ public class UISprite : UIObject, IPositionable
 		uvFrame = manager.uvRectForFilename( filename );
 	}
 
-
+	
+	/// <summary>
+	/// subclasses that override need to properly return the clipped frame!
+	/// </summary>
 	public virtual UIUVRect uvFrame
 	{
-		get { Debug.Log( "returing clipped? " + _clipped ); return _clipped ? _uvFrameClipped : _uvFrame; }
+		get { return _clipped ? _uvFrameClipped : _uvFrame; }
 		set
 		{
 			// Dont bother changing if the new value isn't different
@@ -78,21 +85,18 @@ public class UISprite : UIObject, IPositionable
 	/// <summary>
 	/// Alternate uvFrame for when the sprite is clipped. Set to UIUVRect.zero to remove clipping or set
 	/// clipped to false.
+	/// Note: setting this automatically sets the sprite as clipped
 	/// </summary>
 	public virtual UIUVRect uvFrameClipped
 	{
 		get { return _uvFrameClipped; }
 		set
 		{
-			// Dont bother changing if the new value isn't different
-			if( _uvFrameClipped != value )
-			{
-				_uvFrameClipped = value;
+			_uvFrameClipped = value;
 				
-				// if we were not set to zero then we use the clipped frame
-				_clipped = value != UIUVRect.zero;
-				manager.updateUV( this );
-			}
+			// if we were not set to zero then we use the clipped frame
+			_clipped = value != UIUVRect.zero;
+			manager.updateUV( this );
 		}
 	}
 
@@ -123,6 +127,10 @@ public class UISprite : UIObject, IPositionable
 				return;
 			
 			_clipped = value;
+			if( _clipped )
+				_clippedTopYOffset = 0;
+			
+			updateVertPositions();
 			manager.updateUV( this );
 		}
 	}
@@ -176,6 +184,27 @@ public class UISprite : UIObject, IPositionable
 	#endregion
 	
 	
+	/// <summary>
+	/// Call this when changing multiple properties at once that result in vert, position or uv changes.  Must be
+	/// paired with a call to endUpdates!
+	/// </summary>
+	public void beginUpdates()
+	{
+		_suspendUpdates = true;
+	}
+	
+	
+	/// <summary>
+	/// Commits any update made after beginUpdates was called
+	/// </summary>
+	public void endUpdates()
+	{
+		_suspendUpdates = false;
+		updateVertPositions();
+		updateTransform();
+	}
+
+	
 	public override void transformChanged()
 	{
 		updateTransform();
@@ -190,11 +219,26 @@ public class UISprite : UIObject, IPositionable
 	}
 
 	
-    // Sets the physical dimensions of the sprite in the XY plane
+    /// <summary>
+    /// Sets the physical dimensions of the sprite in the XY plane
+    /// </summary>
     public void setSize( float width, float height )
     {
         _width = width;
         _height = height;
+		
+		updateVertPositions();
+        updateTransform();
+    }
+	
+	
+	/// <summary>
+	/// Updates the vert positions using either the normal width/height or the clipped if appropriate
+	/// </summary>
+	public void updateVertPositions()
+	{
+		var width = _clipped ? _clippedWidth : _width;
+		var height = _clipped ? _clippedHeight : _height;
 		
 		if( gameObjectOriginInCenter )
 		{
@@ -212,24 +256,46 @@ public class UISprite : UIObject, IPositionable
 	        v3 = new Vector3( width, -height, 0 );   // Lower-right
 	        v4 = new Vector3( width, 0, 0 );    // Upper-right
 		}
+	}
+	
+	
+	/// <summary>
+    /// Sets the physical dimensions of the sprite in the XY plane to be used when clipped. We need separate sizes because
+    /// the sprite should still have the same height/width for measuring even though it is clipped by another view.
+    /// Note: setting this DOES NOT automatically set the sprite as clipped. Size should be set after uvFrameClipped!
+    /// </summary>
+    public void setClippedSize( float width, float height, bool clippingTop )
+    {
+        _clippedWidth = width;
+        _clippedHeight = height;
 		
+		if( clippingTop )
+			_clippedTopYOffset = _height - _clippedHeight;
+		else
+			_clippedTopYOffset = 0;
+		
+		position = new Vector3( position.x, position.y - _clippedTopYOffset, position.z );
+		
+		updateVertPositions();
         updateTransform();
-    }
+	}
 	
 
-    // Sets the vertex and UV buffers
+    /// <summary>
+    /// Sets the vertex and UV buffers this sprite has been assigned
+    /// </summary>
     public void setBuffers( Vector3[] v, Vector2[] uv )
     {
         meshVerts = v;
-        UVs = uv;
+        uvs = uv;
     }
 	
 
     // Applies the transform of the client GameObject and stores the results in the associated vertices of the overall mesh
     public virtual void updateTransform()
     {
-		// if we are hidden, no need to update our positions as that would cause us to be visible again
-		if( hidden )
+		// if we are hidden or suspended, no need to update our positions as that would cause us to be visible again
+		if( hidden || _suspendUpdates )
 			return;
 		
 		meshVerts[vertexIndices.mv.one] = clientTransform.TransformPoint( v1 );

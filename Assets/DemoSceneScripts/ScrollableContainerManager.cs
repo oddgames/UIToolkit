@@ -8,7 +8,7 @@ public class ScrollableContainerManager : MonoBehaviour
 	void Start()
 	{
 		var scrollable = new UIScrollableVerticalLayout( 10 );
-		scrollable.position = new Vector3( 0, -30, 0 );
+		scrollable.position = new Vector3( 0, -50, 0 );
 		scrollable.setSize( 300, Screen.height / 1.4f );
 		
 		for( var i = 0; i < 20; i++ )
@@ -25,7 +25,24 @@ public class ScrollableContainerManager : MonoBehaviour
 			
 			scrollable.addChild( button );
 		}
-
-		//scrollable.pixelsFromBottomRight( 10, 10 );
+		
+		
+		// click to scroll to a specific offset
+		var scores = UIButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );
+		scores.positionFromTopRight( 0, 0 );
+		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+		scores.onTouchUpInside += ( sender ) =>
+		{
+			scrollable.scrollTo( -10, true );
+		};
+		
+		
+		scores = UIButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );
+		scores.positionFromBottomRight( 0, 0 );
+		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+		scores.onTouchUpInside += ( sender ) =>
+		{
+			scrollable.scrollTo( -600, true );
+		};
 	}
 }

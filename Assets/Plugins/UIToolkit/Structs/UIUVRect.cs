@@ -7,11 +7,15 @@ public struct UIUVRect
 	public Vector2 uvDimensions;
 
 
-	// Convenience function to return a UVRect of all zeros
+	/// <summary>
+	/// Convenience property to return a UVRect of all zeros
+	/// </summary>
 	public static UIUVRect zero;
 	
 
-	// Automatically converts coordinates to UV space as specified by textureSize
+	/// <summary>
+	/// Automatically converts coordinates to UV space as specified by textureSize
+	/// </summary>
 	public UIUVRect( int x, int y, int width, int height, Vector2 textureSize )
 	{
 		lowerLeftUV = new Vector2( x / textureSize.x, 1.0f - ( ( y + height ) / textureSize.y ) );
@@ -19,7 +23,18 @@ public struct UIUVRect
 	}
 	
 	
-	// doubles everything for retina texture
+	public UIUVRect rectClippedToBounds( Vector2 textureSize )
+	{
+		var uv = this;
+		
+		
+		return uv;
+	}
+	
+	
+	/// <summary>
+	/// doubles everything for retina texture
+	/// </summary>
 	public void doubleForHD()
 	{
 		lowerLeftUV.x *= 2;
@@ -29,7 +44,7 @@ public struct UIUVRect
 	}
 
 
-#region Operator overloads
+	#region Operator overloads
 	
 	public static bool operator ==( UIUVRect lhs, UIUVRect rhs )
 	{
@@ -63,6 +78,6 @@ public struct UIUVRect
 		return string.Format( "x: {0}, y: {1}, w: {2}, h: {3}", lowerLeftUV.x, lowerLeftUV.y, uvDimensions.x, uvDimensions.y );
 	}
 
-#endregion;
+	#endregion;
 
 }

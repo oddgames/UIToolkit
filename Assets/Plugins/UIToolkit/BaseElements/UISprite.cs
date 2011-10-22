@@ -27,6 +27,8 @@ public class UISprite : UIObject, IPositionable
     public Vector3 v4 = new Vector3();
 
 	protected UIUVRect _uvFrame; // UV coordinates and size for the sprite
+	protected UIUVRect _uvFrameClipped; // alternate UV coordinatest for when a sprite it clipped
+	protected bool _clipped; // set to true when the sprite is clipped so the clipped uvFrame is used
 	
     protected Vector3[] meshVerts; // Pointer to the array of vertices in the mesh
     protected Vector2[] UVs; // Pointer to the array of UVs in the mesh
@@ -60,13 +62,35 @@ public class UISprite : UIObject, IPositionable
 
 	public virtual UIUVRect uvFrame
 	{
-		get { return _uvFrame; }
+		get { Debug.Log( "returing clipped? " + _clipped ); return _clipped ? _uvFrameClipped : _uvFrame; }
 		set
 		{
 			// Dont bother changing if the new value isn't different
 			if( _uvFrame != value )
 			{
 				_uvFrame = value;
+				manager.updateUV( this );
+			}
+		}
+	}
+	
+	
+	/// <summary>
+	/// Alternate uvFrame for when the sprite is clipped. Set to UIUVRect.zero to remove clipping or set
+	/// clipped to false.
+	/// </summary>
+	public virtual UIUVRect uvFrameClipped
+	{
+		get { return _uvFrameClipped; }
+		set
+		{
+			// Dont bother changing if the new value isn't different
+			if( _uvFrameClipped != value )
+			{
+				_uvFrameClipped = value;
+				
+				// if we were not set to zero then we use the clipped frame
+				_clipped = value != UIUVRect.zero;
 				manager.updateUV( this );
 			}
 		}
@@ -88,6 +112,20 @@ public class UISprite : UIObject, IPositionable
                 manager.showSprite( this );
         }
     }
+	
+	
+	public bool clipped
+	{
+		get { return _clipped; }
+		set
+		{
+			if( value == _clipped )
+				return;
+			
+			_clipped = value;
+			manager.updateUV( this );
+		}
+	}
 	
 
 	#region Transform passthrough properties so we can update necessary verts when changes occur
@@ -190,6 +228,10 @@ public class UISprite : UIObject, IPositionable
     // Applies the transform of the client GameObject and stores the results in the associated vertices of the overall mesh
     public virtual void updateTransform()
     {
+		// if we are hidden, no need to update our positions as that would cause us to be visible again
+		if( hidden )
+			return;
+		
 		meshVerts[vertexIndices.mv.one] = clientTransform.TransformPoint( v1 );
 		meshVerts[vertexIndices.mv.two] = clientTransform.TransformPoint( v2 );
 		meshVerts[vertexIndices.mv.three] = clientTransform.TransformPoint( v3 );

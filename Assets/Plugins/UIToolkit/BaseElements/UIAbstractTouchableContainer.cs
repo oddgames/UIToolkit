@@ -3,15 +3,18 @@ using System.Collections;
 
 
 
+/// <summary>
+/// Container class that is 
+/// </summary>
 public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouchable
 {
 	protected UIToolkit _manager; // Reference to the sprite manager in which this sprite resides
-
+	protected Vector2 _contentSize;
+	protected Vector2 _minEdgeInset;
+	protected Vector2 _maxEdgeInset;
 	
 	public UIAbstractTouchableContainer( UILayoutType layoutType, int spacing ) : this( UI.firstToolkit, layoutType, spacing )
-	{
-		
-	}
+	{}
 	
 	
 	// Default constructor
@@ -22,7 +25,37 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		
 		_manager.addToTouchables( this );
 	}
-
+	
+	
+	/// <summary>
+	/// Sets the size of the touchable area of the layout. This is also where children will be clipped to
+	/// </summary>
+	public void setSize( float width, float height )
+	{
+		_touchFrame = new Rect( position.x, -position.y, width, height );
+		calculateMinMaxInsets();
+	}
+	
+	
+	/// <summary>
+	/// Calcualates the min/max edge inset in both the x and y direction. This is called in response to the touchFrame
+	/// or contentSize of the container changing
+	/// </summary>
+	private void calculateMinMaxInsets()
+	{
+		_minEdgeInset.x = _contentSize.x - _touchFrame.width;
+		_minEdgeInset.y = -_contentSize.y + _touchFrame.height;
+		
+		_maxEdgeInset.y = 0;
+		_maxEdgeInset.x = 0;
+		
+		// now that we have new insets clip
+		clipToBounds();
+	}
+	
+	
+	protected abstract void clipToBounds();
+	
 	
 	#region ITouchable
 	
@@ -60,7 +93,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
-		Debug.Log( "Moved!!" );
+
 	}
 
 
@@ -83,6 +116,11 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	public override void addChild( params UISprite[] children )
 	{
 		base.addChild( children );
+		
+		// after the children are added we can grab the width/height which are freshly calculated
+		_contentSize.x = width;
+		_contentSize.y = height;
+		calculateMinMaxInsets();
 		
 		foreach( var child in children )
 		{

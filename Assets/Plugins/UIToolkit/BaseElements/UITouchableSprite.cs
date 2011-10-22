@@ -222,7 +222,7 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	}
 
 
-	#region Touch handlers
+	#region ITouchable
 	
 	// Touch handlers.  Subclasses should override these to get their specific behaviour
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER

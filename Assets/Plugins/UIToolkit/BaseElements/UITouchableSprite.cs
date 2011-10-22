@@ -260,9 +260,9 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
     // IComparable - sorts based on the z value of the client
 	public int CompareTo( object obj )
     {
-        if( obj is UITouchableSprite )
+        if( obj is ITouchable )
         {
-            var temp = obj as UITouchableSprite;
+            var temp = obj as ITouchable;
             return position.z.CompareTo( temp.position.z );
         }
 		

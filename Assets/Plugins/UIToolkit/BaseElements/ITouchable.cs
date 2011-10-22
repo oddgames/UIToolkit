@@ -10,6 +10,7 @@ public interface ITouchable
 	bool highlighted { get; set; }
 	bool hidden { get; set; }
 	Rect touchFrame { get; }
+	Vector3 position { get; set; }
 	
 	
 	bool hitTest( Vector2 point );

@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class UIBackgroundLayout : UIAbstractContainer
 {	
 	public UIBackgroundLayout( string filename ) : this( UI.firstToolkit, filename ) {}
-
+	
+	
 	public UIBackgroundLayout( UIToolkit manager, string filename ) : base( UILayoutType.BackgroundLayout ) 
 	{
 		var background = manager.addSprite( filename, 0, 0, 2 );

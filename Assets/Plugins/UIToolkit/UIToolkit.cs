@@ -152,20 +152,22 @@ public class UIToolkit : UISpriteManager
 
 	#region Add/Remove Element and Button functions
 
-	public void addTouchableSprite( UISprite touchableSprite )
+	public void addTouchableSprite( ITouchable touchableSprite )
 	{
-		if( touchableSprite is ITouchable )
-		{
-			addSprite( touchableSprite );
+		if( touchableSprite is UISprite )
+			addSprite( touchableSprite as UISprite );
 			
-			// Add the sprite to our touchables and sort them		
-			_touchableSprites.Add( touchableSprite as ITouchable );
-			_touchableSprites.Sort();
-		}
+		// Add the sprite to our touchables and sort them		
+		_touchableSprites.Add( touchableSprite as ITouchable );
+		
+		// TODO: why does this not work with UIAbstractTouchableContainer?
+		//_touchableSprites.Sort();
 	}
 	
 	
-	// Removes a sprite or touchableSprite
+	/// <summary>
+	/// Removes a sprite
+	/// </summary>
 	public void removeElement( UISprite sprite )
 	{
 		// If we are removing a ITouchable remove it from our internal array as well
@@ -173,6 +175,18 @@ public class UIToolkit : UISpriteManager
 			_touchableSprites.Remove( sprite as ITouchable );
 
 		removeSprite( sprite );
+	}
+	
+	
+	public void removeFromTouchables( ITouchable touchable )
+	{
+		_touchableSprites.Remove( touchable );
+	}
+
+	
+	public void addToTouchables( ITouchable touchable )
+	{
+		_touchableSprites.Add( touchable );
 	}
 
 	#endregion;

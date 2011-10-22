@@ -161,7 +161,6 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
-		Debug.Log( "delta: " + touch.deltaPosition.y );
 		int newTop = _edgeInsets.top - (int)touch.deltaPosition.y;
 		if( newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y )
 		{

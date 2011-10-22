@@ -44,5 +44,18 @@ public class ScrollableContainerManager : MonoBehaviour
 		{
 			scrollable.scrollTo( -600, true );
 		};
+		
+		
+		scores = UIButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );
+		scores.centerize();
+		scores.positionFromTopRight( 0.5f, 0 );
+		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+		scores.onTouchUpInside += ( sender ) =>
+		{
+			var target = scrollable.position;
+			target.x += 50;
+			target.y += 50;
+			scrollable.positionTo( 1, target, Easing.Quintic.easeIn );
+		};
 	}
 }

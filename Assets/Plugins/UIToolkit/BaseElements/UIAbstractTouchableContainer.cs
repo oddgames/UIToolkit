@@ -24,18 +24,21 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		_manager = manager;
 		
 		_manager.addToTouchables( this );
+		
+		// listen to changes to our own transform so we can move the touchFrame
+		this.onTransformChanged += transformChanged;
 	}
+
 	
-	
-	/// <summary>
-	/// Sets the size of the touchable area of the layout. This is also where children will be clipped to
-	/// </summary>
-	public void setSize( float width, float height )
+	public override void transformChanged()
 	{
-		_touchFrame = new Rect( position.x, -position.y, width, height );
-		calculateMinMaxInsets();
+		// we moved so adjust the touchFrame
+		setSize( _touchFrame.width, _touchFrame.height );
+		
+		// call through to base which will relayout our children
+		base.transformChanged();
 	}
-	
+
 	
 	/// <summary>
 	/// Calcualates the min/max edge inset in both the x and y direction. This is called in response to the touchFrame
@@ -109,6 +112,15 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	#endregion
 	
 	
+	/// <summary>
+	/// Sets the size of the touchable area of the layout. This is also where children will be clipped to
+	/// </summary>
+	public void setSize( float width, float height )
+	{
+		_touchFrame = new Rect( position.x, -position.y, width, height );
+		calculateMinMaxInsets();
+	}	
+
 	
 	/// <summary>
 	/// Override so that we can remove the touchable sprites. The container needs to manage all touches.

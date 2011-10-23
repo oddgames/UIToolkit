@@ -23,6 +23,10 @@ public class ScrollableContainerManager : MonoBehaviour
 				button = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
 			}
 			
+			// store i locally so we can put it in the closure scope of the touch handler
+			var j = i;
+			button.onTouchUpInside += ( sender ) => Debug.Log( "touched button: " + j );
+			
 			scrollable.addChild( button );
 		}
 		

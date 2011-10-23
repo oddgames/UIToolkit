@@ -6,8 +6,19 @@ using System.Collections.Generic;
 
 public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 {
-	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 3;
+	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 4;
 	private const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
+	private float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.instance.isHD ? 10 : 5;
+	private const float CONTENT_TOUCH_DELAY = 0.15f;
+	
+	private float _deltaTouch;
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	private UIFakeTouch _lastTouch;
+#else
+	private Touch _lastTouch;
+#endif
+	private Vector2 _lastTouchPosition;
+	private ITouchable _activeTouchable;
 	private bool _isDragging;
 	private Stack<float> _velocities = new Stack<float>( TOTAL_VELOCITY_SAMPLE_COUNT );
 	
@@ -90,6 +101,19 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	}
 	
 	
+	public IEnumerator checkDelayedContentTouch()
+	{
+		yield return new WaitForSeconds( CONTENT_TOUCH_DELAY );
+		
+		if( _isDragging && Mathf.Abs( _deltaTouch ) < TOUCH_MAX_DELTA_FOR_ACTIVATION )
+		{
+			_activeTouchable = getButtonForScreenPosition( _lastTouch.position );
+			if( _activeTouchable != null )
+				_activeTouchable.onTouchBegan( _lastTouch, _lastTouch.position );
+		}
+	}
+	
+	
 	protected override void clipToBounds()
 	{
 		// clip hidden children
@@ -150,8 +174,23 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
+		// sanity check in case we lost a touch (happens with Unity on occassion)
+		if( _activeTouchable != null )
+		{
+			// we dont pass onTouchEnded here because technically we are still over the ITouchable
+			_activeTouchable.highlighted = false;
+			_activeTouchable = null;
+		}
+		
+		// if we have a couroutine running stop it
+		//_manager.StopCoroutine( "checkDelayedContentTouch" );
+		
+		_deltaTouch = 0;
 		_isDragging = true;
 		_velocities.Clear();
+		
+		// kick off a new check
+		_manager.StartCoroutine( checkDelayedContentTouch() );
 	}
 
 
@@ -161,8 +200,20 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
+		// increment deltaTouch so we can pass on the touch if necessary
+		_deltaTouch += touch.deltaPosition.y;
+		_lastTouch = touch;
+		
+		// once we move too far unhighlight and stop tracking the touchable
+		if( Mathf.Abs( _deltaTouch ) > TOUCH_MAX_DELTA_FOR_ACTIVATION && _activeTouchable != null )
+		{
+			_activeTouchable.onTouchEnded( touch, touchPos, true );
+			_activeTouchable = null;
+		}
+			
+		
 		int newTop = _edgeInsets.top - (int)touch.deltaPosition.y;
-		if( newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y )
+		if( newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y ) // movement within the bounds (ie no bounce yet)
 		{
 			_edgeInsets.top = newTop;
 			layoutChildren();
@@ -182,7 +233,18 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 #endif
 	{
 		_isDragging = false;
-		_manager.StartCoroutine( decelerate() );
+		
+		// pass on the touch if we still have an active touchable
+		if( _activeTouchable != null )
+		{
+			_activeTouchable.onTouchEnded( touch, touchPos, true );
+			_activeTouchable.highlighted = false;
+			_activeTouchable = null;
+		}
+		else
+		{
+			_manager.StartCoroutine( decelerate() );
+		}
 	}
 	
 	#endregion

@@ -58,7 +58,15 @@ public class UISlider : UITouchableSprite
 		manager.addTouchableSprite( this );
 	}
 
-
+	// Removes the sprite from the mesh and destroys it's client GO
+	public override void destroy()
+	{
+		// pass the call down to our knob
+		_sliderKnob.destroy();
+		
+		base.destroy();
+	}
+	
     public override bool hidden
     {
         get { return ___hidden; }

@@ -230,7 +230,7 @@ public class UISprite : UIObject, IPositionable
 
 
 	// Removes the sprite from the mesh and destroys it's client GO
-	public void destroy()
+	public virtual void destroy()
 	{
 		manager.removeElement( this );
 	}

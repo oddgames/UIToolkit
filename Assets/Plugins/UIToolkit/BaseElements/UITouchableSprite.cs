@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 
 
-public abstract class UITouchableSprite : UISprite, IComparable
+public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 {
 	public int touchCount;
 	public UIUVRect disabledUVframe; // when disabled, this UV frame will be used if it is set
@@ -102,8 +102,6 @@ public abstract class UITouchableSprite : UISprite, IComparable
 				
 				// grab the normal frame of the sprite then add the offsets to get our touch frames
 				// remembering to offset if we have our origin in the center
-				//Rect normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width, height );
-				//fixed to take into consideration the scale if changed
 				Rect normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width * localScale.x , height * localScale.y );
 				
 				if( gameObjectOriginInCenter )
@@ -121,7 +119,8 @@ public abstract class UITouchableSprite : UISprite, IComparable
 		}
 	}
 	
-	Rect addOffsetsAndClipToScreen( Rect frame, UIEdgeOffsets offsets )
+	
+	private Rect addOffsetsAndClipToScreen( Rect frame, UIEdgeOffsets offsets )
 	{
 		return Rect.MinMaxRect
 		(
@@ -144,7 +143,9 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	#endregion;
 
 
-	// Tests if a point is inside the current touchFrame
+	/// <summary>
+	/// Tests if a point is inside the current touchFrame
+	/// </summary>
 	public bool hitTest( Vector2 point )
 	{
 		return touchFrame.Contains( point );
@@ -219,7 +220,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	}
 
 
-	#region Touch handlers
+	#region ITouchable
 	
 	// Touch handlers.  Subclasses should override these to get their specific behaviour
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
@@ -257,9 +258,9 @@ public abstract class UITouchableSprite : UISprite, IComparable
     // IComparable - sorts based on the z value of the client
 	public int CompareTo( object obj )
     {
-        if( obj is UITouchableSprite )
+        if( obj is ITouchable )
         {
-            var temp = obj as UITouchableSprite;
+            var temp = obj as ITouchable;
             return position.z.CompareTo( temp.position.z );
         }
 		

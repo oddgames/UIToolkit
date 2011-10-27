@@ -9,10 +9,10 @@ public class UIToolkit : UISpriteManager
 	static public UIToolkit instance = null;
 	
 	public bool displayTouchDebugAreas = false; // if true, gizmos will be used to show the hit areas in the editor
-	private UITouchableSprite[] _spriteSelected;
+	private ITouchable[] _spriteSelected;
 	
 	// Holds all our touchable sprites
-	private List<UITouchableSprite> _touchableSprites = new List<UITouchableSprite>();
+	private List<ITouchable> _touchableSprites = new List<ITouchable>();
 	
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	private Vector2? lastMousePosition;
@@ -28,7 +28,7 @@ public class UIToolkit : UISpriteManager
 		
 		base.Awake();
 
-		_spriteSelected = new UITouchableSprite[12];
+		_spriteSelected = new ITouchable[12];
 		for( int i = 0; i < 12; ++i )
 			_spriteSelected[i] = null;
 	}
@@ -152,24 +152,41 @@ public class UIToolkit : UISpriteManager
 
 	#region Add/Remove Element and Button functions
 
-	public void addTouchableSprite( UITouchableSprite touchableSprite )
+	public void addTouchableSprite( ITouchable touchableSprite )
 	{
-		addSprite( touchableSprite );
-		
+		if( touchableSprite is UISprite )
+			addSprite( touchableSprite as UISprite );
+			
 		// Add the sprite to our touchables and sort them		
-		_touchableSprites.Add( touchableSprite );
-		_touchableSprites.Sort();
+		_touchableSprites.Add( touchableSprite as ITouchable );
+		
+		// TODO: why does this not work with UIAbstractTouchableContainer?
+		//_touchableSprites.Sort();
 	}
 	
 	
-	// Removes a sprite or touchableSprite
+	/// <summary>
+	/// Removes a sprite
+	/// </summary>
 	public void removeElement( UISprite sprite )
 	{
-		// If we are removing a GUITouchableSprite remove it from our internal array as well
-		if( sprite is UITouchableSprite )
-			_touchableSprites.Remove( sprite as UITouchableSprite );
+		// If we are removing a ITouchable remove it from our internal array as well
+		if( sprite is ITouchable )
+			_touchableSprites.Remove( sprite as ITouchable );
 
 		removeSprite( sprite );
+	}
+	
+	
+	public void removeFromTouchables( ITouchable touchable )
+	{
+		_touchableSprites.Remove( touchable );
+	}
+
+	
+	public void addToTouchables( ITouchable touchable )
+	{
+		_touchableSprites.Add( touchable );
 	}
 
 	#endregion;
@@ -185,7 +202,7 @@ public class UIToolkit : UISpriteManager
 #endif
 	{
 		// tranform the touch position so the origin is in the top left
-		Vector2 fixedTouchPosition = new Vector2( touch.position.x, Screen.height - touch.position.y );
+		var fixedTouchPosition = new Vector2( touch.position.x, Screen.height - touch.position.y );
 		var button = getButtonForScreenPosition( fixedTouchPosition );
 
 		bool touchEnded = ( touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled );
@@ -241,7 +258,7 @@ public class UIToolkit : UISpriteManager
 
 	
 	// Gets the closets touchableSprite to the camera that contains the touchPosition
-	private UITouchableSprite getButtonForScreenPosition( Vector2 touchPosition )
+	private ITouchable getButtonForScreenPosition( Vector2 touchPosition )
 	{
 		// Run through our touchables in order.  They are sorted by z-index already.
 		for( int i = 0, totalTouchables = _touchableSprites.Count; i < totalTouchables; i++ )

@@ -113,7 +113,7 @@ public class UISpriteManager : MonoBehaviour
 	
 		foreach( System.Collections.DictionaryEntry item in frames )
 		{
-			// extract the info we need from the TexturePacker json file.  mainly uvRect and size
+			// extract the info we need from the TexturePacker json file, mainly uvRect and size
 			var frame = (Hashtable)((Hashtable)item.Value)["frame"];
 			var frameX = int.Parse( frame["x"].ToString() );
 			var frameY = int.Parse( frame["y"].ToString() );

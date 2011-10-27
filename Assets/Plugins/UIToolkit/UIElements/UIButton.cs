@@ -59,7 +59,7 @@ public class UIButton : UITouchableSprite
 	// Sets the uvFrame of the original UISprite and resets the _normalUVFrame for reference when highlighting
 	public override UIUVRect uvFrame
 	{
-		get { return _uvFrame; }
+		get { return _clipped ? _uvFrameClipped : _uvFrame; }
 		set
 		{
 			_uvFrame = value;

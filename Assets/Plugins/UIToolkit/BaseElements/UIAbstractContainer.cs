@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class UIAbstractContainer : UIObject, IPositionable
+public abstract class UIAbstractContainer : UIObject, IPositionable
 {
 	public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, AbsoluteLayout };
 	private UILayoutType _layoutType;
@@ -47,6 +47,14 @@ public class UIAbstractContainer : UIObject, IPositionable
     }
 
 
+	
+	/// <summary>
+	/// We need the layout type set from the getgo so we can default to vertical
+	/// </summary>
+	public UIAbstractContainer() : this( UILayoutType.Vertical )
+	{}
+	
+	
 	/// <summary>
 	/// We need the layout type set from the getgo so we can lay things out properly
 	/// </summary>

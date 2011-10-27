@@ -41,12 +41,12 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		while( !_isDragging )
 		{
 			var deltaMovement = avgVelocity * Time.deltaTime;
-			int newTop = _edgeInsets.top - (int)deltaMovement;
+			var newTop = _scrollPosition - deltaMovement;
 			
 			// make sure we have some velocity and we are within our bounds
 			if( Mathf.Abs( avgVelocity ) > 25 && newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y )
 			{
-				_edgeInsets.top = newTop;
+				_scrollPosition = newTop;
 				layoutChildren();
 				avgVelocity *= SCROLL_DECELERATION_MODIFIER;
 				
@@ -62,7 +62,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	
 	private IEnumerator scrollToInset( int target )
 	{
-		var start = _edgeInsets.top;
+		var start = _scrollPosition;
 		var startTime = Time.time;
 		var duration = 0.4f;
 		var running = true;
@@ -73,7 +73,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 			var easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
 			easPos = Easing.Quartic.easeOut( easPos );
 			
-			_edgeInsets.top = (int)Mathf.Lerp( start, target, easPos );
+			_scrollPosition = (int)Mathf.Lerp( start, target, easPos );
 			layoutChildren();
 			
 			if( ( startTime + duration ) <= Time.time )
@@ -82,22 +82,6 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 			yield return null;
 		}
 		layoutChildren();
-	}
-
-	
-	private ITouchable getButtonForScreenPosition( Vector2 touchPosition )
-	{
-		for( int i = 0, totalChildren = _children.Count; i < totalChildren; i++ )
-		{
-			var touchable = _children[i] as ITouchable;
-			if( touchable != null )
-			{
-				if( touchable.hitTest( touchPosition ) )
-					return touchable;
-			}
-		}
-		
-		return null;
 	}
 	
 	
@@ -213,10 +197,10 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		}
 			
 		
-		int newTop = _edgeInsets.top - (int)touch.deltaPosition.y;
+		var newTop = _scrollPosition - touch.deltaPosition.y;
 		if( newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y ) // movement within the bounds (ie no bounce yet)
 		{
-			_edgeInsets.top = newTop;
+			_scrollPosition = newTop;
 			layoutChildren();
 		}
 
@@ -269,7 +253,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		}
 		else
 		{
-			_edgeInsets.top = newTop;
+			_scrollPosition = newTop;
 			layoutChildren();
 		}
 	}

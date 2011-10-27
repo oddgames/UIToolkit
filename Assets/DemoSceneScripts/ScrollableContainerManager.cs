@@ -5,11 +5,15 @@ using System.Collections;
 
 public class ScrollableContainerManager : MonoBehaviour
 {
+	private bool _movedContainer;
+	
+	
 	void Start()
 	{
 		var scrollable = new UIScrollableVerticalLayout( 10 );
 		scrollable.position = new Vector3( 0, -50, 0 );
-		scrollable.setSize( 300, Screen.height / 1.4f );
+		var width = UI.instance.isHD ? 300 : 150;
+		scrollable.setSize( width, Screen.height / 1.4f );
 		
 		for( var i = 0; i < 20; i++ )
 		{
@@ -57,9 +61,13 @@ public class ScrollableContainerManager : MonoBehaviour
 		scores.onTouchUpInside += ( sender ) =>
 		{
 			var target = scrollable.position;
-			target.x += 50;
-			target.y += 50;
-			scrollable.positionTo( 1, target, Easing.Quintic.easeIn );
+			var moveBy = _movedContainer ? -100 : 100;
+			if( !UI.instance.isHD )
+				moveBy /= 2;
+			target.x += moveBy * 2;
+			target.y += moveBy;
+			scrollable.positionTo( 0.4f, target, Easing.Quintic.easeIn );
+			_movedContainer = !_movedContainer;
 		};
 	}
 }

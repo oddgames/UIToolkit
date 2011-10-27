@@ -21,6 +21,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	protected float _height;
 	public new float height { get { return _height; } }
 	
+	protected float _scrollPosition; // scroll position calculated from the top
+	
 	protected List<UISprite> _children = new List<UISprite>();
 	private bool _suspendUpdates; // when true, layoutChildren will do nothing
 	
@@ -131,7 +133,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		{
 			// start with the insets, then add each object + spacing then end with insets
 			_width = _edgeInsets.left;
-			_height = _edgeInsets.top;
+			_height = _edgeInsets.top + _scrollPosition;
 				
 			if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal )
 			{

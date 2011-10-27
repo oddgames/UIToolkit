@@ -13,6 +13,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	protected Vector2 _minEdgeInset;
 	protected Vector2 _maxEdgeInset;
 	
+	
 	public UIAbstractTouchableContainer( UILayoutType layoutType, int spacing ) : this( UI.firstToolkit, layoutType, spacing )
 	{}
 	
@@ -28,7 +29,10 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		// listen to changes to our own transform so we can move the touchFrame
 		this.onTransformChanged += transformChanged;
 	}
-
+	
+	
+	protected abstract void clipToBounds();
+	
 	
 	public override void transformChanged()
 	{
@@ -56,8 +60,23 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		clipToBounds();
 	}
 	
-	
-	protected abstract void clipToBounds();
+
+	protected ITouchable getButtonForScreenPosition( Vector2 touchPosition )
+	{
+		// we loop backwards so that any clipped elements at the top dont try to override the hitTest
+		// due to their frame overlapping the touchable below
+		for( int i = _children.Count - 1; i >= 0; i-- )
+		{
+			var touchable = _children[i] as ITouchable;
+			if( touchable != null )
+			{
+				if( touchable.hitTest( touchPosition ) )
+					return touchable;
+			}
+		}
+		
+		return null;
+	}
 	
 	
 	#region ITouchable

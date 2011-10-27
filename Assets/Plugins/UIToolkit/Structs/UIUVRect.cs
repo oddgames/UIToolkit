@@ -5,7 +5,9 @@ public struct UIUVRect
 {
 	public Vector2 lowerLeftUV;
 	public Vector2 uvDimensions;
-	private Vector2 _originalCoordinates; // used internallyfor clipping
+	public bool clippingTop; // used internally for clipping
+	
+	private Vector2 _originalCoordinates; // used internally for clipping
 
 
 	/// <summary>
@@ -24,12 +26,14 @@ public struct UIUVRect
 		
 		lowerLeftUV = new Vector2( x / textureSize.x, 1.0f - ( ( y + height ) / textureSize.y ) );
 		uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
+		clippingTop = false;
 	}
 	
 	
 	public UIUVRect rectClippedToBounds( float width, float height, bool clippingTop, Vector2 textureSize )
 	{
 		var uv = this;
+		uv.clippingTop = clippingTop;
 		
 		// if we are clipping the top, only the uvDimensions need adjusting
 		if( clippingTop )
@@ -43,6 +47,18 @@ public struct UIUVRect
 		}
 		
 		return uv;
+	}
+	
+	
+	public float getWidth( Vector2 textureSize )
+	{
+		return uvDimensions.x * textureSize.x;
+	}
+	
+	
+	public float getHeight( Vector2 textureSize )
+	{
+		return uvDimensions.y * textureSize.y;
 	}
 	
 	

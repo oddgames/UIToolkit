@@ -107,9 +107,10 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		
 		if( _isDragging && Mathf.Abs( _deltaTouch ) < TOUCH_MAX_DELTA_FOR_ACTIVATION )
 		{
-			_activeTouchable = getButtonForScreenPosition( _lastTouch.position );
+			var fixedTouchPosition = new Vector2( _lastTouch.position.x, Screen.height - _lastTouch.position.y );
+			_activeTouchable = getButtonForScreenPosition( fixedTouchPosition );
 			if( _activeTouchable != null )
-				_activeTouchable.onTouchBegan( _lastTouch, _lastTouch.position );
+				_activeTouchable.onTouchBegan( _lastTouch, fixedTouchPosition );
 		}
 	}
 	

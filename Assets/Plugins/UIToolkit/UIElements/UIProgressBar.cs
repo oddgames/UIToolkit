@@ -76,6 +76,13 @@ public class UIProgressBar : UISprite
 			_bar.hidden = value;
         }
     }
+	
+	
+	public override void destroy()
+	{
+		_bar.destroy();
+		base.destroy();
+	}
 
 	// Current value of the progress bar.  Value is always between 0 and 1.
 	public float value

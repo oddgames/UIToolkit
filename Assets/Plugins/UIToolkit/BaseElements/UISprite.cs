@@ -76,6 +76,16 @@ public class UISprite : UIObject, IPositionable
 			if( _uvFrame != value )
 			{
 				_uvFrame = value;
+				
+				// if we are clipped, we need to provide a new, clipped frame here as well as set the _uvFrame
+				if( _clipped )
+				{
+					var clippedWidth = _uvFrameClipped.getWidth( manager.textureSize );
+					var clippedHeight = _uvFrameClipped.getHeight( manager.textureSize );
+					
+					_uvFrameClipped = value.rectClippedToBounds( clippedWidth, clippedHeight, _uvFrameClipped.clippingTop, manager.textureSize );
+				}
+				
 				manager.updateUV( this );
 			}
 		}
@@ -338,7 +348,7 @@ public class UISprite : UIObject, IPositionable
 
 
 	// Removes the sprite from the mesh and destroys it's client GO
-	public void destroy()
+	public virtual void destroy()
 	{
 		manager.removeElement( this );
 	}

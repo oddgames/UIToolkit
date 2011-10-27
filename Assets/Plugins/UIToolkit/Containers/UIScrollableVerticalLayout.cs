@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 {
-	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 4;
+	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 2;
 	private const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
 	private float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.instance.isHD ? 10 : 5;
 	private const float CONTENT_TOUCH_DELAY = 0.15f;

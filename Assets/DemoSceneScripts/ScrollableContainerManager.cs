@@ -17,21 +17,32 @@ public class ScrollableContainerManager : MonoBehaviour
 		
 		for( var i = 0; i < 20; i++ )
 		{
-			UIButton button;
-			if( i % 2 == 0 )
+			UITouchableSprite touchable;
+			if( i % 3 == 0 )
 			{
-				button = UIButton.create( "playUp.png", "playDown.png", 0, 0 );
+				touchable = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0 );
+			}
+			else if( i % 2 == 0 )
+			{
+				touchable = UIButton.create( "playUp.png", "playDown.png", 0, 0 );
 			}
 			else
 			{
-				button = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
+				touchable = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
 			}
 			
-			// store i locally so we can put it in the closure scope of the touch handler
-			var j = i;
-			button.onTouchUpInside += ( sender ) => Debug.Log( "touched button: " + j );
+			// only add a touchUpInside handler for buttons
+			if( touchable is UIButton )
+			{
+				var button = touchable as UIButton;
+				
+				// store i locally so we can put it in the closure scope of the touch handler
+				var j = i;
+				button.onTouchUpInside += ( sender ) => Debug.Log( "touched button: " + j );
+			}
+
 			
-			scrollable.addChild( button );
+			scrollable.addChild( touchable );
 		}
 		
 		

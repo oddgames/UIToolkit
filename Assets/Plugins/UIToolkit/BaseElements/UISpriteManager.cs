@@ -83,7 +83,7 @@ public class UISpriteManager : MonoBehaviour
 	{
 		// load our texture, at 2x if necessary
 		if( UI.instance.isHD )
-			texturePackerConfigName = texturePackerConfigName + "2x";
+			texturePackerConfigName = texturePackerConfigName + UI.instance.hdExtension;
 		
 		var texture = (Texture)Resources.Load( texturePackerConfigName, typeof( Texture ) );
 		if( texture == null )

@@ -104,7 +104,7 @@ public class UIText : System.Object
 	{
 		// should we load a double resolution font?
 		if( UI.instance.isHD )
-			filename = filename + "2x";
+			filename = filename + UI.instance.hdExtension;
 	
 		var asset = Resources.Load( filename, typeof( TextAsset ) ) as TextAsset;
 		if( asset == null )

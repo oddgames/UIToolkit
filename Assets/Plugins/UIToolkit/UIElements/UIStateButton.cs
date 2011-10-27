@@ -22,11 +22,13 @@ public class UIStateButton : UIButton
 		return UIStateButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
 	}
 	
+	
 	new public static UIStateButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
 	{
 		return UIStateButton.create( manager, filename, highlightedFilename, xPos, yPos, 1 );
 	}
-
+	
+	
 	new public static UIStateButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
 	{
 		var filenames = new string[1] {filename};
@@ -34,16 +36,19 @@ public class UIStateButton : UIButton
 		return UIStateButton.create( manager, filenames, highlightedFilenames, xPos, yPos, depth );
 	}	
 	
+	
 	public static UIStateButton create( string[] filenames, string[] highlightedFilenames, int xPos, int yPos )
 	{
 		return UIStateButton.create( UI.firstToolkit, filenames, highlightedFilenames, xPos, yPos );
 	}
+	
 	
 	public static UIStateButton create( UIToolkit manager, string[] filenames, string[] highlightedFilenames, int xPos, int yPos )
 	{
 		return UIStateButton.create( manager, filenames, highlightedFilenames, xPos, yPos, 1 );
 	}
 		
+	
 	public static UIStateButton create( UIToolkit manager, string[] filenames, string[] highlightedFilenames, int xPos, int yPos, int depth )
 	{
 		
@@ -63,13 +68,15 @@ public class UIStateButton : UIButton
 		
 		return button;
 	}
-
+	
+	
 	public UIStateButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( manager, frame, depth, uvFrame, highlightedUVframe )
 	{
 	}
 
 
 	#endregion;
+	
 	
 	/// <summary>
 	/// Flag whether state wraps back to 0 after last state hit

@@ -26,6 +26,7 @@ public class UI : MonoBehaviour
 	public int maxWidthOrHeightForSD = 960; // if the width/height of the screen equals or exceeds this size HD mode will be triggered
 	[HideInInspector]
 	public bool isHD = false;
+	public string hdExtension = "2x";
 	
 
 	#region Unity MonoBehaviour Functions

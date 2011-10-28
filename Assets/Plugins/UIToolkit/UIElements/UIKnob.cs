@@ -40,7 +40,7 @@ public class UIKnob : UITouchableSprite
 	}
 
 	
-	public UIKnob( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, true )
+	public UIKnob( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame, true, false )
 	{
 		_tempUVframe = uvFrame;
 		

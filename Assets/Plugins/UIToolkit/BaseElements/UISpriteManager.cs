@@ -16,6 +16,7 @@ public struct UITextureInfo
 	public UIUVRect uvRect;
 	public Rect frame;
 	public Rect sourceSize;
+	public bool rotated;
 }
 
 
@@ -127,11 +128,24 @@ public class UISpriteManager : MonoBehaviour
 			var sourceSizeW = int.Parse( sourceSize["w"].ToString() );
 			var sourceSizeH = int.Parse( sourceSize["h"].ToString() );
 			
-			var ti = new UITextureInfo();
-			ti.frame = new Rect( frameX, frameY, frameW, frameH );
-			ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH, textureSize );
-			ti.sourceSize = new Rect( sourceSizeX, sourceSizeY, sourceSizeW, sourceSizeH );
+			//read the rotation value
+			var item1 = (bool)((Hashtable)item.Value)["rotated"];
 			
+			var ti = new UITextureInfo();
+			if (item1)
+			{
+				ti.frame = new Rect( frameX, frameY, frameH, frameW );
+				ti.uvRect = new UIUVRect( frameX, frameY, frameH, frameW, textureSize );
+				ti.sourceSize = new Rect( sourceSizeX, sourceSizeY, sourceSizeH, sourceSizeW );
+				ti.rotated = item1;
+			}
+			else
+			{
+				ti.frame = new Rect( frameX, frameY, frameW, frameH );
+				ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH, textureSize );
+				ti.sourceSize = new Rect( sourceSizeX, sourceSizeY, sourceSizeW, sourceSizeH );
+				ti.rotated = item1;
+			}
 			textures.Add( item.Key.ToString(), ti );
 		}
 		
@@ -344,17 +358,17 @@ public class UISpriteManager : MonoBehaviour
 		var textureInfo = textureDetails[name];
 		var positionRect = new Rect( xPos, yPos, textureInfo.frame.width, textureInfo.frame.height );
 
-		return this.addSprite( positionRect, textureInfo.uvRect, depth, gameObjectOriginInCenter );
+		return this.addSprite( positionRect, textureInfo.uvRect, depth, gameObjectOriginInCenter , textureInfo.rotated );
     }
 
 	
 	/// <summary>
 	/// Shortcut for adding a new sprite using the raw materials
 	/// </summary>
-    private UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter )
+    private UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter , bool rotated )
     {
         // Create and initialize the new sprite
-		UISprite newSprite = new UISprite( frame, depth, uvFrame, gameObjectOriginInCenter );
+		UISprite newSprite = new UISprite( frame, depth, uvFrame, gameObjectOriginInCenter, rotated );
 		addSprite( newSprite );
 		
 		return newSprite;

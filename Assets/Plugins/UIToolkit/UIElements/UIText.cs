@@ -457,7 +457,7 @@ public class UIText : System.Object
 		
 		if( sprite == null )
 		{
-			sprite = new UISprite( rect, depth, uvRect, false, false );
+			sprite = new UISprite( rect, depth, uvRect, false );
 			_manager.addSprite( sprite );
 		}
 		else

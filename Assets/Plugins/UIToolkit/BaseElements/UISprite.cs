@@ -39,15 +39,13 @@ public class UISprite : UIObject, IPositionable
 	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
 	
 	
-	public UISprite( Rect frame, int depth, UIUVRect uvFrame ) : this( frame, depth, uvFrame, false, false )
+	public UISprite( Rect frame, int depth, UIUVRect uvFrame ) : this( frame, depth, uvFrame, false )
 	{}
 	
-	public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter, bool rotated ):base()
+
+    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ) : base()
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
-
-		if (rotated)
-		client.transform.Rotate(0,0,-90);
 		
 		// Setup our GO
 		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index

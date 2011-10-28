@@ -29,7 +29,7 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	
 	
 	// constructor for when the need to have a centered UISprite arises (I'm looking at you UIKnob)
-	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter, bool rotated ):base( frame, depth, uvFrame, gameObjectOriginInCenter, rotated )
+	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
 	{
 	}
 	

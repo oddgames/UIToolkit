@@ -83,6 +83,8 @@ public class UIAnimation
 	// coroutine that marshals the animation
 	public IEnumerator animate()
 	{
+		_running = true;
+		
 		// check for any previously running animations of this type.  we dont want them fighting
 		if( _spriteAnimations.ContainsKey( sprite ) )
 		{
@@ -184,5 +186,61 @@ public class UIAnimation
 	{
 		_running = false;
 	}
-
+	
+	
+	/// <summary>
+	/// resets the start value to the current. useful for when the sprite has moved/scaled/changed and you still want to use the same UIAnimation
+	/// </summary>
+	public void restartStartToCurrent()
+	{
+		switch( _aniProperty )
+		{
+			case UIAnimationProperty.Position:
+				start = sprite.localPosition;
+				break;
+			case UIAnimationProperty.LocalScale:
+				start = sprite.localScale;
+				break;
+			case UIAnimationProperty.EulerAngles:
+				start = sprite.eulerAngles;
+				break;
+			case UIAnimationProperty.Alpha:
+				Color currentColor = sprite.color;
+				startFloat = currentColor.a;
+				break;
+			case UIAnimationProperty.Color:
+				startColor = sprite.color;
+				break;
+		}
+	}
+	
+	
+	/// <summary>
+	/// sets the duration. this will have no effect if an animation is currently running
+	/// </summary>
+	public void setDuration( float newDuration )
+	{
+		if( !_running )
+			duration = newDuration;
+	}
+	
+	
+	/// <summary>
+	/// sets the target value. this will have no effect if an animation is currently running
+	/// </summary>
+	public void setTarget( Vector3 newTarget )
+	{
+		if( _running )
+			return;
+		
+		switch( _aniProperty )
+		{
+			case UIAnimationProperty.Position:
+			case UIAnimationProperty.LocalScale:
+			case UIAnimationProperty.EulerAngles:
+				target = newTarget;
+				break;
+		}
+	}
+	
 }

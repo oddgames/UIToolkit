@@ -160,6 +160,20 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	}
 	
 	
+	// override hidden so we can set the touch frame to dirty when being shown
+	public override bool hidden
+    {
+        get { return ___hidden; }
+        set
+        {
+            base.hidden = value;
+			
+			if( value )
+				touchFrameIsDirty = true;
+        }
+    }
+
+	
 	// indicates if the mouse pointer is hovering over this element
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public virtual bool hoveredOver

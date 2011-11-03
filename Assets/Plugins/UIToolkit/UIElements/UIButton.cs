@@ -1,13 +1,11 @@
 using UnityEngine;
+using System;
 
 
 public class UIButton : UITouchableSprite
 {
-	public delegate void UIButtonTouchUpInside( UIButton sender );
-	public event UIButtonTouchUpInside onTouchUpInside;
-
-	public delegate void UIButtonTouchDown( UIButton sender );
-	public event UIButtonTouchDown onTouchDown;
+	public event Action<UIButton> onTouchUpInside;
+	public event Action<UIButton> onTouchDown;
 
 	public UIUVRect highlightedUVframe;
 	public AudioClip touchDownSound;

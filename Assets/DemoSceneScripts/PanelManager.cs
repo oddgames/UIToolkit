@@ -15,7 +15,9 @@ public class PanelManager : MonoBehaviour
 	
 	
 		// Options button
-		var optionsButton = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
+		var optionsButton = UIZoomButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
+		optionsButton.animationDuration = 0.2f;
+		optionsButton.animationTargetScale = new Vector3( 1.4f, 1.4f, 1.4f );
 		
 		
 		// Vertical panel

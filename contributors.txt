@@ -7,3 +7,4 @@ mspacemedia provided pixel doubling for UIRelative class when in HD mode
 getluky provided UIText enhancements including bug fixes, vertical and horizontal alignment as well as touch frame clip to screen bounds fixes
 Oliver provided the NoLayout and BackgroundLayout containers
 zentuit provided the UIStateButton
+yuriks provided a fix for Easing.exponential.easeOut

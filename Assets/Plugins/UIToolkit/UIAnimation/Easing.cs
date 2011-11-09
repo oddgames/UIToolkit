@@ -107,7 +107,7 @@ public static class Easing
 		
 		public static float easeOut( float t )
 		{
-			return ( Mathf.Pow( 2, -10 * t ) + 1 ) * -1;
+			return 1 - Mathf.Pow( 2, -10 * t );
 		}
 		
 		
@@ -116,7 +116,7 @@ public static class Easing
 			if( t <= 0.5f )
 				return Exponential.easeIn( t * 2 ) / 2;
 			else
-				return ( Exponential.easeOut( ( t - 0.5f ) * 2.0f ) / 2 ) + 0.5f;
+				return Exponential.easeOut( t * 2 - 1 ) / 2 + 0.5f;
 		}
 	}
 

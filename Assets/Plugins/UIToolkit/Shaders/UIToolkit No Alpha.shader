@@ -11,7 +11,7 @@ Shader "UIToolkit/No Alpha"
 		Tags { "Queue" = "Transparent" }
 		
 		AlphaTest Greater .1
-		ColorMask RGB
+		ColorMask RGBA
 		Cull Off
 		Lighting Off
 		ZWrite On

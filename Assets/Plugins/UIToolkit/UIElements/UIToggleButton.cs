@@ -20,8 +20,12 @@ public class UIToggleButton : UITouchableSprite
 		return create( UI.firstToolkit, filename, selectedFilename, highlightedFilename, xPos, yPos );
 	}
 	
-	
 	public static UIToggleButton create( UIToolkit manager, string filename, string selectedFilename, string highlightedFilename, int xPos, int yPos )
+	{
+		return create(manager, filename, selectedFilename, highlightedFilename, xPos, yPos, 1);
+	}
+	
+	public static UIToggleButton create( UIToolkit manager, string filename, string selectedFilename, string highlightedFilename, int xPos, int yPos, int depth )
 	{
 		var textureInfo = manager.textureInfoForFilename( filename );
 		var frame = new Rect( xPos, yPos, textureInfo.frame.width, textureInfo.frame.height );
@@ -29,7 +33,7 @@ public class UIToggleButton : UITouchableSprite
 		var selectedTI = manager.textureInfoForFilename( selectedFilename );
 		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
-		return new UIToggleButton( manager, frame, 1, textureInfo.uvRect, selectedTI.uvRect, highlightedTI.uvRect );
+		return new UIToggleButton( manager, frame, depth, textureInfo.uvRect, selectedTI.uvRect, highlightedTI.uvRect );
 	}
 	
 	

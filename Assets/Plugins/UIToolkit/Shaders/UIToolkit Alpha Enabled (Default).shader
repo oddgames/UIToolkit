@@ -11,7 +11,7 @@ Shader "UIToolkit/Alpha Enabled (Default)"
 		Tags { "Queue" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		AlphaTest Greater .05
-		ColorMask RGB
+		ColorMask RGBA
 		Cull Off
 		Lighting Off
 		ZWrite On

@@ -1,12 +1,11 @@
 using UnityEngine;
+using System;
 using System.Collections;
-
-
 
 /// <summary>
 /// Container class that is 
 /// </summary>
-public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouchable
+public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouchable, IComparable
 {
 	protected UIToolkit _manager; // Reference to the sprite manager in which this sprite resides
 	protected Vector2 _contentSize;

@@ -160,8 +160,8 @@ public class UIToolkit : UISpriteManager
 		// Add the sprite to our touchables and sort them		
 		_touchableSprites.Add( touchableSprite as ITouchable );
 		
-		// TODO: why does this not work with UIAbstractTouchableContainer?
-		//_touchableSprites.Sort();
+		// Sort the sprites container
+		_touchableSprites.Sort();
 	}
 	
 	

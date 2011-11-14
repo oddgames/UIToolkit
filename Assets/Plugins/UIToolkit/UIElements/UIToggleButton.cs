@@ -85,6 +85,26 @@ public class UIToggleButton : UITouchableSprite
 		}
 	}
 
+    public override bool disabled
+    {
+        get { return _disabled; }
+        set
+        {
+            if (_disabled != value)
+            {
+                _disabled = value;
+
+                // if we have a disabledUVframe use it
+                if (value && !disabledUVframe.Equals(UIUVRect.zero))
+                    base.uvFrame = disabledUVframe;
+                else if (_selected)
+                    base.uvFrame = selectedUVframe;
+                else
+                    base.uvFrame = _tempUVframe;
+            }
+        }
+    }
+
 
 	// Whether the toggle button is in the selected state
 	public bool selected

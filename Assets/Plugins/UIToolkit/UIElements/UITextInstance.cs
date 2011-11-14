@@ -33,7 +33,7 @@ public class UITextInstance : UIObject
 			_text = value;
 			
 			// cleanse our textSprites of any excess that we dont need
-			if( _text.Length > textSprites.Count )
+			if( _text.Length < textSprites.Count )
 			{
 				for( var i = textSprites.Count - 1; i > _text.Length; i-- )
 				{

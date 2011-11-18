@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class GhostJoystick : UITouchableSprite
+public class UIGhostJoystick : UITouchableSprite
 {
 	public Vector2 joystickPosition;
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
@@ -39,22 +39,22 @@ public class GhostJoystick : UITouchableSprite
     }
 	
 	
-	public static GhostJoystick create( string joystickFilename, Rect hitArea )
+	public static UIGhostJoystick create( string joystickFilename, Rect hitArea )
 	{
 		return create( UI.firstToolkit, joystickFilename, hitArea );
 	}
 
 	
-	public static GhostJoystick create( UIToolkit manager, string joystickFilename, Rect hitArea )
+	public static UIGhostJoystick create( UIToolkit manager, string joystickFilename, Rect hitArea )
 	{
 		// create the joystrick sprite
 		var joystick = manager.addSprite( joystickFilename, 0, 0, 1, true );
 		
-		return new GhostJoystick( manager, hitArea, 1, joystick);
+		return new UIGhostJoystick( manager, hitArea, 1, joystick);
 	}
 
 	
-	public GhostJoystick( UIToolkit manager, Rect frame, int depth, UISprite joystickSprite)
+	public UIGhostJoystick( UIToolkit manager, Rect frame, int depth, UISprite joystickSprite)
 		: base(frame, depth, UIUVRect.zero)
 	{
 		// Save out the uvFrame for the sprite so we can highlight

@@ -5,13 +5,17 @@ using System.Collections.Generic;
 
 
 // addTextInstance (from the UIText class) returns one of these so we just need to do a .text on the instance to update it's text
-public class UITextInstance : UIObject
+public class UITextInstance : UIObject, IPositionable
 {
 	private UIText _parentText;
 	private string _text;
 	public UITextAlignMode alignMode;
 	public UITextVerticalAlignMode verticalAlignMode;
-	
+
+    private float _width;
+    public new float width { get { return _width; } }
+    private float _height;
+    public new float height { get { return _height; } }
 	public float xPos;
 	public float yPos;
 	public float scale;
@@ -33,7 +37,7 @@ public class UITextInstance : UIObject
 			_text = value;
 			
 			// cleanse our textSprites of any excess that we dont need
-			if( _text.Length < textSprites.Count )
+			if( _text.Length > textSprites.Count )
 			{
 				for( var i = textSprites.Count - 1; i > _text.Length; i-- )
 				{
@@ -44,6 +48,7 @@ public class UITextInstance : UIObject
 			}
 			
 			_parentText.updateText( this );
+            updateSize();
 		}
 	}
 	
@@ -89,8 +94,15 @@ public class UITextInstance : UIObject
 		this.depth = depth;
 		this.colors = colors;
 		_hidden = false;
+        updateSize();
 	}
-	
+
+    private void updateSize()
+    {
+        Vector2 size = _parentText.sizeForText(_text, scale);
+        _width = size.x;
+        _height = size.y;
+    }
 	
 	private void applyColorToSprites()
 	{
@@ -171,5 +183,5 @@ public class UITextInstance : UIObject
 	{
 		
 	}
-
+    
 }

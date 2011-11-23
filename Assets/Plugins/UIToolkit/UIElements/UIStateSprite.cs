@@ -5,9 +5,8 @@ public class UIStateSprite : UISprite
     private bool _rollOverState = true;
     private int _state = 0;
     private int maxState = 0;
-
-    private UIToolkit _manager;
     private UIUVRect[] _uvFrames;
+
 
     #region Constructors
     public static UIStateSprite create(string filename, int xPos, int yPos)
@@ -53,8 +52,7 @@ public class UIStateSprite : UISprite
     public UIStateSprite(UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame)
         : base(frame, depth, uvFrame)
     {
-        _manager = manager;
-        _manager.addSprite(this);
+        manager.addSprite(this);
     }
     #endregion
 
@@ -133,7 +131,7 @@ public class UIStateSprite : UISprite
         UIUVRect[] frames = new UIUVRect[filenames.Length];
         for (int i = 0; i < filenames.Length; i++)
         {
-            frames[i] = _manager.textureInfoForFilename(filenames[i]).uvRect;
+            frames[i] = manager.textureInfoForFilename(filenames[i]).uvRect;
         }
         return frames;
     }

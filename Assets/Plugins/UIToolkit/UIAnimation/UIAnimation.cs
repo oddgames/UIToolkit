@@ -143,10 +143,19 @@ public class UIAnimation
 				{
 					autoreverse = false; // make sure this only happens once!
 					
-					// flip our start and target and reset the start time
+					// flip our start and target
 					var temp = start;
 					start = target;
 					target = temp;
+                    // flip alpha variables
+                    var tempFloat = startFloat;
+                    startFloat = targetFloat;
+                    targetFloat = tempFloat;
+                    // flip color variables
+                    var tempColor = startColor;
+                    startColor = targetColor;
+                    targetColor = tempColor;
+                    // reset the start time
 					startTime = Time.time;
 				}
 				else

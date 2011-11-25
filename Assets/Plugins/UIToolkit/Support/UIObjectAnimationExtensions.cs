@@ -68,19 +68,19 @@ public static class UIObjectAnimationExtensions
 	// local scale
 	public static UIAnimation scaleTo( this UIObject sprite, float duration, Vector3 target, UIEaseType ease )
 	{
-		return to( sprite, duration, UIAnimationProperty.LocalScale, target, ease );
+		return to( sprite, duration, UIAnimationProperty.Scale, target, ease );
 	}
 	
 
 	public static UIAnimation scaleFrom( this UIObject sprite, float duration, Vector3 target, UIEaseType ease )
 	{
-		return from( sprite, duration, UIAnimationProperty.LocalScale, target, ease );
+		return from( sprite, duration, UIAnimationProperty.Scale, target, ease );
 	}
 	
 	
 	public static UIAnimation scaleFromTo( this UIObject sprite, float duration, Vector3 start, Vector3 target, UIEaseType ease )
 	{
-		return fromTo( sprite, duration, UIAnimationProperty.LocalScale, start, target, ease );
+		return fromTo( sprite, duration, UIAnimationProperty.Scale, start, target, ease );
 	}
 
 
@@ -240,8 +240,8 @@ public static class UIObjectAnimationExtensions
 			case UIAnimationProperty.Position:
 				current = sprite.localPosition;
 				break;
-			case UIAnimationProperty.LocalScale:
-				current = sprite.localScale;
+			case UIAnimationProperty.Scale:
+				current = sprite.scale;
 				break;
 			case UIAnimationProperty.EulerAngles:
 				current = sprite.eulerAngles;

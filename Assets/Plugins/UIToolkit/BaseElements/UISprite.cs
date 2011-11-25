@@ -10,9 +10,9 @@ public class UISprite : UIObject, IPositionable
 	private bool _suspendUpdates; // when true, updateTransform and updateVertPositions will do nothing until endUpdates is called
 	
 	private float _width;
-    public new float width { get { return _width * localScale.x; } }  // Width and Height of the sprite in worldspace units.
+    public new float width { get { return _width * scale.x; } }  // Width and Height of the sprite in worldspace units.
     private float _height;
-    public new float height { get { return _height * localScale.y; } }
+    public new float height { get { return _height * scale.y; } }
 	private float _clippedWidth;
 	private float _clippedHeight;
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
@@ -179,6 +179,17 @@ public class UISprite : UIObject, IPositionable
 			updateTransform();
 		}
 	}
+
+
+    public override Vector3 scale
+    {
+        get { return base.scale; }
+        set
+        {
+            base.scale = value;
+            updateTransform();
+        }
+    }
 
 
 	public override Vector3 localScale

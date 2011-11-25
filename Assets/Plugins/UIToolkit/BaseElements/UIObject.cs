@@ -85,6 +85,45 @@ public class UIObject : System.Object, IPositionable
 	}
 
 
+    public virtual Vector3 scale
+    {
+        get
+        {
+            Vector3 localScale = clientTransform.localScale;
+            if (_parentUIObject != null)
+            {
+                Vector3 parentScale = _parentUIObject.localScale;
+                localScale.x *= parentScale.x;
+                localScale.y *= parentScale.y;
+                localScale.z *= parentScale.z;
+            }
+            return localScale;
+        }
+        set
+        {
+            Vector3 localScale = value;
+            if (_parentUIObject != null)
+            {
+                Vector3 parentScale = _parentUIObject.localScale;
+                localScale.x /= parentScale.x;
+                localScale.y /= parentScale.y;
+                localScale.z /= parentScale.z;
+            }
+            clientTransform.localScale = localScale;
+            // If auto refresh is on, don't call onTransformChanged
+            // as it will be called later when position is updated
+            if (autoRefreshPositionOnScaling)
+            {
+                this.refreshPosition();
+            }
+            else
+            {
+                if (onTransformChanged != null)
+                    onTransformChanged();
+            }
+        }
+    }
+
 	public virtual Vector3 localScale
 	{
 		get { return clientTransform.localScale; }

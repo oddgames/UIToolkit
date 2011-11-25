@@ -92,7 +92,7 @@ public class UIObject : System.Object, IPositionable
             Vector3 localScale = clientTransform.localScale;
             if (_parentUIObject != null)
             {
-                Vector3 parentScale = _parentUIObject.localScale;
+                Vector3 parentScale = _parentUIObject.scale;
                 localScale.x *= parentScale.x;
                 localScale.y *= parentScale.y;
                 localScale.z *= parentScale.z;
@@ -104,7 +104,7 @@ public class UIObject : System.Object, IPositionable
             Vector3 localScale = value;
             if (_parentUIObject != null)
             {
-                Vector3 parentScale = _parentUIObject.localScale;
+                Vector3 parentScale = _parentUIObject.scale;
                 localScale.x /= parentScale.x;
                 localScale.y /= parentScale.y;
                 localScale.z /= parentScale.z;

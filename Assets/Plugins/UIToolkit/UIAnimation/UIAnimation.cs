@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public enum UIAnimationProperty { Position, LocalScale, EulerAngles, Alpha, Color };
+public enum UIAnimationProperty { Position, Scale, EulerAngles, Alpha, Color };
 
 public class UIAnimation
 {
@@ -119,8 +119,8 @@ public class UIAnimation
 				case UIAnimationProperty.Position:
 					sprite.localPosition = Vector3.Lerp( start, target, easPos );
 					break;
-				case UIAnimationProperty.LocalScale:
-					sprite.localScale = Vector3.Lerp( start, target, easPos );
+				case UIAnimationProperty.Scale:
+					sprite.scale = Vector3.Lerp( start, target, easPos );
 					break;
 				case UIAnimationProperty.EulerAngles:
 					sprite.eulerAngles = Vector3.Lerp( start, target, easPos );
@@ -143,10 +143,19 @@ public class UIAnimation
 				{
 					autoreverse = false; // make sure this only happens once!
 					
-					// flip our start and target and reset the start time
+					// flip our start and target
 					var temp = start;
 					start = target;
 					target = temp;
+                    // flip alpha variables
+                    var tempFloat = startFloat;
+                    startFloat = targetFloat;
+                    targetFloat = tempFloat;
+                    // flip color variables
+                    var tempColor = startColor;
+                    startColor = targetColor;
+                    targetColor = tempColor;
+                    // reset the start time
 					startTime = Time.time;
 				}
 				else
@@ -198,8 +207,8 @@ public class UIAnimation
 			case UIAnimationProperty.Position:
 				start = sprite.localPosition;
 				break;
-			case UIAnimationProperty.LocalScale:
-				start = sprite.localScale;
+			case UIAnimationProperty.Scale:
+				start = sprite.scale;
 				break;
 			case UIAnimationProperty.EulerAngles:
 				start = sprite.eulerAngles;
@@ -236,7 +245,7 @@ public class UIAnimation
 		switch( _aniProperty )
 		{
 			case UIAnimationProperty.Position:
-			case UIAnimationProperty.LocalScale:
+			case UIAnimationProperty.Scale:
 			case UIAnimationProperty.EulerAngles:
 				target = newTarget;
 				break;

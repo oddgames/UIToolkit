@@ -10,9 +10,9 @@ public class UISprite : UIObject, IPositionable
 	private bool _suspendUpdates; // when true, updateTransform and updateVertPositions will do nothing until endUpdates is called
 	
 	private float _width;
-    public new float width { get { return _width; } }  // Width and Height of the sprite in worldspace units.
+    public new float width { get { return _width * scale.x; } }  // Width and Height of the sprite in worldspace units.
     private float _height;
-    public new float height { get { return _height; } }
+    public new float height { get { return _height * scale.y; } }
 	private float _clippedWidth;
 	private float _clippedHeight;
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
@@ -181,6 +181,17 @@ public class UISprite : UIObject, IPositionable
 	}
 
 
+    public override Vector3 scale
+    {
+        get { return base.scale; }
+        set
+        {
+            base.scale = value;
+            updateTransform();
+        }
+    }
+
+
 	public override Vector3 localScale
 	{
 		get { return clientTransform.localScale; }
@@ -326,12 +337,13 @@ public class UISprite : UIObject, IPositionable
 		
 		// offset our sprite in the x and y direction to "fix" the change that occurs when we reset to center
 		var pos = clientTransform.position;
-		pos.x += width / 2;
-		pos.y -= height / 2;
+		pos.x += _width / 2;
+		pos.y -= _height / 2;
 		clientTransform.position = pos;
 		
 		gameObjectOriginInCenter = true;
-		setSize( width, height );
+        _anchorInfo.OriginInCenter = true;
+		setSize( _width, _height );
 	}
 	
 

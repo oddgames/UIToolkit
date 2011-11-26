@@ -1,122 +1,266 @@
 using UnityEngine;
-using System.Collections;
 
-
-public enum UIxAnchor { Left, Right };
-public enum UIyAnchor { Top, Bottom };
-
+public enum UIxAnchor { Left, Right, Center };
+public enum UIyAnchor { Top, Bottom, Center };
+public enum UIPrecision { Percentage, Pixel };
 
 public static class UIRelative
 {
-	/// <summary>
-	/// Determine if running in HD and multiply pixelOffsets accordingly.
-	/// </summary>
-	public static int pixelDensityMultiplier()
-	{
-		return UI.instance.isHD ? 2 : 1;
-	}
-
+    /// <summary>
+    /// Determine if running in HD and multiply pixelOffsets accordingly.
+    /// </summary>
+    public static int pixelDensityMultiplier()
+    {
+        return UI.instance.isHD ? 2 : 1;
+    }
 	
-	/// <summary>
-	/// Percent to offset from the anchor.  If the anchor is right, the width will be used to make the offset
-	/// from the right-most point of the sprite.
-	/// </summary>
-	public static float xPercentFrom( UIxAnchor anchor, float percentOffset )
-	{
-		return xPercentFrom( anchor, percentOffset, 0 );
-	}
+	
+    #region Relative offset methods
 
-
-	public static float xPercentFrom( UIxAnchor anchor, float percentOffset, float width )
-	{
-		switch( anchor )
-		{
-			case UIxAnchor.Left:
-				return percentOffset * Screen.width;
-			case UIxAnchor.Right:
-				return Screen.width - ( percentOffset * Screen.width ) - width;
-		}
-		return 0f;
-	}
-
-
-	/// <summary>
-	/// Pixels to offset from the anchor.  If the anchor is right, the width will be used to make the offset
-	/// from the right-most point of the sprite.
-	/// </summary>
-	public static float xPixelsFrom( UIxAnchor anchor, int pixelOffset )
-	{
-		return xPixelsFrom( anchor, pixelOffset, 0 );
-	}
-
-
-	public static float xPixelsFrom( UIxAnchor anchor, int pixelOffset, float width )
-	{
-		switch( anchor )
-		{
-			case UIxAnchor.Left:
-				return pixelOffset * pixelDensityMultiplier();
-			case UIxAnchor.Right:
-				return Screen.width - pixelOffset*pixelDensityMultiplier() - width;
-		}
-		return 0f;
-	}
-
-
-	/// <summary>
-	/// Percent to offset from the anchor.  If the anchor is bottom, the height will be used to make the offset
-	/// from the height-most point of the sprite.
-	/// </summary>
-	public static float yPercentFrom( UIyAnchor anchor, float percentOffset )
-	{
-		return yPercentFrom( anchor, percentOffset, 0 );
-	}
-
-
-	public static float yPercentFrom( UIyAnchor anchor, float percentOffset, float height )
-	{
-		switch( anchor )
-		{
-			case UIyAnchor.Top:
-				return percentOffset * Screen.height;
-			case UIyAnchor.Bottom:
-				return Screen.height - ( percentOffset * Screen.height ) - height;
-		}
-		return 0f;
-	}
-
-
-	/// <summary>
-	/// Pixels to offset from the anchor.  If the anchor is bottom, the height will be used to make the offset
-	/// from the bottom-most point of the sprite.
-	/// </summary>
-	public static float yPixelsFrom( UIyAnchor anchor, int pixelOffset )
-	{
-		return yPixelsFrom( anchor, pixelOffset, 0 );
-	}
-
-
-	public static float yPixelsFrom( UIyAnchor anchor, int pixelOffset, float height )
-	{
-		switch( anchor )
-		{
-			case UIyAnchor.Top:
-				return pixelOffset * pixelDensityMultiplier();
-			case UIyAnchor.Bottom:
-				return Screen.height - pixelOffset*pixelDensityMultiplier() - height;
-		}
-		return 0f;
-	}
-
-
-	public static Vector2 center( float width, float height )
-	{
-		var pos = Vector2.zero;
+    /// <summary>
+    /// Calculates offset based on screen width percentage.
+    /// </summary>
+    /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="percentOffset">Percentage offset - 1 is 100%</param>
+    /// <returns></returns>
+    public static float xPercentFrom( UIxAnchor anchor, float percentOffset )
+    {
+        // Get inital offset
+        float offset = Screen.width * percentOffset;
 		
-		pos.x = Screen.width / 2 - width / 2;
-		pos.y = Screen.height / 2 - height / 2;
+        // If anchor is right the offset is flipped
+        if( anchor == UIxAnchor.Right )
+        {
+            offset = Screen.width - offset;
+        }
+        return offset;
+    }
+	
+	
+    /// <summary>
+    /// Calculates offset based on screen height percentage.
+    /// </summary>
+    /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="percentOffset">Percentage offset - 1 is 100%</param>
+    /// <returns></returns>
+    public static float yPercentFrom( UIyAnchor anchor, float percentOffset )
+    {
+        // Get initial offset
+        float offset = Screen.height * percentOffset;
 		
-		return pos;
-	}
+        // If anchor is bottom the offset is flipped
+        if( anchor == UIyAnchor.Bottom )
+        {
+            offset = Screen.height - offset;
+        }
+        return offset;
+    }
+	
 
+    /// <summary>
+    /// Calculates screen width percentage based on offset.
+    /// </summary>
+    /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="offset">Position offset</param>
+    /// <returns></returns>
+    public static float xPercentTo( UIxAnchor anchor, float offset )
+    {
+        // Get initial percentage
+        float percentOffset = offset / Screen.width;
+		
+        // If anchor isn't right the percentage is flipped
+        if( anchor != UIxAnchor.Right )
+        {
+            percentOffset = -percentOffset;
+        }
+        return percentOffset;
+    }
+	
+	
+    /// <summary>
+    /// Calculates screen height percentage based on offset.
+    /// </summary>
+    /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="offset">Position offset</param>
+    /// <returns></returns>
+    public static float yPercentTo( UIyAnchor anchor, float offset )
+    {
+        // Get initial percentage
+        float percentOffset = offset / Screen.height;
+		
+        // If anchor isn't bottom the percentage is flipped
+        if( anchor != UIyAnchor.Bottom )
+        {
+            percentOffset = -percentOffset;
+        }
+        return percentOffset;
+    }
+
+    #endregion
+	
+	
+    #region Pixel offset methods
+
+    /// <summary>
+    /// Calculates horizontal pixel offset based on SD or HD.
+    /// </summary>
+    /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="pixelOffset">Fixed offset</param>
+    /// <returns></returns>
+    public static float xPixelsFrom( UIxAnchor anchor, float pixelOffset )
+    {
+        // Get initial offset
+        float offset = pixelOffset * pixelDensityMultiplier();
+		
+        // If anchor is right the offset is flipped
+        if( anchor == UIxAnchor.Right )
+        {
+            offset = -offset;
+        }
+        return offset;
+    }
+
+
+    /// <summary>
+    /// Calculates vertical pixel offset based on SD or HD.
+    /// </summary>
+    /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="pixelOffset">Fixed offset</param>
+    /// <returns></returns>
+    public static float yPixelsFrom( UIyAnchor anchor, float pixelOffset )
+    {
+        // Get initial offset
+        float offset = pixelOffset * pixelDensityMultiplier();
+		
+        // If anchor is bottom the offset is flipped
+        if( anchor == UIyAnchor.Bottom )
+        {
+            offset = -offset;
+        }
+        return offset;
+    }
+
+
+    /// <summary>
+    /// Calculates fixed horizontal pixel offset based on SD or HD offset.
+    /// </summary>
+    /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="offset">Relative offset</param>
+    /// <returns></returns>
+    public static float xPixelsTo( UIxAnchor anchor, float offset )
+    {
+        // Get initial fixed offset
+        float pixelOffset = offset / pixelDensityMultiplier();
+		
+        // If anchor isn't right the fixed offset is flipped
+        if( anchor != UIxAnchor.Right )
+        {
+            pixelOffset = -pixelOffset;
+        }
+        return pixelOffset;
+    }
+
+
+    /// <summary>
+    /// Calculates fixed vertical pixel offset based on SD or HD offset.
+    /// </summary>
+    /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="offset">Relative offset</param>
+    /// <returns></returns>
+    public static float yPixelsTo( UIyAnchor anchor, float offset )
+    {
+        // Get initial fixed offset
+        float pixelOffset = offset / pixelDensityMultiplier();
+		
+        // If anchor isn't bottom the fixed offset is flipped
+        if( anchor != UIyAnchor.Bottom )
+        {
+            pixelOffset = -pixelOffset;
+        }
+        return pixelOffset;
+    }
+
+    #endregion
+	
+	
+    #region Anchor adjustment methods
+
+    /// <summary>
+    /// Finds horizontal adjustment for anchor, based on width and origin of sprite.
+    /// </summary>
+    /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="width">Sprite width</param>
+    /// <param name="originInCenter">True if origin is in center</param>
+    /// <returns></returns>
+    public static float xAnchorAdjustment( UIxAnchor anchor, float width, bool originInCenter )
+    {
+        float adjustment = 0f;
+        switch( anchor )
+        {
+            case UIxAnchor.Left:
+                if( originInCenter )
+                {
+                    adjustment -= width / 2f;
+                }
+                break;
+            case UIxAnchor.Right:
+                if( originInCenter )
+                {
+                    adjustment += width / 2f;
+                }
+                else
+                {
+                    adjustment += width;
+                }
+                break;
+            case UIxAnchor.Center:
+                if( !originInCenter )
+                {
+                    adjustment += width / 2f;
+                }
+                break;
+        }
+        return adjustment;
+    }
+
+
+    /// <summary>
+    /// Finds vertical adjustment for anchor, based on height and origin of sprite.
+    /// </summary>
+    /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="height">Sprite height</param>
+    /// <param name="originInCenter">True if origin is in center</param>
+    /// <returns></returns>
+    public static float yAnchorAdjustment( UIyAnchor anchor, float height, bool originInCenter )
+    {
+        float adjustment = 0f;
+        switch( anchor )
+        {
+            case UIyAnchor.Top:
+                if( originInCenter )
+                {
+                    adjustment -= height / 2f;
+                }
+                break;
+            case UIyAnchor.Bottom:
+                if( originInCenter )
+                {
+                    adjustment += height / 2f;
+                }
+                else
+                {
+                    adjustment += height;
+                }
+                break;
+            case UIyAnchor.Center:
+                if( !originInCenter )
+                {
+                    adjustment += height / 2f;
+                }
+                break;
+        }
+        return adjustment;
+    }
+
+    #endregion
 }

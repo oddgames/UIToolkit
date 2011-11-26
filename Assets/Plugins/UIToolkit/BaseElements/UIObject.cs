@@ -4,8 +4,8 @@ using System.Collections;
 
 public class UIObject : System.Object, IPositionable
 {
-	public delegate void UIObjectTransormChagedDelegate();
-	public event UIObjectTransormChagedDelegate onTransformChanged;
+	public delegate void UIObjectTransformChangedDelegate();
+	public event UIObjectTransformChangedDelegate onTransformChanged;
 	
 	private GameObject _client; // Reference to the client GameObject
     public GameObject client
@@ -15,7 +15,8 @@ public class UIObject : System.Object, IPositionable
     protected Transform clientTransform; // Cached Transform of the client GameObject
     private UIObject _parentUIObject;
     public virtual Color color { get; set; } // hack that is overridden in UISprite just for animation support
-    
+    protected UIAnchorInfo _anchorInfo;
+    public bool autoRefreshPositionOnScaling = true;
     
 	/// <summary>
 	/// Sets up the client GameObject along with it's layer and caches the transform
@@ -29,6 +30,8 @@ public class UIObject : System.Object, IPositionable
 		
 		// Cache the clientTransform
 		clientTransform = _client.transform;
+        // Create a default anchor info object
+        _anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
     }
 
 	
@@ -82,14 +85,62 @@ public class UIObject : System.Object, IPositionable
 	}
 
 
+    public virtual Vector3 scale
+    {
+        get
+        {
+            Vector3 localScale = clientTransform.localScale;
+            if (_parentUIObject != null)
+            {
+                Vector3 parentScale = _parentUIObject.scale;
+                localScale.x *= parentScale.x;
+                localScale.y *= parentScale.y;
+                localScale.z *= parentScale.z;
+            }
+            return localScale;
+        }
+        set
+        {
+            Vector3 localScale = value;
+            if (_parentUIObject != null)
+            {
+                Vector3 parentScale = _parentUIObject.scale;
+                localScale.x /= parentScale.x;
+                localScale.y /= parentScale.y;
+                localScale.z /= parentScale.z;
+            }
+            clientTransform.localScale = localScale;
+            // If auto refresh is on, don't call onTransformChanged
+            // as it will be called later when position is updated
+            if (autoRefreshPositionOnScaling)
+            {
+                this.refreshPosition();
+            }
+            else
+            {
+                if (onTransformChanged != null)
+                    onTransformChanged();
+            }
+        }
+    }
+
 	public virtual Vector3 localScale
 	{
 		get { return clientTransform.localScale; }
 		set
 		{
 			clientTransform.localScale = value;
-			if( onTransformChanged != null )
-				onTransformChanged();
+            // If auto refresh is on, don't call onTransformChanged
+            // as it will be called later when position is updated
+            if (autoRefreshPositionOnScaling)
+            {
+                this.refreshPosition();
+            }
+            else
+            {
+                if (onTransformChanged != null)
+                    onTransformChanged();
+            }
 		}
 	}
 	
@@ -123,6 +174,8 @@ public class UIObject : System.Object, IPositionable
 			//	value.parent = parent;
 						
 			_parentUIObject = value;
+            // Update anchor info according to new parent
+            this.adjustAnchorForNewParent(_parentUIObject);
 			
 			// if we got a null value, then we are being removed from the UIObject so reparent to our manager
 			if( _parentUIObject != null )
@@ -164,6 +217,12 @@ public class UIObject : System.Object, IPositionable
 	{
 		get { throw new System.NotImplementedException(); }
 	}
+
+    public UIAnchorInfo anchorInfo
+    {
+        get { return _anchorInfo; }
+        set { _anchorInfo = value; }
+    }
 	
 	#endregion
 

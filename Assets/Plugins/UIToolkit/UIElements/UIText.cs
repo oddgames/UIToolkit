@@ -489,8 +489,9 @@ public class UIText : System.Object
 		float offsetY;
 		int fontLineSkip = 0;
 		int charId = 0;
+		
 		// Simulate text wrapping
-		text = wrapText(text, scale);
+		text = wrapText( text, scale );
 		
 		// Simulated origin of 0, 0
 		
@@ -585,7 +586,7 @@ public class UIText : System.Object
 	public void updateText( UITextInstance textInstance )
 	{
 		// kill the current text then draw some new text
-		drawText( textInstance, textInstance.xPos, textInstance.yPos, textInstance.scale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
+		drawText( textInstance, textInstance.xPos, textInstance.yPos, textInstance.textScale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
 	}
 	
 	

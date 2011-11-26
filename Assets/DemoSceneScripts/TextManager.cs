@@ -29,23 +29,23 @@ public class TextManager : MonoBehaviour
 		
 		var textSize = text.sizeForText( "testing small bitmap fonts", 0.3f );
 		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
-		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y );
-		text2 = text.addTextInstance( "testing small bitmap fonts", x, y, 0.3f );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, .01f );
+		text2 = text.addTextInstance( "testing small bitmap fonts", x, Screen.height - 25, 0.3f );
 		
 		
 		// Centering using alignment modes.
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0f );
-		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0f );
+		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0.2f );
+		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0.5f );
 		text3 = text.addTextInstance( "with only\n1 draw call\nfor everything", x, y, 0.5f, 5, Color.yellow, UITextAlignMode.Right, UITextVerticalAlignMode.Top );
-		
+
 		
 		// High Ascii forcing crash demo. To test this, 
 		// Disable "Set Low ASCII Forcing Mode" in the TextManager inspector and see the crash.
 		// Not as handy if you don't need to paste in large amounts of text from word.
 		text.forceLowAscii = setLowAsciiForcingMode;
 		
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0, 0 );
-		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0, 0 );
+		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0 );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0 );
 		text4 = text.addTextInstance( highAsciiString, x, y, 0.4f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Bottom );
 		
 		
@@ -56,24 +56,24 @@ public class TextManager : MonoBehaviour
 			colors.Add( Color.Lerp( Color.white, Color.magenta, (float)i / centeredText.Length ) );
 		
 		textSize = text.sizeForText( centeredText );
-		var center = UIRelative.center( textSize.x, textSize.y );
-		text.addTextInstance( centeredText, center.x, center.y, 1f, 4, colors.ToArray(), UITextAlignMode.Left, UITextVerticalAlignMode.Top );
+		x = UIRelative.xAnchorAdjustment( UIxAnchor.Center, textSize.x, false );
+		y = UIRelative.yAnchorAdjustment( UIyAnchor.Center, Screen.height, false );
+		text.addTextInstance( centeredText, x, y, 1f, 4, colors.ToArray(), UITextAlignMode.Left, UITextVerticalAlignMode.Middle );
 		
 		
 		// Now center on right side.
-		x = UIRelative.xPercentFrom( UIxAnchor.Right, 0 );
-		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0.5f );
-		text.addTextInstance( "Vert-Centering on right side", x, y, 0.5f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Middle );
+		y = UIRelative.yPercentFrom( UIyAnchor.Top, 0.3f );
+		text.addTextInstance( "Vert-Centering on right side", Screen.width, y, 0.5f, 1, Color.white, UITextAlignMode.Right, UITextVerticalAlignMode.Middle );
 		
 		
-		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0f );
-		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0f, textSize.y * 3 );
+		x = UIRelative.xPercentFrom( UIxAnchor.Left, 0.1f );
+		y = UIRelative.yPercentFrom( UIyAnchor.Bottom, 0.1f );
 
 		var wrapText = new UIText( "prototype", "prototype.png" );
 		wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
 		wrapText.lineWrapWidth = 100.0f;
-		
-		textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.\n\nAnd manual L/B.", x, y, 0.3f, 1, Color.white, UITextAlignMode.Left, UITextVerticalAlignMode.Bottom);
+		Debug.Log( "x: " + x + ", y: " + y );
+		textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.\n\nAnd manual L/B.", x, y, 0.3f, 1, Color.white, UITextAlignMode.Left, UITextVerticalAlignMode.Bottom );
 		
 		wrapText.lineWrapWidth = 100.0f;
 		wrapText.wrapMode = UITextLineWrapMode.AlwaysHyphenate;

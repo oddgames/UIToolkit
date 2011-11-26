@@ -72,7 +72,6 @@ public class TextManager : MonoBehaviour
 		var wrapText = new UIText( "prototype", "prototype.png" );
 		wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
 		wrapText.lineWrapWidth = 100.0f;
-		Debug.Log( "x: " + x + ", y: " + y );
 		textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.\n\nAnd manual L/B.", x, y, 0.3f, 1, Color.white, UITextAlignMode.Left, UITextVerticalAlignMode.Bottom );
 		
 		wrapText.lineWrapWidth = 100.0f;

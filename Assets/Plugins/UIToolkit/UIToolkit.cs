@@ -253,6 +253,13 @@ public class UIToolkit : UISpriteManager
 				// Deselect the touched sprite
 				_spriteSelected[touch.fingerId] = null;
 			}
+			else if(_spriteSelected[touch.fingerId] != null)
+			{
+				// If we have a button that isn't the selected button end the touch on it because we moved off of it
+				// quickly enough that we never got a TouchPhase.Moved or TouchPhase.Stationary
+				_spriteSelected[touch.fingerId].onTouchEnded( touch, fixedTouchPosition, false );
+				_spriteSelected[touch.fingerId] = null;
+			}			
 		}
 	}
 

@@ -136,8 +136,6 @@ public static class IPositionablePositioningExtensions
         // Set new anchor information
         sprite.anchorInfo = anchorInfo;
 
-				Debug.Log( sprite.anchorInfo );
-
         // Refresh position
         sprite.refreshPosition();
     }

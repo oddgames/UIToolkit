@@ -31,7 +31,7 @@ public static class UIRelative
         // If anchor is right the offset is flipped
         if( anchor == UIxAnchor.Right )
         {
-            offset = Screen.width - offset;
+            offset = -offset;
         }
         return offset;
     }
@@ -51,7 +51,7 @@ public static class UIRelative
         // If anchor is bottom the offset is flipped
         if( anchor == UIyAnchor.Bottom )
         {
-            offset = Screen.height - offset;
+            offset = -offset;
         }
         return offset;
     }

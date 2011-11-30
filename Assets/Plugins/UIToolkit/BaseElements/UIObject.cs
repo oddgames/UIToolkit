@@ -181,6 +181,9 @@ public class UIObject : System.Object, IPositionable
 			if( _parentUIObject != null )
 			{
 				clientTransform.parent = _parentUIObject.clientTransform;
+
+                // add the new listener
+                _parentUIObject.onTransformChanged += transformChanged;
 			}
 			else
 			{
@@ -189,9 +192,6 @@ public class UIObject : System.Object, IPositionable
 				else
 					clientTransform.parent = null;
 			}
-			
-			// add the new listener
-			_parentUIObject.onTransformChanged += transformChanged;
 		}
 	}
 	

@@ -15,12 +15,6 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	public UIEdgeInsets _edgeInsets; // pixel padding insets for top, left, bottom and right
 	public UIEdgeInsets edgeInsets { get { return _edgeInsets; } set { _edgeInsets = value; layoutChildren(); } } // relayout when edgeInsets changes
 	
-	protected float _width;
-	public new float width { get { return _width; } }
-
-	protected float _height;
-	public new float height { get { return _height; } }
-	
 	protected float _scrollPosition; // scroll position calculated from the top
 	
 	protected List<UISprite> _children = new List<UISprite>();

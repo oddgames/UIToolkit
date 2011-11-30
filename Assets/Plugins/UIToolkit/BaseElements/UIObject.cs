@@ -17,6 +17,7 @@ public class UIObject : System.Object, IPositionable
     public virtual Color color { get; set; } // hack that is overridden in UISprite just for animation support
     protected UIAnchorInfo _anchorInfo;
     public bool autoRefreshPositionOnScaling = true;
+    protected float _width, _height;
     
 	/// <summary>
 	/// Sets up the client GameObject along with it's layer and caches the transform
@@ -211,13 +212,13 @@ public class UIObject : System.Object, IPositionable
 	// subclasses should implement these methods if they want to take part in positioning!
 	public float width
 	{
-		get { throw new System.NotImplementedException(); }
+		get { return _width; }
 	}
 	
 	
 	public float height
 	{
-		get { throw new System.NotImplementedException(); }
+		get { return _height; }
 	}
 
     public UIAnchorInfo anchorInfo

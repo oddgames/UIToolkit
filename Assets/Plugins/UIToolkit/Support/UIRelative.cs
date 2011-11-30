@@ -68,6 +68,8 @@ public static class UIRelative
     /// <returns></returns>
     public static float xPercentTo( UIxAnchor anchor, float width, float offset )
     {
+        if (width == 0f) return 0f;
+
         // Get initial percentage
         float percentOffset = offset / width;
 		
@@ -89,6 +91,8 @@ public static class UIRelative
     /// <returns></returns>
     public static float yPercentTo( UIyAnchor anchor, float height, float offset )
     {
+        if (height == 0f) return 0f;
+
         // Get initial percentage
         float percentOffset = offset / height;
 		

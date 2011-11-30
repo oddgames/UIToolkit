@@ -13,10 +13,6 @@ public class UITextInstance : UIObject, IPositionable
 	private UITextAlignMode _alignMode;
 	private UITextVerticalAlignMode _verticalAlignMode;
 
-    private float _width;
-    public new float width { get { return _width; } }
-    private float _height;
-    public new float height { get { return _height; } }
 	public Color[] colors;
 	public List<UISprite> textSprites = new List<UISprite>(); // all the sprites that make up the string
 
@@ -220,6 +216,9 @@ public class UITextInstance : UIObject, IPositionable
                 _anchorInfo.OriginUIyAnchor = UIyAnchor.Bottom;
                 break;
         }
+
+        _anchorInfo.OffsetX = xPos;
+        _anchorInfo.OffsetY = yPos;
 
         updateSize();
 	}

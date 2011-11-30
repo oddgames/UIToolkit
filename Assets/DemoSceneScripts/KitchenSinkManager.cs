@@ -11,8 +11,8 @@ public class KitchenSinkManager : MonoBehaviour
 	void Start()
 	{
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
-		var y = UIRelative.yPercentFrom( UIyAnchor.Top, .05f );
-		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, (int)y );
+		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, 0 );
+        playButton.positionFromTopLeft( 0.05f, 0f );
 		playButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		playButton.onTouchUpInside += ( sender ) => Debug.Log( "clicked the button: " + sender );
 
@@ -29,6 +29,7 @@ public class KitchenSinkManager : MonoBehaviour
 		scores.onTouchUpInside += onTouchUpInsideScoresButton;
 		scores.onTouchIsDown += ( sender ) => Debug.Log( "touch is down: " + Time.time );
 		scores.touchDownSound = scoresSound;
+        scores.autoRefreshPositionOnScaling = false;
 	
 	
 		// Options button

@@ -342,7 +342,8 @@ public class UISprite : UIObject, IPositionable
 		clientTransform.position = pos;
 		
 		gameObjectOriginInCenter = true;
-        _anchorInfo.OriginInCenter = true;
+        _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
+        _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
 		setSize( _width, _height );
 	}
 	

@@ -828,38 +828,33 @@ public static class IPositionablePositioningExtensions
     #endregion
 
     /// <summary>
-    /// Adjusts anchor offsets for a new parent anchor and updates the sprite's anchor infomation.
+    /// Refreshes the sprite's anchoring offsets according to its parent and position.
     /// </summary>
     /// <param name="sprite"></param>
-    /// <param name="newParent"></param>
-    public static void adjustAnchorForNewParent(this IPositionable sprite, IPositionable newParent)
+    public static void refreshAnchorInformation(this IPositionable sprite)
     {
         // Get anchor info
         UIAnchorInfo anchorInfo = sprite.anchorInfo;
 
-        // Get parent anchors
-        Vector3 oldParentAnchorPosition = parentAnchorPosition(anchorInfo.ParentUIObject, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor);
-        Vector3 newParentAnchorPosition = parentAnchorPosition(newParent, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor);
-        Vector3 diffAnchor = newParentAnchorPosition - oldParentAnchorPosition;
-
+        // Get anchor positions
+        Vector3 parentPosition = parentAnchorPosition(anchorInfo.ParentUIObject, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor);
+        Vector3 diffAnchor = sprite.position - parentPosition;
+  
         // Adjust for sprite anchor offset
-        diffAnchor.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor);
-        diffAnchor.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor);
+        diffAnchor.x += UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor);
+        diffAnchor.y -= UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor);
 
         // Adjust parent anchor offsets
         if (anchorInfo.UIPrecision == UIPrecision.Percentage)
         {
-            anchorInfo.OffsetX += UIRelative.xPercentTo(anchorInfo.UIxAnchor, diffAnchor.x);
-            anchorInfo.OffsetY -= UIRelative.yPercentTo(anchorInfo.UIyAnchor, diffAnchor.y);
+            anchorInfo.OffsetX = UIRelative.xPercentTo(anchorInfo.UIxAnchor, parentWidth(anchorInfo.ParentUIObject), diffAnchor.x);
+            anchorInfo.OffsetY = -UIRelative.yPercentTo(anchorInfo.UIyAnchor, parentHeight(anchorInfo.ParentUIObject), diffAnchor.y);
         }
         else
         {
-            anchorInfo.OffsetX += UIRelative.xPixelsTo(anchorInfo.UIxAnchor, diffAnchor.x);
-            anchorInfo.OffsetY -= UIRelative.yPixelsTo(anchorInfo.UIyAnchor, diffAnchor.y);
+            anchorInfo.OffsetX = UIRelative.xPixelsTo(anchorInfo.UIxAnchor, diffAnchor.x);
+            anchorInfo.OffsetY = -UIRelative.yPixelsTo(anchorInfo.UIyAnchor, diffAnchor.y);
         }
-
-        // Update parent
-        anchorInfo.ParentUIObject = newParent;
 
         // Set update anchor info
         sprite.anchorInfo = anchorInfo;
@@ -880,8 +875,8 @@ public static class IPositionablePositioningExtensions
         // Add position offset
         if (anchorInfo.UIPrecision == UIPrecision.Percentage)
         {
-            position.x += UIRelative.xPercentFrom(anchorInfo.UIxAnchor, anchorInfo.OffsetX);
-            position.y -= UIRelative.yPercentFrom(anchorInfo.UIyAnchor, anchorInfo.OffsetY);
+            position.x += UIRelative.xPercentFrom(anchorInfo.UIxAnchor, parentWidth(anchorInfo.ParentUIObject), anchorInfo.OffsetX);
+            position.y -= UIRelative.yPercentFrom(anchorInfo.UIyAnchor, parentHeight(anchorInfo.ParentUIObject), anchorInfo.OffsetY);
         }
         else
         {
@@ -933,4 +928,23 @@ public static class IPositionablePositioningExtensions
         return position;
     }
 
+    /// <summary>
+    /// Returns width of parent or screen if parent is null
+    /// </summary>
+    /// <param name="sprite">Provided parent</param>
+    /// <returns>Width of parent (or screen)</returns>
+    private static float parentWidth(IPositionable sprite)
+    {
+        return (sprite == null) ? Screen.width : sprite.width;
+    }
+
+    /// <summary>
+    /// Returns height of parent or screen if parent is null
+    /// </summary>
+    /// <param name="sprite">Provided parent</param>
+    /// <returns>Height of parent (or screen)</returns>
+    private static float parentHeight(IPositionable sprite)
+    {
+        return (sprite == null) ? Screen.height : sprite.height;
+    }
 }

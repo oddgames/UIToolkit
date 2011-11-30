@@ -174,8 +174,6 @@ public class UIObject : System.Object, IPositionable
 			//	value.parent = parent;
 						
 			_parentUIObject = value;
-            // Update anchor info according to new parent
-            this.adjustAnchorForNewParent(_parentUIObject);
 			
 			// if we got a null value, then we are being removed from the UIObject so reparent to our manager
 			if( _parentUIObject != null )
@@ -192,6 +190,10 @@ public class UIObject : System.Object, IPositionable
 				else
 					clientTransform.parent = null;
 			}
+
+            // Update anchor info according to new parent
+            _anchorInfo.ParentUIObject = _parentUIObject;
+            this.refreshAnchorInformation();
 		}
 	}
 	

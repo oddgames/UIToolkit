@@ -21,12 +21,13 @@ public static class UIRelative
     /// Calculates offset based on screen width percentage.
     /// </summary>
     /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="width">Parent width</param>
     /// <param name="percentOffset">Percentage offset - 1 is 100%</param>
     /// <returns></returns>
-    public static float xPercentFrom( UIxAnchor anchor, float percentOffset )
+    public static float xPercentFrom( UIxAnchor anchor, float width, float percentOffset )
     {
         // Get inital offset
-        float offset = Screen.width * percentOffset;
+        float offset = width * percentOffset;
 		
         // If anchor is right the offset is flipped
         if( anchor == UIxAnchor.Right )
@@ -41,12 +42,13 @@ public static class UIRelative
     /// Calculates offset based on screen height percentage.
     /// </summary>
     /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="height">Parent height</param>
     /// <param name="percentOffset">Percentage offset - 1 is 100%</param>
     /// <returns></returns>
-    public static float yPercentFrom( UIyAnchor anchor, float percentOffset )
+    public static float yPercentFrom( UIyAnchor anchor, float height, float percentOffset )
     {
         // Get initial offset
-        float offset = Screen.height * percentOffset;
+        float offset = height * percentOffset;
 		
         // If anchor is bottom the offset is flipped
         if( anchor == UIyAnchor.Bottom )
@@ -61,15 +63,16 @@ public static class UIRelative
     /// Calculates screen width percentage based on offset.
     /// </summary>
     /// <param name="anchor">Sprite horizontal anchor</param>
+    /// <param name="width">Parent width</param>
     /// <param name="offset">Position offset</param>
     /// <returns></returns>
-    public static float xPercentTo( UIxAnchor anchor, float offset )
+    public static float xPercentTo( UIxAnchor anchor, float width, float offset )
     {
         // Get initial percentage
-        float percentOffset = offset / Screen.width;
+        float percentOffset = offset / width;
 		
-        // If anchor isn't right the percentage is flipped
-        if( anchor != UIxAnchor.Right )
+        // If anchor is right the percentage is flipped
+        if( anchor == UIxAnchor.Right )
         {
             percentOffset = -percentOffset;
         }
@@ -81,15 +84,16 @@ public static class UIRelative
     /// Calculates screen height percentage based on offset.
     /// </summary>
     /// <param name="anchor">Sprite vertical anchor</param>
+    /// <param name="height">Parent height</param>
     /// <param name="offset">Position offset</param>
     /// <returns></returns>
-    public static float yPercentTo( UIyAnchor anchor, float offset )
+    public static float yPercentTo( UIyAnchor anchor, float height, float offset )
     {
         // Get initial percentage
-        float percentOffset = offset / Screen.height;
+        float percentOffset = offset / height;
 		
-        // If anchor isn't bottom the percentage is flipped
-        if( anchor != UIyAnchor.Bottom )
+        // If anchor is bottom the percentage is flipped
+        if( anchor == UIyAnchor.Bottom )
         {
             percentOffset = -percentOffset;
         }
@@ -152,8 +156,8 @@ public static class UIRelative
         // Get initial fixed offset
         float pixelOffset = offset / pixelDensityMultiplier();
 		
-        // If anchor isn't right the fixed offset is flipped
-        if( anchor != UIxAnchor.Right )
+        // If anchor is right the fixed offset is flipped
+        if( anchor == UIxAnchor.Right )
         {
             pixelOffset = -pixelOffset;
         }
@@ -172,8 +176,8 @@ public static class UIRelative
         // Get initial fixed offset
         float pixelOffset = offset / pixelDensityMultiplier();
 		
-        // If anchor isn't bottom the fixed offset is flipped
-        if( anchor != UIyAnchor.Bottom )
+        // If anchor is bottom the fixed offset is flipped
+        if( anchor == UIyAnchor.Bottom )
         {
             pixelOffset = -pixelOffset;
         }

@@ -10,16 +10,13 @@ public class UITextInstance : UIObject, IPositionable
 	private UIText _parentText;
 	private string _text;
     private float _scale;
-	public UITextAlignMode alignMode;
-	public UITextVerticalAlignMode verticalAlignMode;
+	private UITextAlignMode _alignMode;
+	private UITextVerticalAlignMode _verticalAlignMode;
 
     private float _width;
     public new float width { get { return _width; } }
     private float _height;
     public new float height { get { return _height; } }
-	public float xPos;
-	public float yPos;
-	public int depth;
 	public Color[] colors;
 	public List<UISprite> textSprites = new List<UISprite>(); // all the sprites that make up the string
 
@@ -46,7 +43,7 @@ public class UITextInstance : UIObject, IPositionable
 					_parentText.manager.removeElement( sprite );
 				}
 			}
-			
+
 			_parentText.updateText( this );
             updateSize();
 		}
@@ -82,7 +79,98 @@ public class UITextInstance : UIObject, IPositionable
 				sprite.hidden = _hidden;
 		}
 	}
-	
+
+
+    public float xPos
+    {
+        get { return position.x; }
+        set
+        {
+            Vector3 pos = position;
+            pos.x = value;
+            position = pos;
+        }
+    }
+
+
+    public float yPos
+    {
+        get { return position.y; }
+        set
+        {
+            Vector3 pos = position;
+            pos.y = -value;
+            position = pos;
+        }
+    }
+
+
+    public int depth
+    {
+        get { return (int)position.z; }
+        set
+        {
+            Vector3 pos = position;
+            pos.z = value;
+            position = pos;
+        }
+    }
+
+
+    public UITextAlignMode alignMode
+    {
+        get { return _alignMode; }
+        set
+        {
+            if (_alignMode == value)
+                return;
+
+            _alignMode = value;
+            switch (_alignMode)
+            {
+                case UITextAlignMode.Left:
+                    _anchorInfo.OriginUIxAnchor = UIxAnchor.Left;
+                    break;
+                case UITextAlignMode.Center:
+                    _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
+                    break;
+                case UITextAlignMode.Right:
+                    _anchorInfo.OriginUIxAnchor = UIxAnchor.Right;
+                    break;
+            }
+
+            _parentText.updateText(this);
+            updateSize();
+        }
+    }
+
+
+    public UITextVerticalAlignMode verticalAlignMode
+    {
+        get { return _verticalAlignMode; }
+        set
+        {
+            if (_verticalAlignMode == value)
+                return;
+
+            _verticalAlignMode = value;
+            switch (_verticalAlignMode)
+            {
+                case UITextVerticalAlignMode.Top:
+                    _anchorInfo.OriginUIyAnchor = UIyAnchor.Top;
+                    break;
+                case UITextVerticalAlignMode.Middle:
+                    _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
+                    break;
+                case UITextVerticalAlignMode.Bottom:
+                    _anchorInfo.OriginUIyAnchor = UIyAnchor.Bottom;
+                    break;
+            }
+
+            _parentText.updateText(this);
+            updateSize();
+        }
+    }
 
 	
 	/// <summary>
@@ -97,18 +185,42 @@ public class UITextInstance : UIObject, IPositionable
 	/// </summary>
 	public UITextInstance( UIText parentText, string text, float xPos, float yPos, float scale, int depth, Color[] colors, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode ) : base()
 	{
-		client.transform.position = new Vector3( xPos, yPos, depth );
-		
-		this.alignMode = alignMode;
-		this.verticalAlignMode = verticalAlignMode;
 		_parentText = parentText;
 		_text = text;
         _scale = scale;
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.depth = depth;
 		this.colors = colors;
+        position = new Vector3(xPos, -yPos, depth);
 		_hidden = false;
+
+        // Set anchor alignment
+        _alignMode = alignMode;
+        switch (alignMode)
+        {
+            case UITextAlignMode.Left:
+                _anchorInfo.OriginUIxAnchor = UIxAnchor.Left;
+                break;
+            case UITextAlignMode.Center:
+                _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
+                break;
+            case UITextAlignMode.Right:
+                _anchorInfo.OriginUIxAnchor = UIxAnchor.Right;
+                break;
+        }
+        // Set anchor vertical alignment
+        _verticalAlignMode = verticalAlignMode;
+        switch (verticalAlignMode)
+        {
+            case UITextVerticalAlignMode.Top:
+                _anchorInfo.OriginUIyAnchor = UIyAnchor.Top;
+                break;
+            case UITextVerticalAlignMode.Middle:
+                _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
+                break;
+            case UITextVerticalAlignMode.Bottom:
+                _anchorInfo.OriginUIyAnchor = UIyAnchor.Bottom;
+                break;
+        }
+
         updateSize();
 	}
 
@@ -119,6 +231,8 @@ public class UITextInstance : UIObject, IPositionable
 
         _width = size.x;
         _height = size.y;
+        
+        this.refreshPosition();
     }
 
 	

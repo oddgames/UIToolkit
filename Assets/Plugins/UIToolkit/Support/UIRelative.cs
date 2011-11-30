@@ -190,33 +190,41 @@ public static class UIRelative
     /// </summary>
     /// <param name="anchor">Sprite horizontal anchor</param>
     /// <param name="width">Sprite width</param>
-    /// <param name="originInCenter">True if origin is in center</param>
+    /// <param name="originAnchor">Sprite origin anchor</param>
     /// <returns></returns>
-    public static float xAnchorAdjustment( UIxAnchor anchor, float width, bool originInCenter )
+    public static float xAnchorAdjustment( UIxAnchor anchor, float width, UIxAnchor originAnchor )
     {
         float adjustment = 0f;
         switch( anchor )
         {
             case UIxAnchor.Left:
-                if( originInCenter )
+                if (originAnchor == UIxAnchor.Center)
                 {
                     adjustment -= width / 2f;
                 }
+                else if (originAnchor == UIxAnchor.Right)
+                {
+                    adjustment -= width;
+                }
                 break;
             case UIxAnchor.Right:
-                if( originInCenter )
-                {
-                    adjustment += width / 2f;
-                }
-                else
+                if (originAnchor == UIxAnchor.Left)
                 {
                     adjustment += width;
                 }
-                break;
-            case UIxAnchor.Center:
-                if( !originInCenter )
+                else if (originAnchor == UIxAnchor.Center)
                 {
                     adjustment += width / 2f;
+                }
+                break;
+            case UIxAnchor.Center:
+                if (originAnchor == UIxAnchor.Left)
+                {
+                    adjustment += width / 2f;
+                }
+                else if (originAnchor == UIxAnchor.Right)
+                {
+                    adjustment -= width / 2f;
                 }
                 break;
         }
@@ -229,33 +237,41 @@ public static class UIRelative
     /// </summary>
     /// <param name="anchor">Sprite vertical anchor</param>
     /// <param name="height">Sprite height</param>
-    /// <param name="originInCenter">True if origin is in center</param>
+    /// <param name="originAnchor">Sprite origin anchor</param>
     /// <returns></returns>
-    public static float yAnchorAdjustment( UIyAnchor anchor, float height, bool originInCenter )
+    public static float yAnchorAdjustment(UIyAnchor anchor, float height, UIyAnchor originAnchor)
     {
         float adjustment = 0f;
         switch( anchor )
         {
             case UIyAnchor.Top:
-                if( originInCenter )
+                if (originAnchor == UIyAnchor.Center)
                 {
                     adjustment -= height / 2f;
                 }
+                else if (originAnchor == UIyAnchor.Bottom)
+                {
+                    adjustment -= height;
+                }
                 break;
             case UIyAnchor.Bottom:
-                if( originInCenter )
-                {
-                    adjustment += height / 2f;
-                }
-                else
+                if (originAnchor == UIyAnchor.Top)
                 {
                     adjustment += height;
                 }
-                break;
-            case UIyAnchor.Center:
-                if( !originInCenter )
+                else if (originAnchor == UIyAnchor.Center)
                 {
                     adjustment += height / 2f;
+                }
+                break;
+            case UIyAnchor.Center:
+                if (originAnchor == UIyAnchor.Top)
+                {
+                    adjustment += height / 2f;
+                }
+                else if (originAnchor == UIyAnchor.Bottom)
+                {
+                    adjustment -= height / 2f;
                 }
                 break;
         }

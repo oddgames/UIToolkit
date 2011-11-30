@@ -5,15 +5,6 @@ public static class IPositionablePositioningExtensions
     #region Relative offset methods
 
     /// <summary>
-    /// Positions a sprite in the center of its parent.
-    /// </summary>
-    /// <param name="sprite"></param>
-    public static void positionCenter(this IPositionable sprite)
-    {
-        sprite.positionFromCenter(0f, 0f);
-    }
-
-    /// <summary>
     /// Positions a sprite relatively to the center of its parent.
     /// Values are percentage of screen width/height to move away from the parent.
     /// </summary>
@@ -420,6 +411,15 @@ public static class IPositionablePositioningExtensions
     #endregion
 
     #region Pixel offset methods
+
+    /// <summary>
+    /// Positions a sprite in the center of its parent.
+    /// </summary>
+    /// <param name="sprite"></param>
+    public static void positionCenter(this IPositionable sprite)
+    {
+        sprite.pixelsFromCenter(0, 0);
+    }
 
     /// <summary>
     /// Positions a sprite relatively to the center of its parent.
@@ -843,8 +843,8 @@ public static class IPositionablePositioningExtensions
         Vector3 diffAnchor = newParentAnchorPosition - oldParentAnchorPosition;
 
         // Adjust for sprite anchor offset
-        diffAnchor.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginInCenter);
-        diffAnchor.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginInCenter);
+        diffAnchor.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor);
+        diffAnchor.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor);
 
         // Adjust parent anchor offsets
         if (anchorInfo.UIPrecision == UIPrecision.Percentage)
@@ -890,8 +890,8 @@ public static class IPositionablePositioningExtensions
         }
 
         // Adjust for anchor offset
-        position.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginInCenter);
-        position.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginInCenter);
+        position.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor);
+        position.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor);
 
         // Set new position
         sprite.position = position;
@@ -908,7 +908,8 @@ public static class IPositionablePositioningExtensions
     {
         Vector3 position;
         float width, height;
-        bool originInCenter = false;
+        UIxAnchor originUIxAnchor = UIxAnchor.Left;
+        UIyAnchor originUIyAnchor = UIyAnchor.Top;
         // Determine correct parent values
         if (sprite == null)
         {
@@ -921,12 +922,13 @@ public static class IPositionablePositioningExtensions
             position = sprite.position;
             width = sprite.width;
             height = sprite.height;
-            originInCenter = sprite.anchorInfo.OriginInCenter;
+            originUIxAnchor = sprite.anchorInfo.OriginUIxAnchor;
+            originUIyAnchor = sprite.anchorInfo.OriginUIyAnchor;
         }
 
         // Adjust anchor offset
-        position.x += UIRelative.xAnchorAdjustment(xAnchor, width, originInCenter);
-        position.y -= UIRelative.yAnchorAdjustment(yAnchor, height, originInCenter);
+        position.x += UIRelative.xAnchorAdjustment(xAnchor, width, originUIxAnchor);
+        position.y -= UIRelative.yAnchorAdjustment(yAnchor, height, originUIyAnchor);
 
         return position;
     }

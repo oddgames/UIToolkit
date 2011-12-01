@@ -64,7 +64,10 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// </summary>
 	public UIAbstractContainer( UILayoutType layoutType )
 	{
-		_layoutType = layoutType;
+        _layoutType = layoutType;
+
+        // listen to changes to our own transform so we can move the touchFrame
+        this.onTransformChanged += transformChanged;
 	}
 
 
@@ -169,22 +172,29 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
 				{
-					// we add spacing for all but the first and last
-					if( i != 0 && i != lastIndex )
-						_width += _spacing;
+                    if (item.hidden)
+                    {
+                        lastIndex--;
+                    }
+                    else
+                    {
+                        // we add spacing for all but the first and last
+                        if (i != 0 && i != lastIndex)
+                            _width += _spacing;
 
-                    // Set anchor offset
-                    anchorInfo.OffsetX = _width * hdFactor;
-                    item.anchorInfo = anchorInfo;
-	
-					// all items get their width added
-					_width += item.width;
-					
-					// height will just be the height of the tallest item
-					if( _height < item.height )
-						_height = item.height;
-					
-					i++;
+                        // Set anchor offset
+                        anchorInfo.OffsetX = _width * hdFactor;
+                        item.anchorInfo = anchorInfo;
+
+                        // all items get their width added
+                        _width += item.width;
+
+                        // height will just be the height of the tallest item
+                        if (_height < item.height)
+                            _height = item.height;
+
+                        i++;
+                    }
 				}
 			}
 			else // vertical alignment
@@ -212,22 +222,29 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
 				{
-					// we add spacing for all but the first and last
-					if( i != 0 && i != lastIndex )
-						_height += _spacing;
+                    if (item.hidden)
+                    {
+                        lastIndex--;
+                    }
+                    else
+                    {
+                        // we add spacing for all but the first and last
+                        if (i != 0 && i != lastIndex)
+                            _height += _spacing;
 
-                    // Set anchor offset
-                    anchorInfo.OffsetY = _height * hdFactor;
-                    item.anchorInfo = anchorInfo;
-                    
-					// all items get their height added
-					_height += item.height;
-					
-					// width will just be the width of the widest item
-					if( _width < item.width )
-						_width = item.width;
-					
-					i++;
+                        // Set anchor offset
+                        anchorInfo.OffsetY = _height * hdFactor;
+                        item.anchorInfo = anchorInfo;
+
+                        // all items get their height added
+                        _height += item.height;
+
+                        // width will just be the width of the widest item
+                        if (_width < item.width)
+                            _width = item.width;
+
+                        i++;
+                    }
 				}
 			}
 			
@@ -239,22 +256,28 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		{
 			foreach( var item in _children )
 			{
-				item.localPosition = new Vector3( item.position.x, item.position.y, item.position.z );
-				
-				// find the width that contains the item with the largest offset/width
-				if( _width < item.localPosition.x + item.width )
-					_width = item.localPosition.x + item.width;
-				
-				// find the height that contains the item with the largest offset/height
-				if( _height < -item.localPosition.y + item.height )
-					_height = -item.localPosition.y + item.height;
+                if (!item.hidden)
+                {
+                    item.localPosition = new Vector3(item.position.x, item.position.y, item.position.z);
+
+                    // find the width that contains the item with the largest offset/width
+                    if (_width < item.localPosition.x + item.width)
+                        _width = item.localPosition.x + item.width;
+
+                    // find the height that contains the item with the largest offset/height
+                    if (_height < -item.localPosition.y + item.height)
+                        _height = -item.localPosition.y + item.height;
+                }
 			}
 		}
 
         // Refresh child position to proper positions
         foreach ( var item in _children )
         {
-            item.refreshPosition();
+            if (!item.hidden)
+            {
+                item.refreshPosition();
+            }
         }
 	}
 

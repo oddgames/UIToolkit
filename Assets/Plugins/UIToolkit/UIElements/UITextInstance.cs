@@ -312,7 +312,8 @@ public class UITextInstance : UIObject, IPositionable
 	/// </summary>
 	public override void transformChanged()
 	{
-		
+        base.transformChanged();
+        this.refreshPosition();
 	}
     
 }

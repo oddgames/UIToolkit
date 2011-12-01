@@ -226,6 +226,7 @@ public class UISprite : UIObject, IPositionable
 	
 	public override void transformChanged()
 	{
+        base.transformChanged();
 		updateTransform();
 	}
 

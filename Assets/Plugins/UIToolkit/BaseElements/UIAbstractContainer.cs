@@ -203,6 +203,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 
 	public override void transformChanged()
 	{
+        base.transformChanged();
 		layoutChildren();
 	}
 

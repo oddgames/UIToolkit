@@ -409,6 +409,9 @@ public class UISpriteManager : MonoBehaviour
 		vertices[sprite.vertexIndices.mv.four] = Vector3.zero;
 
         _sprites[sprite.index] = null;
+
+        // remove any delegate callbacks, etc.
+        sprite.parentUIObject = null;
 		
 		// This should happen when the sprite dies!!
 		Destroy( sprite.client );

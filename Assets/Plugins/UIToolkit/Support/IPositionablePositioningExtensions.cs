@@ -866,6 +866,8 @@ public static class IPositionablePositioningExtensions
     /// <param name="sprite"></param>
     public static void refreshPosition(this IPositionable sprite)
     {
+        // Get sprite depth
+        float depth = sprite.position.z;
         // Get anchor info
         UIAnchorInfo anchorInfo = sprite.anchorInfo;
 
@@ -888,6 +890,8 @@ public static class IPositionablePositioningExtensions
         position.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor);
         position.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor);
 
+        // Set depth
+        position.z = depth;
         // Set new position
         sprite.position = position;
     }

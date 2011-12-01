@@ -5,7 +5,15 @@ using System.Collections.Generic;
 
 public abstract class UIAbstractContainer : UIObject, IPositionable
 {
-	public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, AbsoluteLayout };
+    public enum UIContainerAlignMode { Left, Center, Right };
+    private UIContainerAlignMode _alignMode = UIContainerAlignMode.Left;
+    public UIContainerAlignMode alignMode { get { return _alignMode; } set { _alignMode = value; layoutChildren(); } } // relayout when alignMode changes
+
+    public enum UIContainerVerticalAlignMode { Top, Middle, Bottom };
+    private UIContainerVerticalAlignMode _verticalAlignMode = UIContainerVerticalAlignMode.Top;
+    public UIContainerVerticalAlignMode verticalAlignMode { get { return _verticalAlignMode; } set { _verticalAlignMode = value; layoutChildren(); } } // relayout when verticalAlignMode changes
+
+    public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, AbsoluteLayout };
 	private UILayoutType _layoutType;
 	public UILayoutType layoutType { get { return _layoutType; } set { _layoutType = value; layoutChildren(); } } // relayout when layoutType changes
 	
@@ -122,15 +130,41 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		if( _suspendUpdates )
 			return;
 
+        // Get HD factor
+        float hdFactor = UI.instance.isHD ? 0.5f : 1f;
+
 		// rules for vertical and horizontal layouts
 		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )
 		{
 			// start with the insets, then add each object + spacing then end with insets
 			_width = _edgeInsets.left;
 			_height = _edgeInsets.top + _scrollPosition;
+
+            // create UIAnchorInfo to control positioning
+            var anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
+            anchorInfo.ParentUIObject = this;
 				
 			if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal )
 			{
+                // Set anchor information
+                switch (_verticalAlignMode)
+                {
+                    case UIContainerVerticalAlignMode.Top:
+                        anchorInfo.UIyAnchor = UIyAnchor.Top;
+                        anchorInfo.ParentUIyAnchor = UIyAnchor.Top;
+                        anchorInfo.OffsetY = _edgeInsets.top * hdFactor;
+                        break;
+                    case UIContainerVerticalAlignMode.Middle:
+                        anchorInfo.UIyAnchor = UIyAnchor.Center;
+                        anchorInfo.ParentUIyAnchor = UIyAnchor.Center;
+                        break;
+                    case UIContainerVerticalAlignMode.Bottom:
+                        anchorInfo.UIyAnchor = UIyAnchor.Bottom;
+                        anchorInfo.ParentUIyAnchor = UIyAnchor.Bottom;
+                        anchorInfo.OffsetY = _edgeInsets.bottom * hdFactor;
+                        break;
+                }
+
 				var i = 0;
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
@@ -138,10 +172,10 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					// we add spacing for all but the first and last
 					if( i != 0 && i != lastIndex )
 						_width += _spacing;
-					
-					var yPos = item.gameObjectOriginInCenter ? -item.height / 2 : 0;
-					var xPosModifier = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-					item.localPosition = new Vector3( _width + xPosModifier, _edgeInsets.top + yPos, item.position.z );
+
+                    // Set anchor offset
+                    anchorInfo.OffsetX = _width * hdFactor;
+                    item.anchorInfo = anchorInfo;
 	
 					// all items get their width added
 					_width += item.width;
@@ -155,6 +189,25 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			}
 			else // vertical alignment
 			{
+                // Set anchor information
+                switch (_alignMode)
+                {
+                    case UIContainerAlignMode.Left:
+                        anchorInfo.UIxAnchor = UIxAnchor.Left;
+                        anchorInfo.ParentUIxAnchor = UIxAnchor.Left;
+                        anchorInfo.OffsetX = _edgeInsets.left * hdFactor;
+                        break;
+                    case UIContainerAlignMode.Center:
+                        anchorInfo.UIxAnchor = UIxAnchor.Center;
+                        anchorInfo.ParentUIxAnchor = UIxAnchor.Center;
+                        break;
+                    case UIContainerAlignMode.Right:
+                        anchorInfo.UIxAnchor = UIxAnchor.Right;
+                        anchorInfo.ParentUIxAnchor = UIxAnchor.Right;
+                        anchorInfo.OffsetX = _edgeInsets.right * hdFactor;
+                        break;
+                }
+
 				var i = 0;
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
@@ -162,12 +215,11 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					// we add spacing for all but the first and last
 					if( i != 0 && i != lastIndex )
 						_height += _spacing;
-					
-					var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-					var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
-					
-					item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.position.z );
-	
+
+                    // Set anchor offset
+                    anchorInfo.OffsetY = _height * hdFactor;
+                    item.anchorInfo = anchorInfo;
+                    
 					// all items get their height added
 					_height += item.height;
 					
@@ -198,6 +250,12 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					_height = -item.localPosition.y + item.height;
 			}
 		}
+
+        // Refresh child position to proper positions
+        foreach ( var item in _children )
+        {
+            item.refreshPosition();
+        }
 	}
 
 

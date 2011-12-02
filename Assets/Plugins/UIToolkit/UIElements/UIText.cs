@@ -197,6 +197,7 @@ public class UIText : System.Object
 	{
         // Start by resetting textInstance position
         textInstance.position = Vector3.zero;
+        bool hidden = textInstance.hidden;
 		float dx = 0;
 		float dy = 0;
 		float offsetY;
@@ -254,6 +255,9 @@ public class UIText : System.Object
 				currentTextSprite.parentUIObject = textInstance;
 				textInstance.textSprites.Add( currentTextSprite );
 			}
+
+            // Ensure the sprite is hidden if the textInstance is
+            currentTextSprite.hidden = hidden;
 			
 			// See below @NOTE re: offsetx vs. xadvance bugfix.
 			// advance the position to draw the next letter

@@ -246,7 +246,7 @@ public class UIText : System.Object
 			var currentTextSprite = textInstance.textSpriteAtIndex( i );
 			var addingNewTextSprite = currentTextSprite == null;
 			
-			currentTextSprite = configureSpriteForCharId( currentTextSprite, charId, dx, dy, scale, depth );
+			currentTextSprite = configureSpriteForCharId( currentTextSprite, charId, dx, dy, scale, 0 );
 			
 			if( addingNewTextSprite )
 			{

@@ -219,5 +219,6 @@ public class UIObject : System.Object, IPositionable
 		set { _anchorInfo = value; }
 	}
 
+
 	#endregion
 }

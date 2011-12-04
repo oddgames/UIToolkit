@@ -30,3 +30,4 @@ Library/ScriptAssemblies/*
 
 Assembly-CSharp-*
 UIToolkit-csharp.sln
+*.suo

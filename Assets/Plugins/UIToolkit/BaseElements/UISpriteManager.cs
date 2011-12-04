@@ -15,7 +15,10 @@ public struct UITextureInfo
 {
 	public UIUVRect uvRect;
 	public Rect frame;
-	public Rect sourceSize;
+	public Rect spriteSourceSize;
+	public Vector2 sourceSize;
+	public bool trimmed;
+	public bool rotated;
 }
 
 
@@ -121,16 +124,26 @@ public class UISpriteManager : MonoBehaviour
 			var frameH = int.Parse( frame["h"].ToString() );
 		
 			// for trimming support
-			var sourceSize = (Hashtable)((Hashtable)item.Value)["spriteSourceSize"];
-			var sourceSizeX = int.Parse( sourceSize["x"].ToString() );
-			var sourceSizeY = int.Parse( sourceSize["y"].ToString() );
-			var sourceSizeW = int.Parse( sourceSize["w"].ToString() );
-			var sourceSizeH = int.Parse( sourceSize["h"].ToString() );
+			var spriteSourceSize = (Hashtable)((Hashtable)item.Value)["spriteSourceSize"];
+			var spriteSourceSizeX = int.Parse( spriteSourceSize["x"].ToString() );
+			var spriteSourceSizeY = int.Parse( spriteSourceSize["y"].ToString() );
+			var spriteSourceSizeW = int.Parse( spriteSourceSize["w"].ToString() );
+			var spriteSourceSizeH = int.Parse( spriteSourceSize["h"].ToString() );
+
+			var sourceSize = (Hashtable)((Hashtable)item.Value)["sourceSize"];
+			var sourceSizeX = int.Parse(sourceSize["w"].ToString());
+			var sourceSizeY = int.Parse(sourceSize["h"].ToString());
+
+			var trimmed = (bool)((Hashtable)item.Value)["trimmed"];
+			var rotated = (bool)((Hashtable)item.Value)["rotated"];
 			
 			var ti = new UITextureInfo();
 			ti.frame = new Rect( frameX, frameY, frameW, frameH );
 			ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH, textureSize );
-			ti.sourceSize = new Rect( sourceSizeX, sourceSizeY, sourceSizeW, sourceSizeH );
+			ti.spriteSourceSize = new Rect( spriteSourceSizeX, spriteSourceSizeY, spriteSourceSizeW, spriteSourceSizeH );
+			ti.sourceSize = new Vector2(sourceSizeX, sourceSizeY);
+			ti.trimmed = trimmed;
+			ti.rotated = rotated;
 			
 			textures.Add( item.Key.ToString(), ti );
 		}

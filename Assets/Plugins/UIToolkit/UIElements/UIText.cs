@@ -92,7 +92,7 @@ public class UIText : System.Object
 		// We need to sub out the trimmed amount coming back from the manager.
 		var info = _manager.textureInfoForFilename( textureFilename );
 		
-		this._textureOffset = new Vector2( rect.x - info.sourceSize.x, rect.y - info.sourceSize.y );
+		this._textureOffset = new Vector2( rect.x - info.spriteSourceSize.x, rect.y - info.spriteSourceSize.y );
 	}
 
 	

@@ -5,7 +5,15 @@ using System.Collections.Generic;
 
 public abstract class UIAbstractContainer : UIObject, IPositionable
 {
-	public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, AbsoluteLayout };
+    public enum UIContainerAlignMode { Left, Center, Right };
+    private UIContainerAlignMode _alignMode = UIContainerAlignMode.Left;
+    public UIContainerAlignMode alignMode { get { return _alignMode; } set { _alignMode = value; layoutChildren(); } } // relayout when alignMode changes
+
+    public enum UIContainerVerticalAlignMode { Top, Middle, Bottom };
+    private UIContainerVerticalAlignMode _verticalAlignMode = UIContainerVerticalAlignMode.Top;
+    public UIContainerVerticalAlignMode verticalAlignMode { get { return _verticalAlignMode; } set { _verticalAlignMode = value; layoutChildren(); } } // relayout when verticalAlignMode changes
+
+    public enum UILayoutType { Horizontal, Vertical, BackgroundLayout, AbsoluteLayout };
 	private UILayoutType _layoutType;
 	public UILayoutType layoutType { get { return _layoutType; } set { _layoutType = value; layoutChildren(); } } // relayout when layoutType changes
 	
@@ -14,12 +22,6 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	
 	public UIEdgeInsets _edgeInsets; // pixel padding insets for top, left, bottom and right
 	public UIEdgeInsets edgeInsets { get { return _edgeInsets; } set { _edgeInsets = value; layoutChildren(); } } // relayout when edgeInsets changes
-	
-	protected float _width;
-	public new float width { get { return _width; } }
-
-	protected float _height;
-	public new float height { get { return _height; } }
 	
 	protected float _scrollPosition; // scroll position calculated from the top
 	
@@ -62,7 +64,10 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// </summary>
 	public UIAbstractContainer( UILayoutType layoutType )
 	{
-		_layoutType = layoutType;
+        _layoutType = layoutType;
+
+        // listen to changes to our own transform so we can move the touchFrame
+        this.onTransformChanged += transformChanged;
 	}
 
 
@@ -128,60 +133,118 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		if( _suspendUpdates )
 			return;
 
+        // Get HD factor
+        float hdFactor = UI.instance.isHD ? 0.5f : 1f;
+
 		// rules for vertical and horizontal layouts
 		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )
 		{
 			// start with the insets, then add each object + spacing then end with insets
 			_width = _edgeInsets.left;
 			_height = _edgeInsets.top + _scrollPosition;
+
+            // create UIAnchorInfo to control positioning
+            var anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
+            anchorInfo.ParentUIObject = this;
 				
 			if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal )
 			{
+                // Set anchor information
+                switch (_verticalAlignMode)
+                {
+                    case UIContainerVerticalAlignMode.Top:
+                        anchorInfo.UIyAnchor = UIyAnchor.Top;
+                        anchorInfo.ParentUIyAnchor = UIyAnchor.Top;
+                        anchorInfo.OffsetY = _edgeInsets.top * hdFactor;
+                        break;
+                    case UIContainerVerticalAlignMode.Middle:
+                        anchorInfo.UIyAnchor = UIyAnchor.Center;
+                        anchorInfo.ParentUIyAnchor = UIyAnchor.Center;
+                        break;
+                    case UIContainerVerticalAlignMode.Bottom:
+                        anchorInfo.UIyAnchor = UIyAnchor.Bottom;
+                        anchorInfo.ParentUIyAnchor = UIyAnchor.Bottom;
+                        anchorInfo.OffsetY = _edgeInsets.bottom * hdFactor;
+                        break;
+                }
+
 				var i = 0;
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
 				{
-					// we add spacing for all but the first and last
-					if( i != 0 && i != lastIndex )
-						_width += _spacing;
-					
-					var yPos = item.gameObjectOriginInCenter ? -item.height / 2 : 0;
-					var xPosModifier = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-					item.localPosition = new Vector3( _width + xPosModifier, _edgeInsets.top + yPos, item.position.z );
-	
-					// all items get their width added
-					_width += item.width;
-					
-					// height will just be the height of the tallest item
-					if( _height < item.height )
-						_height = item.height;
-					
-					i++;
+                    if (item.hidden)
+                    {
+                        lastIndex--;
+                    }
+                    else
+                    {
+                        // we add spacing for all but the first and last
+                        if (i != 0 && i != lastIndex)
+                            _width += _spacing;
+
+                        // Set anchor offset
+                        anchorInfo.OffsetX = _width * hdFactor;
+                        item.anchorInfo = anchorInfo;
+
+                        // all items get their width added
+                        _width += item.width;
+
+                        // height will just be the height of the tallest item
+                        if (_height < item.height)
+                            _height = item.height;
+
+                        i++;
+                    }
 				}
 			}
 			else // vertical alignment
 			{
+                // Set anchor information
+                switch (_alignMode)
+                {
+                    case UIContainerAlignMode.Left:
+                        anchorInfo.UIxAnchor = UIxAnchor.Left;
+                        anchorInfo.ParentUIxAnchor = UIxAnchor.Left;
+                        anchorInfo.OffsetX = _edgeInsets.left * hdFactor;
+                        break;
+                    case UIContainerAlignMode.Center:
+                        anchorInfo.UIxAnchor = UIxAnchor.Center;
+                        anchorInfo.ParentUIxAnchor = UIxAnchor.Center;
+                        break;
+                    case UIContainerAlignMode.Right:
+                        anchorInfo.UIxAnchor = UIxAnchor.Right;
+                        anchorInfo.ParentUIxAnchor = UIxAnchor.Right;
+                        anchorInfo.OffsetX = _edgeInsets.right * hdFactor;
+                        break;
+                }
+
 				var i = 0;
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
 				{
-					// we add spacing for all but the first and last
-					if( i != 0 && i != lastIndex )
-						_height += _spacing;
-					
-					var xPos = item.gameObjectOriginInCenter ? item.width / 2 : 0;
-					var yPosModifier = item.gameObjectOriginInCenter ? item.height / 2 : 0;
-					
-					item.localPosition = new Vector3( _edgeInsets.left + xPos, -( _height + yPosModifier ), item.position.z );
-	
-					// all items get their height added
-					_height += item.height;
-					
-					// width will just be the width of the widest item
-					if( _width < item.width )
-						_width = item.width;
-					
-					i++;
+                    if (item.hidden)
+                    {
+                        lastIndex--;
+                    }
+                    else
+                    {
+                        // we add spacing for all but the first and last
+                        if (i != 0 && i != lastIndex)
+                            _height += _spacing;
+
+                        // Set anchor offset
+                        anchorInfo.OffsetY = _height * hdFactor;
+                        item.anchorInfo = anchorInfo;
+
+                        // all items get their height added
+                        _height += item.height;
+
+                        // width will just be the width of the widest item
+                        if (_width < item.width)
+                            _width = item.width;
+
+                        i++;
+                    }
 				}
 			}
 			
@@ -193,22 +256,35 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		{
 			foreach( var item in _children )
 			{
-				item.localPosition = new Vector3( item.position.x, item.position.y, item.position.z );
-				
-				// find the width that contains the item with the largest offset/width
-				if( _width < item.localPosition.x + item.width )
-					_width = item.localPosition.x + item.width;
-				
-				// find the height that contains the item with the largest offset/height
-				if( _height < -item.localPosition.y + item.height )
-					_height = -item.localPosition.y + item.height;
+                if (!item.hidden)
+                {
+                    item.localPosition = new Vector3(item.position.x, item.position.y, item.position.z);
+
+                    // find the width that contains the item with the largest offset/width
+                    if (_width < item.localPosition.x + item.width)
+                        _width = item.localPosition.x + item.width;
+
+                    // find the height that contains the item with the largest offset/height
+                    if (_height < -item.localPosition.y + item.height)
+                        _height = -item.localPosition.y + item.height;
+                }
 			}
 		}
+
+        // Refresh child position to proper positions
+        foreach ( var item in _children )
+        {
+            if (!item.hidden)
+            {
+                item.refreshPosition();
+            }
+        }
 	}
 
 
 	public override void transformChanged()
 	{
+        base.transformChanged();
 		layoutChildren();
 	}
 

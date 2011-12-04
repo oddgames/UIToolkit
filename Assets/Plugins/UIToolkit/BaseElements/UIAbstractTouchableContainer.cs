@@ -24,9 +24,6 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		_manager = manager;
 		
 		_manager.addToTouchables( this );
-		
-		// listen to changes to our own transform so we can move the touchFrame
-		this.onTransformChanged += transformChanged;
 	}
 	
 	

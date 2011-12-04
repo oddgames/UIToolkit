@@ -26,9 +26,8 @@ public class MultipleAtlasManager : MonoBehaviour
 		// setup our text instance which will parse our .fnt file and allow us to
 		var text = new UIText( textToolkit, "prototype", "prototype.png" );
 
-		var x = UIRelative.xPercentFrom( UIxAnchor.Left, .05f );
-		var y = UIRelative.yPercentFrom( UIyAnchor.Top, .1f );
-		text.addTextInstance( "hello man.  I have a line\nbreak", x, y );
+		var helloText = text.addTextInstance( "hello man.  I have a line\nbreak", 0, 0 );
+        helloText.positionFromTopLeft( 0.1f, 0.05f );
 	}
 	
 

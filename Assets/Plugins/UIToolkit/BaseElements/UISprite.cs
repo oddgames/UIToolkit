@@ -9,9 +9,7 @@ public class UISprite : UIObject, IPositionable
 	public static readonly Rect _rectZero = new Rect( 0, 0, 0, 0 ); // used for disabled touch frames
 	private bool _suspendUpdates; // when true, updateTransform and updateVertPositions will do nothing until endUpdates is called
 	
-	private float _width;
     public new float width { get { return _width * scale.x; } }  // Width and Height of the sprite in worldspace units.
-    private float _height;
     public new float height { get { return _height * scale.y; } }
 	private float _clippedWidth;
 	private float _clippedHeight;
@@ -228,6 +226,7 @@ public class UISprite : UIObject, IPositionable
 	
 	public override void transformChanged()
 	{
+        base.transformChanged();
 		updateTransform();
 	}
 
@@ -342,7 +341,8 @@ public class UISprite : UIObject, IPositionable
 		clientTransform.position = pos;
 		
 		gameObjectOriginInCenter = true;
-        _anchorInfo.OriginInCenter = true;
+        _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
+        _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
 		setSize( _width, _height );
 	}
 	

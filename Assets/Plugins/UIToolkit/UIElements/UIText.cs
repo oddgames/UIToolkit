@@ -195,7 +195,10 @@ public class UIText : System.Object
 	/// </summary>
 	private void drawText( UITextInstance textInstance, float xPos, float yPos, float scale, int depth, Color[] color, UITextAlignMode instanceAlignMode, UITextVerticalAlignMode instanceVerticalAlignMode )
 	{
-		float dx = xPos;
+        // Start by resetting textInstance position
+        textInstance.position = Vector3.zero;
+        bool hidden = textInstance.hidden;
+		float dx = 0;
 		float dy = 0;
 		float offsetY;
 		int fontLineSkip = 0;
@@ -223,11 +226,11 @@ public class UIText : System.Object
 				fontLineSkip += (int)( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
 				totalHeight += (int)( _fontDetails[ASCII_LINEHEIGHT_REFERENCE].h * scale * lineSpacing );
 				
-				alignLine( textInstance.textSprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
+				alignLine( textInstance.textSprites, lineStartChar, lineEndChar, dx, instanceAlignMode );
 				
 				lineStartChar = i + 1;
 				
-				dx = xPos;
+				dx = 0;
 			}
 			else
 			{
@@ -244,7 +247,7 @@ public class UIText : System.Object
 			var currentTextSprite = textInstance.textSpriteAtIndex( i );
 			var addingNewTextSprite = currentTextSprite == null;
 			
-			currentTextSprite = configureSpriteForCharId( currentTextSprite, charId, dx, dy + yPos, scale, depth );
+			currentTextSprite = configureSpriteForCharId( currentTextSprite, charId, dx, dy, scale, 0 );
 			
 			if( addingNewTextSprite )
 			{
@@ -252,14 +255,20 @@ public class UIText : System.Object
 				currentTextSprite.parentUIObject = textInstance;
 				textInstance.textSprites.Add( currentTextSprite );
 			}
+
+            // Ensure the sprite is hidden if the textInstance is
+            currentTextSprite.hidden = hidden;
 			
 			// See below @NOTE re: offsetx vs. xadvance bugfix.
 			// advance the position to draw the next letter
 			dx += _fontDetails[charId].xadvance * scale;
 		}
 		
-		alignLine( textInstance.textSprites, lineStartChar, lineEndChar, dx - xPos, instanceAlignMode );
+		alignLine( textInstance.textSprites, lineStartChar, lineEndChar, dx, instanceAlignMode );
 		verticalAlignText( textInstance.textSprites, totalHeight, _fontDetails[ASCII_LINEHEIGHT_REFERENCE].offsety * scale * lineSpacing, instanceVerticalAlignMode );
+
+        // Re-position textInstance
+        textInstance.position = new Vector3(xPos, yPos, depth);
 	}
 	
 	
@@ -577,7 +586,8 @@ public class UIText : System.Object
 			forceLowAsciiString( ref text );
 		
 		var textInstance = new UITextInstance( this, text, xPos, yPos, scale, depth, colors, alignMode, verticalAlignMode );
-		drawText( textInstance, xPos, yPos, scale, depth, colors, textInstance.alignMode, textInstance.verticalAlignMode );
+        textInstance.parent = _manager.transform;
+        drawText(textInstance, textInstance.xPos, textInstance.yPos, textInstance.textScale, textInstance.depth, colors, textInstance.alignMode, textInstance.verticalAlignMode);
 		
 		return textInstance;
 	}

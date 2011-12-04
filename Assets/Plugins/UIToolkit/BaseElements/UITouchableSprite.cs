@@ -32,32 +32,6 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
 	{
 	}
-	
-
-	#region Transform passthrough properties - we need to set the touchFrame dirty when these change
-	
-	public new Vector3 position
-	{
-		get { return clientTransform.position; }
-		set
-		{
-			clientTransform.position = value;
-			updateTransform();
-		}
-	}
-
-
-	public new Vector3 localPosition
-	{
-		get { return clientTransform.localPosition; }
-		set
-		{
-			clientTransform.localPosition = value;
-			updateTransform();
-		}
-	}
-	
-	#endregion
 
 	
 	#region Properties and Getters/Setters

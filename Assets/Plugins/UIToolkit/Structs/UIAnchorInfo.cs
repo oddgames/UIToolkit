@@ -10,10 +10,11 @@ public struct UIAnchorInfo
     public UIyAnchor ParentUIyAnchor;
     public UIxAnchor UIxAnchor;
     public UIyAnchor UIyAnchor;
+    public UIxAnchor OriginUIxAnchor;
+    public UIyAnchor OriginUIyAnchor;
     public UIPrecision UIPrecision;
     public float OffsetX;
     public float OffsetY;
-    public bool OriginInCenter;
 
     /// <summary>
     /// Creates a default anchor info object anchored to top left corner.
@@ -28,10 +29,11 @@ public struct UIAnchorInfo
             ParentUIyAnchor = UIyAnchor.Top,
             UIxAnchor = UIxAnchor.Left,
             UIyAnchor = UIyAnchor.Top,
-            UIPrecision = UIPrecision.Percentage,
+            OriginUIxAnchor = UIxAnchor.Left,
+            OriginUIyAnchor = UIyAnchor.Top,
+            UIPrecision = UIPrecision.Pixel,
             OffsetX = 0f,
-            OffsetY = 0f,
-            OriginInCenter = false
+            OffsetY = 0f
         };
         return anchorInfo;
     }
@@ -39,8 +41,8 @@ public struct UIAnchorInfo
 #if UNITY_EDITOR
     public override string ToString()
     {
-        return string.Format("Parent UIObject: {0:g}\nParent UIxAnchor: {1}\nParent UIyAnchor: {2}\nUIxAnchor: {3}\nUIyAnchor: {4}\nUIPrecision: {5}\nOffsetX: {6}\nOffsetY: {7}\nOriginInCenter: {8}",
-            ParentUIObject, ParentUIxAnchor, ParentUIyAnchor, UIxAnchor, UIyAnchor, UIPrecision, OffsetX, OffsetY, OriginInCenter);
+        return string.Format("Parent UIObject: {0:g}\nParent UIxAnchor: {1}\nParent UIyAnchor: {2}\nUIxAnchor: {3}\nUIyAnchor: {4}\nOriginUIxAnchor: {5}\nOriginUIyAnchor: {6}\nUIPrecision: {7}\nOffsetX: {8}\nOffsetY: {9}",
+            ParentUIObject, ParentUIxAnchor, ParentUIyAnchor, UIxAnchor, UIyAnchor, OriginUIxAnchor, OriginUIyAnchor, UIPrecision, OffsetX, OffsetY);
     }
 #endif
 }

@@ -46,7 +46,7 @@ public class UIAnimation
 		this.start = start;
 		
 		_running = true;
-		startTime = Time.time;
+		startTime = Time.realtimeSinceStartup;
 	}
 
 
@@ -61,7 +61,7 @@ public class UIAnimation
 		this.startFloat = startFloat;
 		
 		_running = true;
-		startTime = Time.time;
+		startTime = Time.realtimeSinceStartup;
 	}
 
 
@@ -76,7 +76,7 @@ public class UIAnimation
 		this.targetColor = targetColor;
 		
 		_running = true;
-		startTime = Time.time;
+		startTime = Time.realtimeSinceStartup;
 	}
 
 	
@@ -105,12 +105,12 @@ public class UIAnimation
 		_spriteAnimations[sprite].Add( this );
 		
 		// Store our start time
-		startTime = Time.time;
+		startTime = Time.realtimeSinceStartup;
 
 		while( _running )
 		{				
 			// Get our easing position
-			var easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
+			var easPos = Mathf.Clamp01( ( Time.realtimeSinceStartup - startTime ) / duration );
 			easPos = ease( easPos );
 			
 			// Set the proper property
@@ -136,7 +136,7 @@ public class UIAnimation
 			}
 
 			// See if we are done with our animation yet
-			if( ( startTime + duration ) <= Time.time )
+			if( ( startTime + duration ) <= Time.realtimeSinceStartup )
 			{
 				// if we are set to autoreverse, flip around a few variables and continue
 				if( autoreverse )
@@ -156,7 +156,7 @@ public class UIAnimation
                     startColor = targetColor;
                     targetColor = tempColor;
                     // reset the start time
-					startTime = Time.time;
+					startTime = Time.realtimeSinceStartup;
 				}
 				else
 				{
@@ -187,7 +187,7 @@ public class UIAnimation
 	public WaitForSeconds chain()
 	{
 		var multiplier = autoreverse ? 2 : 1;
-		return new WaitForSeconds( startTime + ( duration * multiplier ) - Time.time );
+		return new WaitForSeconds( startTime + ( duration * multiplier ) - Time.realtimeSinceStartup );
 	}
 	
 	

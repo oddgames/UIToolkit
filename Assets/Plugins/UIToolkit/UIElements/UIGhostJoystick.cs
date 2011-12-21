@@ -13,7 +13,8 @@ public class UIGhostJoystick : UITouchableSprite
 
 	private Vector2 _joystickCenter;
 
-	public float maxJoystickMovement = 40.0f; // max distance from _joystickCenter that the joystick will move
+	public float maxJoystickMovement = 20.0f; // max distance from _joystickCenter that the joystick will move
+	private float resolutionDivisor;
 	private UIToolkit _manager; // we need this for getting at texture details after the constructor
 	
 	
@@ -68,6 +69,8 @@ public class UIGhostJoystick : UITouchableSprite
 		
 		manager.addTouchableSprite( this );
 		_manager = manager;
+
+		resolutionDivisor = UIRelative.pixelDensityMultiplier();
 	}
 	
 	// Sets the image to be displayed when the joystick is highlighted
@@ -123,15 +126,15 @@ public class UIGhostJoystick : UITouchableSprite
 		Vector2 newPosition = localTouchPosition;
 
 		float sqrlen = newPosition.sqrMagnitude;
-		if (sqrlen > maxJoystickMovement*maxJoystickMovement) {
-			newPosition = newPosition.normalized * maxJoystickMovement; 
+		if (sqrlen > maxJoystickMovement*maxJoystickMovement*resolutionDivisor*resolutionDivisor) {
+			newPosition = newPosition.normalized * maxJoystickMovement*resolutionDivisor;
 		}
 		
 		// Set the new position and update the transform
 		_joystickSprite.localPosition = new Vector2(newPosition.x + _joystickCenter.x, _joystickCenter.y + newPosition.y);
 		
 		// Get a value between -1 and 1 for position
-		joystickPosition = newPosition / maxJoystickMovement;
+		joystickPosition = newPosition / (maxJoystickMovement*resolutionDivisor);
 		
 		// Adjust for dead zone	
 		float absoluteX = Mathf.Abs( joystickPosition.x );

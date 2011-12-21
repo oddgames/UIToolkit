@@ -13,8 +13,11 @@ public class UIGhostJoystick : UITouchableSprite
 
 	private Vector2 _joystickCenter;
 
-	public float maxJoystickMovement = 40.0f; // max distance from _joystickCenter that the joystick will move
+	public float maxJoystickMovement = 20.0f; // max distance from _joystickCenter that the joystick will move
+	private float resolutionDivisor;
 	private UIToolkit _manager; // we need this for getting at texture details after the constructor
+
+	private int currentTouchId = -1;
 	
 	
 	/// <summary>
@@ -68,6 +71,8 @@ public class UIGhostJoystick : UITouchableSprite
 		
 		manager.addTouchableSprite( this );
 		_manager = manager;
+
+		resolutionDivisor = UIRelative.pixelDensityMultiplier();
 	}
 	
 	// Sets the image to be displayed when the joystick is highlighted
@@ -123,15 +128,15 @@ public class UIGhostJoystick : UITouchableSprite
 		Vector2 newPosition = localTouchPosition;
 
 		float sqrlen = newPosition.sqrMagnitude;
-		if (sqrlen > maxJoystickMovement*maxJoystickMovement) {
-			newPosition = newPosition.normalized * maxJoystickMovement; 
+		if (sqrlen > maxJoystickMovement*maxJoystickMovement*resolutionDivisor*resolutionDivisor) {
+			newPosition = newPosition.normalized * maxJoystickMovement*resolutionDivisor;
 		}
 		
 		// Set the new position and update the transform
 		_joystickSprite.localPosition = new Vector2(newPosition.x + _joystickCenter.x, _joystickCenter.y + newPosition.y);
 		
 		// Get a value between -1 and 1 for position
-		joystickPosition = newPosition / maxJoystickMovement;
+		joystickPosition = newPosition / (maxJoystickMovement*resolutionDivisor);
 		
 		// Adjust for dead zone	
 		float absoluteX = Mathf.Abs( joystickPosition.x );
@@ -167,6 +172,11 @@ public class UIGhostJoystick : UITouchableSprite
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
+		if (currentTouchId != -1)
+			return;
+
+		currentTouchId = touch.fingerId;
+
 		touchPos.y = -touchPos.y;
 
 		highlighted = true;
@@ -188,6 +198,9 @@ public class UIGhostJoystick : UITouchableSprite
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
+		if (touch.fingerId != currentTouchId)
+			return;
+
 		touchPos.y = -touchPos.y;
 
 		this.layoutJoystick(this.inverseTranformPoint(touchPos - _joystickCenter));
@@ -200,11 +213,16 @@ public class UIGhostJoystick : UITouchableSprite
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #endif
 	{
+		if (touch.fingerId != currentTouchId)
+			return;
+
 		// Set highlighted to avoid calling super
 		highlighted = false;
 		
 		// Reset back to default state
 		this.resetJoystick();
+
+		currentTouchId = -1;
 	}
 	
 }

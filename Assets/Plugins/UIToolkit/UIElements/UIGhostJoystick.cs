@@ -16,6 +16,8 @@ public class UIGhostJoystick : UITouchableSprite
 	public float maxJoystickMovement = 20.0f; // max distance from _joystickCenter that the joystick will move
 	private float resolutionDivisor;
 	private UIToolkit _manager; // we need this for getting at texture details after the constructor
+
+	private int currentTouchId = -1;
 	
 	
 	/// <summary>
@@ -170,6 +172,11 @@ public class UIGhostJoystick : UITouchableSprite
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
+		if (currentTouchId != -1)
+			return;
+
+		currentTouchId = touch.fingerId;
+
 		touchPos.y = -touchPos.y;
 
 		highlighted = true;
@@ -191,6 +198,9 @@ public class UIGhostJoystick : UITouchableSprite
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
 	{
+		if (touch.fingerId != currentTouchId)
+			return;
+
 		touchPos.y = -touchPos.y;
 
 		this.layoutJoystick(this.inverseTranformPoint(touchPos - _joystickCenter));
@@ -203,11 +213,16 @@ public class UIGhostJoystick : UITouchableSprite
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #endif
 	{
+		if (touch.fingerId != currentTouchId)
+			return;
+
 		// Set highlighted to avoid calling super
 		highlighted = false;
 		
 		// Reset back to default state
 		this.resetJoystick();
+
+		currentTouchId = -1;
 	}
 	
 }

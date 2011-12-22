@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 {
-	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 2;
+	private const int TOTAL_VELOCITY_SAMPLE_COUNT = 3;
 	private const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
 	private float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.instance.isHD ? 10 : 5;
-	private const float CONTENT_TOUCH_DELAY = 0.15f;
-
+	private const float CONTENT_TOUCH_DELAY = 0.1f;
+	
 	private float _deltaTouch;
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	private UIFakeTouch _lastTouch;
@@ -20,7 +20,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	private Vector2 _lastTouchPosition;
 	private ITouchable _activeTouchable;
 	private bool _isDragging;
-	private Stack<float> _velocities = new Stack<float>(TOTAL_VELOCITY_SAMPLE_COUNT);
+	private Queue<float> _velocities = new Queue<float>( TOTAL_VELOCITY_SAMPLE_COUNT );
 
 
 	public UIScrollableVerticalLayout(int spacing)
@@ -44,14 +44,21 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 			var newTop = _scrollPosition - deltaMovement;
 
 			// make sure we have some velocity and we are within our bounds
-			if (Mathf.Abs(avgVelocity) > 25 && newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y) {
-				_scrollPosition = newTop;
-				layoutChildren();
-				avgVelocity *= SCROLL_DECELERATION_MODIFIER;
+			if( Mathf.Abs( avgVelocity ) > 25 )
+			{
+				if (newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y)
+				{
+					_scrollPosition = newTop;
+					layoutChildren();
+					avgVelocity *= SCROLL_DECELERATION_MODIFIER;
 
-				yield return null;
-			}
-			else {
+					yield return null;
+				} else {
+					_scrollPosition = Mathf.Clamp(newTop, _minEdgeInset.y, _maxEdgeInset.y);
+					layoutChildren();
+					break;
+				}
+			} else {
 				break;
 			}
 		}
@@ -222,16 +229,14 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 
 
 		var newTop = _scrollPosition - touch.deltaPosition.y;
-		if (newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y) // movement within the bounds (ie no bounce yet)
-		{
-			_scrollPosition = newTop;
-			layoutChildren();
-		}
+		newTop = Mathf.Clamp(newTop, _minEdgeInset.y, _maxEdgeInset.y);
+		_scrollPosition = newTop;
+		layoutChildren();
 
 		// pop any extra velocities and push the current velocity onto the stack
-		if (_velocities.Count == TOTAL_VELOCITY_SAMPLE_COUNT)
-			_velocities.Pop();
-		_velocities.Push(touch.deltaPosition.y / Time.deltaTime);
+		if( _velocities.Count == TOTAL_VELOCITY_SAMPLE_COUNT )
+			_velocities.Dequeue();
+		_velocities.Enqueue(touch.deltaPosition.y / Time.deltaTime);
 	}
 
 

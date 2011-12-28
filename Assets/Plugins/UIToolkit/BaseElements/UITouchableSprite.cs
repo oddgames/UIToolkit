@@ -22,15 +22,28 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	protected bool _hoveredOver;
 #endif
 	
-	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
+	
+	/// <summary>
+	/// Gets or sets the string data for this controller
+	/// </summary>
+	/// <value>
+	/// String data value which can be set at item creation time, and then
+	/// evaluated by the touch/click event handler.
+	/// </value>	
+	public string StringData { get; set; }
+	
+	
+	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, string stringData = "" ):base( frame, depth, uvFrame )
 	{
 		_tempUVframe = uvFrame;
+		StringData = stringData;
 	}
 	
 	
 	// constructor for when the need to have a centered UISprite arises (I'm looking at you UIKnob)
-	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
+	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter, string stringData = "" ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
 	{
+		StringData = stringData;
 	}
 
 	

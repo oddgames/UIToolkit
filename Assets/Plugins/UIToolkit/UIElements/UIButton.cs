@@ -14,19 +14,19 @@ public class UIButton : UITouchableSprite
 
 	#region Constructors/Destructor
 	
-	public static UIButton create( string filename, string highlightedFilename, int xPos, int yPos )
+	public static UIButton create( string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return UIButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+		return UIButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos, stringData );
 	}
 	
 	
-	public static UIButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	public static UIButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return UIButton.create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+		return UIButton.create( manager, filename, highlightedFilename, xPos, yPos, 1, stringData );
 	}
 
 	
-	public static UIButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
+	public static UIButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth, string stringData = ""  )
 	{
 		// grab the texture details for the normal state
 		var normalTI = manager.textureInfoForFilename( filename );
@@ -36,11 +36,11 @@ public class UIButton : UITouchableSprite
 		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		return new UIButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		return new UIButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect, stringData );
 	}
 
 
-	public UIButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( frame, depth, uvFrame )
+	public UIButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe, string stringData = "" ):base( frame, depth, uvFrame, stringData )
 	{
 		// If a highlighted frame has not yet been set use the normalUVframe
 		if( highlightedUVframe == UIUVRect.zero )

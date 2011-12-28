@@ -30,19 +30,19 @@ public class UIZoomButton : UIButton
 
 	#region Constructors/Destructor
 	
-	public static new UIZoomButton create( string filename, string highlightedFilename, int xPos, int yPos )
+	public static new UIZoomButton create( string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return UIZoomButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+		return UIZoomButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos, stringData );
 	}
 	
 	
-	public static new UIZoomButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	public static new UIZoomButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return UIZoomButton.create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+		return UIZoomButton.create( manager, filename, highlightedFilename, xPos, yPos, 1, stringData );
 	}
 
 	
-	public static new UIZoomButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
+	public static new UIZoomButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth, string stringData = "" )
 	{
 		// grab the texture details for the normal state
 		var normalTI = manager.textureInfoForFilename( filename );
@@ -52,11 +52,11 @@ public class UIZoomButton : UIButton
 		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		return new UIZoomButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		return new UIZoomButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect, stringData );
 	}
 
 
-	public UIZoomButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( manager, frame, depth, uvFrame, highlightedUVframe )
+	public UIZoomButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe, string stringData = "" ):base( manager, frame, depth, uvFrame, highlightedUVframe, stringData )
 	{
 		centerize();
 		_zoomInAnimation = new UIAnimation( this, 0.3f, UIAnimationProperty.Scale, new Vector3( 1, 1, 1 ), new Vector3( 1.3f, 1.3f, 1.3f ), Easing.Quartic.easeInOut );

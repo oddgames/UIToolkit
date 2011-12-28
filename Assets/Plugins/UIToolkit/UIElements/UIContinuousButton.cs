@@ -12,19 +12,19 @@ public class UIContinuousButton : UIButton
 	public bool onlyFireStartAndEndEvents = false;
 	
 	
-	public static new UIContinuousButton create( string filename, string highlightedFilename, int xPos, int yPos )
+	public static new UIContinuousButton create( string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+		return create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos, stringData );
 	}
 
 	
-	public static new UIContinuousButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	public static new UIContinuousButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+		return create( manager, filename, highlightedFilename, xPos, yPos, 1, stringData );
 	}
 	
 	
-	public static new UIContinuousButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
+	public static new UIContinuousButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth, string stringData = "" )
 	{
 		// grab the texture details for the normal state
 		var normalTI = manager.textureInfoForFilename( filename );
@@ -34,11 +34,11 @@ public class UIContinuousButton : UIButton
 		var highlightedTI = manager.textureInfoForFilename( highlightedFilename );
 		
 		// create the button
-		return new UIContinuousButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect );
+		return new UIContinuousButton( manager, frame, depth, normalTI.uvRect, highlightedTI.uvRect, stringData );
 	}
 
 
-	public UIContinuousButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( manager, frame, depth, uvFrame, highlightedUVframe )
+	public UIContinuousButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe, string stringData = "" ):base( manager, frame, depth, uvFrame, highlightedUVframe, stringData )
 	{
 	}
 

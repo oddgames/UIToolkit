@@ -12,8 +12,10 @@ public interface ITouchable
 	Rect touchFrame { get; }
 	Vector3 position { get; set; }
 	
-	
 	bool hitTest( Vector2 point );
+	
+	
+	string StringData { get; set; }
 	
 	
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER

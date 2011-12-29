@@ -90,7 +90,7 @@ public class UISpriteManager : MonoBehaviour
 
 		var texture = (Texture)Resources.Load(texturePackerConfigName, typeof(Texture));
 		if (texture == null)
-			Debug.Log("UI texture is being autoloaded and it doesnt exist.  Cannot find texturePackerConfigName: " + texturePackerConfigName);
+			Debug.Log("UI texture is being autoloaded and it doesn't exist.  Cannot find texturePackerConfigName: " + texturePackerConfigName);
 		material.SetTexture("_MainTex", texture);
 
 		// Cache our texture size

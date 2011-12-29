@@ -17,39 +17,39 @@ public class UIStateButton : UIButton
 
 	#region Constructors/Destructor
 	
-	new public static UIStateButton create( string filename, string highlightedFilename, int xPos, int yPos )
+	new public static UIStateButton create( string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return UIStateButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos );
+		return UIStateButton.create( UI.firstToolkit, filename, highlightedFilename, xPos, yPos, stringData );
 	}
 	
 	
-	new public static UIStateButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos )
+	new public static UIStateButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, string stringData = "" )
 	{
-		return UIStateButton.create( manager, filename, highlightedFilename, xPos, yPos, 1 );
+		return UIStateButton.create( manager, filename, highlightedFilename, xPos, yPos, 1, stringData );
 	}
 	
 	
-	new public static UIStateButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth )
+	new public static UIStateButton create( UIToolkit manager, string filename, string highlightedFilename, int xPos, int yPos, int depth, string stringData = "" )
 	{
 		var filenames = new string[1] {filename};
 		var highlightedFilenames = new string[1] {highlightedFilename};
-		return UIStateButton.create( manager, filenames, highlightedFilenames, xPos, yPos, depth );
+		return UIStateButton.create( manager, filenames, highlightedFilenames, xPos, yPos, depth, stringData );
 	}	
 	
 	
-	public static UIStateButton create( string[] filenames, string[] highlightedFilenames, int xPos, int yPos )
+	public static UIStateButton create( string[] filenames, string[] highlightedFilenames, int xPos, int yPos, string stringData = "" )
 	{
-		return UIStateButton.create( UI.firstToolkit, filenames, highlightedFilenames, xPos, yPos );
+		return UIStateButton.create( UI.firstToolkit, filenames, highlightedFilenames, xPos, yPos, stringData );
 	}
 	
 	
-	public static UIStateButton create( UIToolkit manager, string[] filenames, string[] highlightedFilenames, int xPos, int yPos )
+	public static UIStateButton create( UIToolkit manager, string[] filenames, string[] highlightedFilenames, int xPos, int yPos, string stringData = "" )
 	{
-		return UIStateButton.create( manager, filenames, highlightedFilenames, xPos, yPos, 1 );
+		return UIStateButton.create( manager, filenames, highlightedFilenames, xPos, yPos, 1, stringData );
 	}
 		
 	
-	public static UIStateButton create( UIToolkit manager, string[] filenames, string[] highlightedFilenames, int xPos, int yPos, int depth )
+	public static UIStateButton create( UIToolkit manager, string[] filenames, string[] highlightedFilenames, int xPos, int yPos, int depth, string stringData = "" )
 	{
 		
 		// grab the texture details for the initial state
@@ -62,7 +62,7 @@ public class UIStateButton : UIButton
 			manager.textureInfoForFilename( highlightedFilenames[0] );
 		}
 		
-		var button = new UIStateButton( manager, frame, depth, firstNormalTI.uvRect, firstHighlightedTI.uvRect );
+		var button = new UIStateButton( manager, frame, depth, firstNormalTI.uvRect, firstHighlightedTI.uvRect, stringData );
 
 		button.addFrames(filenames, highlightedFilenames);
 		
@@ -70,7 +70,7 @@ public class UIStateButton : UIButton
 	}
 	
 	
-	public UIStateButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe ):base( manager, frame, depth, uvFrame, highlightedUVframe )
+	public UIStateButton( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UIUVRect highlightedUVframe, string stringData = "" ):base( manager, frame, depth, uvFrame, highlightedUVframe, stringData )
 	{
 	}
 

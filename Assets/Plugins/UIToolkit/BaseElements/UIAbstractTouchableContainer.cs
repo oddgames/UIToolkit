@@ -13,6 +13,16 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	protected Vector2 _maxEdgeInset;
 	
 	
+	/// <summary>
+	/// Gets or sets the string data for this controller
+	/// </summary>
+	/// <value>
+	/// String data value which can be set at item creation time, and then
+	/// evaluated by the touch/click event handler.
+	/// </value>
+	public string StringData { get; set; }
+	
+	
 	public UIAbstractTouchableContainer( UILayoutType layoutType, int spacing ) : this( UI.firstToolkit, layoutType, spacing )
 	{}
 	

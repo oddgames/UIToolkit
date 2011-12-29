@@ -55,7 +55,33 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		// now that we have new insets clip
 		clipToBounds();
 	}
-	
+
+	ITouchable TestTouchable(UIObject touchableObj, Vector2 touchPosition)
+	{
+
+
+		foreach (Transform t in touchableObj.client.transform) {
+			UIElement uie = t.GetComponent<UIElement>();
+			if (uie != null) {
+				UIObject o = t.GetComponent<UIElement>().UIObject;
+				if (o != null) {
+					var touched = TestTouchable(o, touchPosition);
+					if (touched != null)
+						return touched;
+				}
+			}
+		}
+
+		ITouchable touchable = touchableObj as ITouchable;
+		if (touchable != null) {
+			if (touchable.hitTest(touchPosition))
+				return touchable as ITouchable;
+		}
+
+
+
+		return null;
+	}
 
 	protected ITouchable getButtonForScreenPosition( Vector2 touchPosition )
 	{
@@ -63,11 +89,12 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		// due to their frame overlapping the touchable below
 		for( int i = _children.Count - 1; i >= 0; i-- )
 		{
-			var touchable = _children[i] as ITouchable;
+			var touchable = _children[i];
 			if( touchable != null )
 			{
-				if( touchable.hitTest( touchPosition ) )
-					return touchable;
+				ITouchable touched = TestTouchable(touchable, touchPosition); // Recursive
+				if (touched != null)
+					return touched;
 			}
 		}
 		

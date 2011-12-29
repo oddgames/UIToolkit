@@ -256,9 +256,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 
 		// Refresh child position to proper positions
 		foreach (var item in _children) {
-			//			if (!item.hidden) {
 			item.refreshPosition();
-			//			}
 		}
 	}
 

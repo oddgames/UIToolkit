@@ -29,6 +29,10 @@ public class UIObject : System.Object, IPositionable
 		_client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
 		_client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
 
+		UIElement uie = _client.AddComponent<UIElement>();
+		uie.UIObject = this;
+		
+
 		// Cache the clientTransform
 		clientTransform = _client.transform;
 		// Create a default anchor info object

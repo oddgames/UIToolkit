@@ -6,7 +6,7 @@ using System.Collections;
 public class ScrollableContainerManager : MonoBehaviour
 {
 	private bool _movedContainer;
-	
+	public UIToolkit TextManager;	
 	
 	void Start()
 	{
@@ -30,6 +30,27 @@ public class ScrollableContainerManager : MonoBehaviour
 			{
 				touchable = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
 			}
+			if (i == 1) {
+				var ch = UIToggleButton.create("cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0);
+				ch.parentUIObject = touchable;
+				ch.pixelsFromRight(0);
+				ch.client.name = "TEST THINGY";
+				ch.scale = new Vector3(0.5f, 0.5f, 1);
+			}
+			if (i == 4) {
+				var text = new UIText(TextManager, "prototype", "prototype.png");
+
+				var helloText = text.addTextInstance("Child Text", 0, 0,0.5f,-1,Color.cyan,UITextAlignMode.Center,UITextVerticalAlignMode.Middle);
+				helloText.parentUIObject = touchable;
+				helloText.positionCenter();
+
+				var ch = UIToggleButton.create("cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0);
+				ch.parentUIObject = helloText;
+				ch.pixelsFromRight(-16);
+				ch.client.name = "subsub";
+				ch.scale = new Vector3(0.25f, 0.25f, -2);
+			}
+
 			
 			// only add a touchUpInside handler for buttons
 			if( touchable is UIButton )

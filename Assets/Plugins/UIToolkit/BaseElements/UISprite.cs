@@ -135,8 +135,7 @@ public class UISprite : UIObject, IPositionable
 				return;
 			
 			_clipped = value;
-			if( _clipped )
-				_clippedTopYOffset = 0;
+			_clippedTopYOffset = 0;
 			
 			updateVertPositions();
 			manager.updateUV( this );
@@ -263,18 +262,18 @@ public class UISprite : UIObject, IPositionable
 		if( gameObjectOriginInCenter )
 		{
 			// Some objects need to rotate so we set the origin at the center of the GO
-			v1 = new Vector3( -width / 2, height / 2, 0 );   // Upper-left
-			v2 = new Vector3( -width / 2, -height / 2, 0 );  // Lower-left
-			v3 = new Vector3( width / 2, -height / 2, 0 );   // Lower-right
-			v4 = new Vector3( width / 2, height / 2, 0 );    // Upper-right
+			v1 = new Vector3( -width / 2, height / 2 - _clippedTopYOffset, 0 );   // Upper-left
+			v2 = new Vector3(-width / 2, -height / 2 - _clippedTopYOffset, 0);  // Lower-left
+			v3 = new Vector3(width / 2, -height / 2 - _clippedTopYOffset, 0);   // Lower-right
+			v4 = new Vector3(width / 2, height / 2 - _clippedTopYOffset, 0);    // Upper-right
 		}
 		else
 		{
 			// Make the origin the top-left corner of the GO
-	        v1 = new Vector3( 0, 0, 0 );   // Upper-left
-	        v2 = new Vector3( 0, -height, 0 );  // Lower-left
-	        v3 = new Vector3( width, -height, 0 );   // Lower-right
-	        v4 = new Vector3( width, 0, 0 );    // Upper-right
+			v1 = new Vector3(0, 0 - _clippedTopYOffset, 0);   // Upper-left
+			v2 = new Vector3(0, -height - _clippedTopYOffset, 0);  // Lower-left
+			v3 = new Vector3(width, -height - _clippedTopYOffset, 0);   // Lower-right
+			v4 = new Vector3(width, 0 - _clippedTopYOffset, 0);    // Upper-right
 		}
 	}
 	
@@ -286,18 +285,16 @@ public class UISprite : UIObject, IPositionable
     /// </summary>
     public void setClippedSize( float width, float height, bool clippingTop )
     {
-        _clippedWidth = width;
-        _clippedHeight = height;
+			_clippedWidth = width;
+			_clippedHeight = height;
 		
 		if( clippingTop )
 			_clippedTopYOffset = _height - _clippedHeight;
 		else
 			_clippedTopYOffset = 0;
 		
-		position = new Vector3( position.x, position.y - _clippedTopYOffset, position.z );
-		
 		updateVertPositions();
-        updateTransform();
+		updateTransform();
 	}
 	
 

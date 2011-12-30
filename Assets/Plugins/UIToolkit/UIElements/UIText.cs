@@ -459,10 +459,10 @@ public class UIText : System.Object
 		// in the wrong spot according to the angelcode spec. xadvance is the complete character width
 		// and offsetx is supposed to be used only during character rendering, not during cursor advance.
 		// Please note that yPos already has offsety built in.
-		var rect = new Rect( xPos + _fontDetails[charId].offsetx * scale,
+		var rect = new Rect( xPos + _fontDetails[charId].offsetx* scale,
 				             yPos, 
-				             _fontDetails[charId].w * scale, 
-				             _fontDetails[charId].h * scale );
+				             _fontDetails[charId].w, 
+				             _fontDetails[charId].h);
 		
 		if( sprite == null )
 		{
@@ -475,7 +475,10 @@ public class UIText : System.Object
 			sprite.position = new Vector3( rect.x, -rect.y, depth );
 			sprite.setSize( rect.width, rect.height );
 		}
-		
+
+		// We scale the sprite this way so it will work with the container clipping
+		sprite.autoRefreshPositionOnScaling = false;
+		sprite.scale = new Vector3(scale, scale, 1);
 		return sprite;
 	}
 	

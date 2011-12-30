@@ -161,7 +161,19 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	{
 		_touchFrame = new Rect( position.x, -position.y, width, height );
 		calculateMinMaxInsets();
-	}	
+	}
+
+	public override float width
+	{
+		get { return _touchFrame.width; }
+	}
+
+
+	public override float height
+	{
+		get { return _touchFrame.height; }
+	}
+
 
 	
 	/// <summary>
@@ -172,8 +184,8 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		base.addChild( children );
 		
 		// after the children are added we can grab the width/height which are freshly calculated
-		_contentSize.x = width;
-		_contentSize.y = height;
+		_contentSize.x = _contentWidth;
+		_contentSize.y = _contentHeight;
 		calculateMinMaxInsets();
 		
 		foreach( var child in children )

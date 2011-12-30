@@ -92,18 +92,19 @@ public class UIVerticalPanel : UIAbstractContainer
 	protected override void layoutChildren()
 	{
 		base.layoutChildren();
+		matchSizeToContentSize();
 		
 		// make sure we have enough height to work with.  totalAvailableHeight will be calculated as the minimum required height for the panel
 		// if _height is greater than that, we will use it
 		var totalAvailableHeight = _topStripHeight + _bottomStripHeight + 1 + _edgeInsets.top + _edgeInsets.bottom;
-		if( _height > totalAvailableHeight )
-			totalAvailableHeight = (int)_height;
+		if( _contentHeight > totalAvailableHeight )
+			totalAvailableHeight = (int)_contentHeight;
 
 		// now we move our sprites into position.  we have the proper height now so we can use that with a couple extra pixels to fill the gap
 		var leftoverHeight = totalAvailableHeight - _topStripHeight - _bottomStripHeight + 3;
 		
 		_middleStrip.setSize( _middleStrip.width, leftoverHeight );
-		_bottomStrip.localPosition = new Vector3( _bottomStrip.localPosition.x, -_height - _bottomStripHeight, _bottomStrip.localPosition.z );
+		_bottomStrip.localPosition = new Vector3( _bottomStrip.localPosition.x, -_contentHeight - _bottomStripHeight, _bottomStrip.localPosition.z );
 	}
 
 }

@@ -206,13 +206,13 @@ public class UIObject : System.Object, IPositionable
 	#region IPositionable implementation
 
 	// subclasses should implement these methods if they want to take part in positioning!
-	public float width
+	public virtual float width
 	{
 		get { return _width; }
 	}
 
 
-	public float height
+	public virtual float height
 	{
 		get { return _height; }
 	}

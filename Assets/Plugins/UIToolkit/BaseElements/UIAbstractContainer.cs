@@ -29,6 +29,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	private bool _suspendUpdates; // when true, layoutChildren will do nothing
 
 
+	protected float _contentWidth;
+	protected float _contentHeight;
 
 	/// <summary>
 	/// Hides the container and all of it's children
@@ -139,8 +141,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		// rules for vertical and horizontal layouts
 		if (_layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical) {
 			// start with the insets, then add each object + spacing then end with insets
-			_width = _edgeInsets.left;
-			_height = _edgeInsets.top + _scrollPosition;
+			_contentWidth = _edgeInsets.left;
+			_contentHeight = _edgeInsets.top + _scrollPosition;
 
 			// create UIAnchorInfo to control positioning
 			var anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
@@ -173,18 +175,18 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					}
 					// we add spacing for all but the first and last
 					if (i != 0 && i != lastIndex)
-						_width += _spacing;
+						_contentWidth += _spacing;
 
 					// Set anchor offset
-					anchorInfo.OffsetX = _width * hdFactor;
+					anchorInfo.OffsetX = _contentWidth * hdFactor;
 					item.anchorInfo = anchorInfo;
 
 					// all items get their width added
-					_width += item.width;
+					_contentWidth += item.width;
 
 					// height will just be the height of the tallest item
-					if (_height < item.height)
-						_height = item.height;
+					if (_contentHeight < item.height)
+						_contentHeight = item.height;
 
 					i++;
 				}
@@ -217,26 +219,26 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					}
 					// we add spacing for all but the first and last
 					if (i != 0 && i != lastIndex)
-						_height += _spacing;
+						_contentHeight += _spacing;
 
 					// Set anchor offset
-					anchorInfo.OffsetY = _height * hdFactor;
+					anchorInfo.OffsetY = _contentHeight * hdFactor;
 					item.anchorInfo = anchorInfo;
 
 					// all items get their height added
-					_height += item.height;
+					_contentHeight += item.height;
 
 					// width will just be the width of the widest item
-					if (_width < item.width)
-						_width = item.width;
+					if (_contentWidth < item.width)
+						_contentWidth = item.width;
 
 					i++;
 				}
 			}
 
 			// add the right and bottom edge inset to finish things off
-			_width += _edgeInsets.right;
-			_height += _edgeInsets.bottom;
+			_contentWidth += _edgeInsets.right;
+			_contentHeight += _edgeInsets.bottom;
 		}
 		else if (_layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout) {
 			foreach (var item in _children) {
@@ -244,12 +246,12 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					item.localPosition = new Vector3(item.position.x, item.position.y, item.position.z);
 
 					// find the width that contains the item with the largest offset/width
-					if (_width < item.localPosition.x + item.width)
-						_width = item.localPosition.x + item.width;
+					if (_contentWidth < item.localPosition.x + item.width)
+						_contentWidth = item.localPosition.x + item.width;
 
 					// find the height that contains the item with the largest offset/height
-					if (_height < -item.localPosition.y + item.height)
-						_height = -item.localPosition.y + item.height;
+					if (_contentHeight < -item.localPosition.y + item.height)
+						_contentHeight = -item.localPosition.y + item.height;
 				}
 			}
 		}
@@ -265,6 +267,12 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	{
 		base.transformChanged();
 		layoutChildren();
+	}
+
+	public void matchSizeToContentSize()
+	{
+		_width = _contentWidth;
+		_height = _contentHeight;
 	}
 
 }

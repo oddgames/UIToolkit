@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+public enum UIMouseState { UpThisFrame, DownThisFrame, HeldDown };
 
 public struct UIFakeTouch
 {
@@ -24,7 +25,7 @@ public struct UIFakeTouch
 	}
 
 
-	public static UIFakeTouch fromInput( ref Vector2? lastMousePosition )
+	public static UIFakeTouch fromInput( UIMouseState mouseState, ref Vector2? lastMousePosition )
 	{
 		var fakeTouch = new UIFakeTouch();
 		fakeTouch.fingerId = 2;
@@ -33,17 +34,17 @@ public struct UIFakeTouch
 		if( lastMousePosition.HasValue )
 			fakeTouch.deltaPosition = Input.mousePosition - (Vector3)lastMousePosition;
 		
-		if( Input.GetMouseButtonDown( 0 ) ) // equivalent to touchBegan
+		if( mouseState == UIMouseState.DownThisFrame ) // equivalent to touchBegan
 		{
 			fakeTouch.phase = TouchPhase.Began;
 			lastMousePosition = Input.mousePosition;
 		}
-		else if( Input.GetMouseButtonUp( 0 ) ) // equivalent to touchEnded
+		else if( mouseState == UIMouseState.UpThisFrame ) // equivalent to touchEnded
 		{
 			fakeTouch.phase = TouchPhase.Ended;
 			lastMousePosition = null;
 		}
-		else // equivalent to touchMoved/Stationary
+		else // UIMouseState.HeldDown - equivalent to touchMoved/Stationary
 		{
 			fakeTouch.phase = TouchPhase.Moved;
 			lastMousePosition = Input.mousePosition;

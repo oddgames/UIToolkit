@@ -53,8 +53,23 @@ public class UIToolkit : UISpriteManager
 		else
 		{
 			// no touches. so check the mouse input if we are in the editor
-			if( Input.GetMouseButton( 0 ) || Input.GetMouseButtonUp( 0 ) )
-				lookAtTouch( UIFakeTouch.fromInput( ref lastMousePosition ) );
+			
+			// check for each mouse state in turn, no elses here. They can all occur on the same frame!
+			
+			if( Input.GetMouseButtonDown( 0 ) )
+			{
+				lookAtTouch( UIFakeTouch.fromInput( UIMouseState.DownThisFrame, ref lastMousePosition ) );
+			}
+
+			if( Input.GetMouseButton( 0 ) )
+			{
+				lookAtTouch( UIFakeTouch.fromInput( UIMouseState.HeldDown, ref lastMousePosition ) );
+			}
+			
+			if( Input.GetMouseButtonUp( 0 ) )
+			{
+				lookAtTouch( UIFakeTouch.fromInput( UIMouseState.UpThisFrame, ref lastMousePosition ) );
+			}			
 			
 			// handle hover states
 			// if we have a previously hovered sprite unhover it
@@ -73,8 +88,11 @@ public class UIToolkit : UISpriteManager
 			}
 		}
 #endif
-		
-		
+	}
+
+
+	protected void LateUpdate()
+	{
 		// take care of updating our UVs, colors or bounds if necessary
 		if( meshIsDirty )
 		{

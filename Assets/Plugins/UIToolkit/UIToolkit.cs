@@ -73,8 +73,11 @@ public class UIToolkit : UISpriteManager
 			}
 		}
 #endif
-		
-		
+	}
+
+
+	protected void LateUpdate()
+	{
 		// take care of updating our UVs, colors or bounds if necessary
 		if( meshIsDirty )
 		{

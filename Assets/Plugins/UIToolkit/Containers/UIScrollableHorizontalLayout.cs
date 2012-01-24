@@ -74,7 +74,7 @@ public class UIScrollableHorizontalLayout : UIAbstractTouchableContainer
 		// once we move too far unhighlight and stop tracking the touchable
 		if( _activeTouchable != null && Mathf.Abs( _deltaTouch ) > TOUCH_MAX_DELTA_FOR_ACTIVATION )
 		{
-			_activeTouchable.onTouchEnded( touch, touchPos, true );
+			_activeTouchable.onTouchEnded(touch, touchPos, false);
 			_activeTouchable = null;
 		}
 

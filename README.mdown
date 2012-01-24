@@ -62,7 +62,11 @@ Setup
 2. Create an empty GameObject and position it at 0, 0, 0.
 3. Now drag the UI.cs script to this object.  Be sure to set the UILayer that you chose in the previous step in the inspector in the UILayer slot.
 4. Go to the main camera and remove the UILayer (in this example "UILayer") from the Culling Mask so that your GUI doesn't get rendered twice.
-5. Create a new GameObject and set it as the child of the UI GameObject that was just created and drag the UIToolkit.cs script onto it.
+5. 
+	- Create a new GameObject
+	- Set it as the child of the UI GameObject that was just created
+	- Assign it to the newly created 'UILayer' ([like this.](http://unity3d.com/support/documentation/Components/Layers.html))
+	- Drag the UIToolkit.cs script onto it.
 (You can create multiple UIToolkit child objects that each have their own texture atlas for when one isn't enough).  Your object hierarchy should look like 
 [this](http://cl.ly/6Z6x/Screen_shot_2011-05-08_at_10.34.01_AM.png).
 6. Set the texturePackerConfigName in the inspector (more on this later).  Make sure your texture packer .txt config file your

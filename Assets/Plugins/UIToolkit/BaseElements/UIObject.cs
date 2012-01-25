@@ -20,6 +20,15 @@ public class UIObject : System.Object, IPositionable
 	protected float _width, _height;
 
 	/// <summary>
+	/// Gets or sets the user data for this object
+	/// </summary>
+	/// <value>
+	/// User data value which can be set at item creation time, and then
+	/// evaluated by event handlers.
+	/// </value>
+	public object userData { get; set; }
+
+	/// <summary>
 	/// Sets up the client GameObject along with it's layer and caches the transform
 	/// </summary>
 	public UIObject()

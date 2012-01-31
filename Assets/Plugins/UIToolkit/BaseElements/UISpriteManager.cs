@@ -112,29 +112,29 @@ public class UISpriteManager : MonoBehaviour
 
 		var jsonString = asset.text;
 		var decodedHash = jsonString.hashtableFromJson();
-		var frames = (Hashtable)decodedHash["frames"];
+		var frames = (IDictionary)decodedHash["frames"];
 
 		foreach (System.Collections.DictionaryEntry item in frames) {
 			// extract the info we need from the TexturePacker json file, mainly uvRect and size
-			var frame = (Hashtable)((Hashtable)item.Value)["frame"];
+			var frame = (IDictionary)((IDictionary)item.Value)["frame"];
 			var frameX = int.Parse(frame["x"].ToString());
 			var frameY = int.Parse(frame["y"].ToString());
 			var frameW = int.Parse(frame["w"].ToString());
 			var frameH = int.Parse(frame["h"].ToString());
 
 			// for trimming support
-			var spriteSourceSize = (Hashtable)((Hashtable)item.Value)["spriteSourceSize"];
+			var spriteSourceSize = (IDictionary)((IDictionary)item.Value)["spriteSourceSize"];
 			var spriteSourceSizeX = int.Parse(spriteSourceSize["x"].ToString());
 			var spriteSourceSizeY = int.Parse(spriteSourceSize["y"].ToString());
 			var spriteSourceSizeW = int.Parse(spriteSourceSize["w"].ToString());
 			var spriteSourceSizeH = int.Parse(spriteSourceSize["h"].ToString());
 
-			var sourceSize = (Hashtable)((Hashtable)item.Value)["sourceSize"];
+			var sourceSize = (IDictionary)((IDictionary)item.Value)["sourceSize"];
 			var sourceSizeX = int.Parse(sourceSize["w"].ToString());
 			var sourceSizeY = int.Parse(sourceSize["h"].ToString());
 
-			var trimmed = (bool)((Hashtable)item.Value)["trimmed"];
-			var rotated = (bool)((Hashtable)item.Value)["rotated"];
+			var trimmed = (bool)((IDictionary)item.Value)["trimmed"];
+			var rotated = (bool)((IDictionary)item.Value)["rotated"];
 
 			var ti = new UITextureInfo();
 			ti.frame = new Rect(frameX, frameY, frameW, frameH);

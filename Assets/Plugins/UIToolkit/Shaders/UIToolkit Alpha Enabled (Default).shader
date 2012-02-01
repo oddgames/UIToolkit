@@ -15,6 +15,7 @@ Shader "UIToolkit/Alpha Enabled (Default)"
 		Cull Off
 		Lighting Off
 		ZWrite On
+		Fog { Mode Off }
 		
 		BindChannels
 		{

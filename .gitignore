@@ -11,6 +11,7 @@ Xcode/
 Temp/*
 Library/*
 !Library/*.asset
+ProjectSettings/
 
 
 /UIToolkit.csproj

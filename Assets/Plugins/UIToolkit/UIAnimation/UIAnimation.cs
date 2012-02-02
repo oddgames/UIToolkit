@@ -36,13 +36,13 @@ public class UIAnimation
 	private Color targetColor;
 
 
-    public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease, bool affectedByTimeScale = true)
+	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease, bool affectedByTimeScale = true)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		_aniProperty = aniProperty;
 		this.ease = ease;
-        this.affectedByTimeScale = affectedByTimeScale;
+		this.affectedByTimeScale = affectedByTimeScale;
 		this.target = target;
 		this.start = start;
 		
@@ -51,33 +51,33 @@ public class UIAnimation
 	}
 
 
-    public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease, bool affectedByTimeScale = true)
+	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease, bool affectedByTimeScale = true)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		_aniProperty = aniProperty;
 		this.ease = ease;
-        this.affectedByTimeScale = affectedByTimeScale;
+		this.affectedByTimeScale = affectedByTimeScale;
 		this.targetFloat = targetFloat;
 		this.startFloat = startFloat;
 		
 		_running = true;
-        startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
+		startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 	}
 
 
-    public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease, bool affectedByTimeScale = true)
+	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease, bool affectedByTimeScale = true)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		_aniProperty = aniProperty;
 		this.ease = ease;
-        this.affectedByTimeScale = affectedByTimeScale;
+		this.affectedByTimeScale = affectedByTimeScale;
 		this.startColor = startColor;
 		this.targetColor = targetColor;
 		
 		_running = true;
-        startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
+		startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 	}
 
 	
@@ -106,13 +106,13 @@ public class UIAnimation
 		_spriteAnimations[sprite].Add( this );
 		
 		// Store our start time
-        startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
+		startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 
 		while( _running )
 		{
-            float currentTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
+			float currentTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 			// Get our easing position
-            var easPos = Mathf.Clamp01((currentTime - startTime) / duration);
+			var easPos = Mathf.Clamp01((currentTime - startTime) / duration);
 			easPos = ease( easPos );
 			
 			// Set the proper property
@@ -138,7 +138,7 @@ public class UIAnimation
 			}
 
 			// See if we are done with our animation yet
-            if ((startTime + duration) <= currentTime)
+			if ((startTime + duration) <= currentTime)
 			{
 				// if we are set to autoreverse, flip around a few variables and continue
 				if( autoreverse )
@@ -149,16 +149,16 @@ public class UIAnimation
 					var temp = start;
 					start = target;
 					target = temp;
-                    // flip alpha variables
-                    var tempFloat = startFloat;
-                    startFloat = targetFloat;
-                    targetFloat = tempFloat;
-                    // flip color variables
-                    var tempColor = startColor;
-                    startColor = targetColor;
-                    targetColor = tempColor;
-                    // reset the start time
-                    startTime = currentTime;
+					// flip alpha variables
+					var tempFloat = startFloat;
+					startFloat = targetFloat;
+					targetFloat = tempFloat;
+					// flip color variables
+					var tempColor = startColor;
+					startColor = targetColor;
+					targetColor = tempColor;
+					// reset the start time
+					startTime = currentTime;
 				}
 				else
 				{
@@ -193,15 +193,15 @@ public class UIAnimation
 	}
 
 
-    public IEnumerator realChain()
-    {
-        var multiplier = autoreverse ? 2 : 1;
-        var endTime = startTime + (duration * multiplier);
-        while (endTime - Time.realtimeSinceStartup > 0f)
-        {
-            yield return null;
-        }
-    }
+	public IEnumerator realChain()
+	{
+		var multiplier = autoreverse ? 2 : 1;
+		var endTime = startTime + (duration * multiplier);
+		while (endTime - Time.realtimeSinceStartup > 0f)
+		{
+			yield return null;
+		}
+	}
 	
 	
 	public void stop()

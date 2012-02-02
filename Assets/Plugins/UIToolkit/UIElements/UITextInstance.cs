@@ -15,6 +15,10 @@ public class UITextInstance : UIObject, IPositionable
 
 	public Color[] colors;
 	public List<UISprite> textSprites = new List<UISprite>(); // all the sprites that make up the string
+	public UIToolkit manager
+	{
+		get { return _parentText.manager; }
+	}
 
 	/// <summary>
 	/// Sets and draws the text string displayed on screen
@@ -165,6 +169,19 @@ public class UITextInstance : UIObject, IPositionable
 
             _parentText.updateText(this);
             updateSize();
+        }
+    }
+
+
+    public override Color color
+    {
+        get
+        {
+            return colors[0];
+        }
+        set
+        {
+            setColorForAllLetters(value);
         }
     }
 

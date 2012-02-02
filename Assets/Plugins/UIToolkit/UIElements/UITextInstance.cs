@@ -294,7 +294,17 @@ public class UITextInstance : UIObject, IPositionable
 		
 		textSprites.Clear();
 	}
-	
+
+
+	/// <summary>
+	/// Destroys the UITextInstance object and its sprites
+	/// </summary>
+	public void destroy()
+	{
+		clear();
+		Object.Destroy(client);
+	}
+
 
 	/// <summary>
 	/// Sets the color for the text.  All colors will be changed.

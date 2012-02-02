@@ -6,6 +6,7 @@ public class UIButton : UITouchableSprite
 {
 	public event Action<UIButton> onTouchUpInside;
 	public event Action<UIButton> onTouchDown;
+	public event Action<UIButton> onTouchUp;
 
 	public UIUVRect highlightedUVframe;
 	public AudioClip touchDownSound;
@@ -111,6 +112,9 @@ public class UIButton : UITouchableSprite
 #endif
 	{
 		highlighted = false;
+
+		if (onTouchUp != null)
+			onTouchUp(this);
 		
 		// If the touch was inside our touchFrame and we have an action, call it
 		if( touchWasInsideTouchFrame && onTouchUpInside != null )

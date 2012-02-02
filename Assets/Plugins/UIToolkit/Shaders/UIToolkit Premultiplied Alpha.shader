@@ -15,6 +15,7 @@ Shader "UIToolkit/Premultiplied Alpha"
 		Lighting Off
 		ZWrite Off
 		ZTest Always
+		Fog { Mode Off }
 		
 		BindChannels
 		{
@@ -23,7 +24,6 @@ Shader "UIToolkit/Premultiplied Alpha"
 			Bind "TexCoord", texcoord
 		}
 		
-
 		SubShader
 		{
 			Pass

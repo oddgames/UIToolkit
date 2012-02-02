@@ -191,8 +191,10 @@ public class UIObject : System.Object, IPositionable
 				_parentUIObject.onTransformChanged += transformChanged;
 			}
 			else {
-				if (this.GetType() == typeof(UISprite))
+				if (this is UISprite)
 					clientTransform.parent = ((UISprite)this).manager.transform;
+				else if (this is UITextInstance)
+					clientTransform.parent = ((UITextInstance)this).manager.transform;
 				else
 					clientTransform.parent = null;
 			}

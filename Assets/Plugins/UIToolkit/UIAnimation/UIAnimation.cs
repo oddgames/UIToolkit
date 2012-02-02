@@ -24,6 +24,7 @@ public class UIAnimation
 	private float startTime;
 	private UIObject sprite;
 	private float duration;
+    private bool affectedByTimeScale;
 	private System.Func<float, float> ease;
 	
 	// target properties of different types for the different animations
@@ -33,50 +34,50 @@ public class UIAnimation
 	private float targetFloat;
 	private Color startColor;
 	private Color targetColor;
-	
-	
-	public UIAnimation( UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease )
+
+
+    public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease, bool affectedByTimeScale = true)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		_aniProperty = aniProperty;
 		this.ease = ease;
-		
+        this.affectedByTimeScale = affectedByTimeScale;
 		this.target = target;
 		this.start = start;
 		
 		_running = true;
-		startTime = Time.realtimeSinceStartup;
+		startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 	}
 
 
-	public UIAnimation( UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease )
+    public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease, bool affectedByTimeScale = true)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		_aniProperty = aniProperty;
 		this.ease = ease;
-		
+        this.affectedByTimeScale = affectedByTimeScale;
 		this.targetFloat = targetFloat;
 		this.startFloat = startFloat;
 		
 		_running = true;
-		startTime = Time.realtimeSinceStartup;
+        startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 	}
 
 
-	public UIAnimation( UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease )
+    public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease, bool affectedByTimeScale = true)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
 		_aniProperty = aniProperty;
 		this.ease = ease;
-		
+        this.affectedByTimeScale = affectedByTimeScale;
 		this.startColor = startColor;
 		this.targetColor = targetColor;
 		
 		_running = true;
-		startTime = Time.realtimeSinceStartup;
+        startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 	}
 
 	
@@ -105,12 +106,13 @@ public class UIAnimation
 		_spriteAnimations[sprite].Add( this );
 		
 		// Store our start time
-		startTime = Time.realtimeSinceStartup;
+        startTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 
 		while( _running )
-		{				
+		{
+            float currentTime = affectedByTimeScale ? Time.time : Time.realtimeSinceStartup;
 			// Get our easing position
-			var easPos = Mathf.Clamp01( ( Time.realtimeSinceStartup - startTime ) / duration );
+            var easPos = Mathf.Clamp01((currentTime - startTime) / duration);
 			easPos = ease( easPos );
 			
 			// Set the proper property
@@ -136,7 +138,7 @@ public class UIAnimation
 			}
 
 			// See if we are done with our animation yet
-			if( ( startTime + duration ) <= Time.realtimeSinceStartup )
+            if ((startTime + duration) <= currentTime)
 			{
 				// if we are set to autoreverse, flip around a few variables and continue
 				if( autoreverse )
@@ -156,7 +158,7 @@ public class UIAnimation
                     startColor = targetColor;
                     targetColor = tempColor;
                     // reset the start time
-					startTime = Time.realtimeSinceStartup;
+                    startTime = currentTime;
 				}
 				else
 				{
@@ -187,8 +189,19 @@ public class UIAnimation
 	public WaitForSeconds chain()
 	{
 		var multiplier = autoreverse ? 2 : 1;
-		return new WaitForSeconds( startTime + ( duration * multiplier ) - Time.realtimeSinceStartup );
+		return new WaitForSeconds(startTime + (duration * multiplier) - Time.time);
 	}
+
+
+    public IEnumerator realChain()
+    {
+        var multiplier = autoreverse ? 2 : 1;
+        var endTime = startTime + (duration * multiplier);
+        while (endTime - Time.realtimeSinceStartup > 0f)
+        {
+            yield return null;
+        }
+    }
 	
 	
 	public void stop()

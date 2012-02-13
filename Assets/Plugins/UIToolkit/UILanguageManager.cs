@@ -2,6 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <author>Frederik Buus Sauer</author>
+/// <date>2012-02-13</date>
+/// <summary>
+/// Static event based language manager based on JSON translation files
+/// </summary>
 public class UILanguageManager
 {
     #region Events
@@ -253,12 +258,12 @@ public class UILanguageManager
 
         // Language file loaded, grab the text.
         string jsonString = textAsset.text;
-        // Get a nice Hashtable for us
-        Hashtable decodedHash = jsonString.hashtableFromJson();
-        // Get the Hashtable we need
-        Hashtable stringsHash = decodedHash["TranslatedStrings"] as Hashtable;
+        // Get a nice IDictionary for us
+        IDictionary decodedDict = jsonString.hashtableFromJson();
+        // Get the IDictionary we need
+        IDictionary stringsDict = decodedDict["TranslatedStrings"] as IDictionary;
         // Let's ensure that we've got something
-        if (stringsHash == null)
+        if (stringsDict == null)
         {
             Debug.LogError("Translation file for " + language + " is invalid!");
             return null;
@@ -276,9 +281,9 @@ public class UILanguageManager
             }
 
             // Loop through Hashtable and add entries
-            foreach (DictionaryEntry item in stringsHash)
+            foreach (DictionaryEntry item in stringsDict)
             {
-                string text = (string)((Hashtable)item.Value)["StringToRead"];
+                string text = (string)((IDictionary)item.Value)["StringToRead"];
                 _texts.Add(item.Key.ToString(), text);
             }
         }

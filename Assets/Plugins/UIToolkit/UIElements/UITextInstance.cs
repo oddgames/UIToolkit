@@ -15,6 +15,10 @@ public class UITextInstance : UIObject, IPositionable
 
 	public Color[] colors;
 	public List<UISprite> textSprites = new List<UISprite>(); // all the sprites that make up the string
+	public UIToolkit manager
+	{
+		get { return _parentText.manager; }
+	}
 
 	/// <summary>
 	/// Sets and draws the text string displayed on screen
@@ -168,6 +172,19 @@ public class UITextInstance : UIObject, IPositionable
         }
     }
 
+
+    public override Color color
+    {
+        get
+        {
+            return colors[0];
+        }
+        set
+        {
+            setColorForAllLetters(value);
+        }
+    }
+
 	
 	/// <summary>
 	/// Call the full constructor with default alignment modes brought from the parent UIText object.
@@ -277,7 +294,17 @@ public class UITextInstance : UIObject, IPositionable
 		
 		textSprites.Clear();
 	}
-	
+
+
+	/// <summary>
+	/// Destroys the UITextInstance object and its sprites
+	/// </summary>
+	public void destroy()
+	{
+		clear();
+		Object.Destroy(client);
+	}
+
 
 	/// <summary>
 	/// Sets the color for the text.  All colors will be changed.

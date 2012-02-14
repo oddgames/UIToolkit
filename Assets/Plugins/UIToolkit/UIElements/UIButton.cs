@@ -110,6 +110,11 @@ public class UIButton : UITouchableSprite
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #endif
 	{
+		// If someone has un-highlighted us through code we are deactivated 
+		// and should not fire the event
+		if (!highlighted)
+			return;
+		
 		highlighted = false;
 		
 		// If the touch was inside our touchFrame and we have an action, call it

@@ -104,11 +104,11 @@ public class UISpriteManager : MonoBehaviour
 		textureSize = new Vector2(t.width, t.height);
 
 		// load up the config file
-		textureDetails = loadTexturesFromTexturePackerJSON(texturePackerConfigName);
+		textureDetails = loadTexturesFromTexturePackerJSON(texturePackerConfigName, textureSize);
 	}
 
 
-	private Dictionary<string, UITextureInfo> loadTexturesFromTexturePackerJSON(string filename)
+	public static Dictionary<string, UITextureInfo> loadTexturesFromTexturePackerJSON(string filename, Vector2 textureSize)
 	{
 		var textures = new Dictionary<string, UITextureInfo>();
 

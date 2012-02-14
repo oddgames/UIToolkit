@@ -55,8 +55,9 @@ public class UISpriteManager : MonoBehaviour
 	protected int[] triIndices = new int[0];    // Indices into the vertex array
 	protected Vector2[] UVs = new Vector2[0];       // UV coordinates
 	protected Color[] colors = new Color[0];      // Color values
-
-	protected Dictionary<string, UITextureInfo> textureDetails; // texture details loaded from the TexturePacker config file
+	
+	[HideInInspector]
+	public Dictionary<string, UITextureInfo> textureDetails; // texture details loaded from the TexturePacker config file
 
 	#endregion;
 

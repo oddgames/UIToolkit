@@ -20,7 +20,7 @@ public class TextManager : MonoBehaviour
 		// spawn new text instances showing off the relative positioning features by placing one text instance in each corner
 		// Uses default color, scale, alignment, and depth.
 		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", 0, 0 );
-        text1.pixelsFromTopLeft( 0, 0 );
+        text1.pixelsFromTop( 0, 0 );
 		
 
 		text2 = text.addTextInstance( "testing small bitmap fonts", 0, 0, 0.3f );
@@ -68,7 +68,7 @@ public class TextManager : MonoBehaviour
 		textWrap2 = wrapText.addTextInstance( "This should be hyphenated. Check baseline - tytyt", 0, 0, 0.5f, 1, Color.green, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
         textWrap2.positionFromBottom( 0f );
 		
-		StartCoroutine( modifyTextInstances() );
+		//StartCoroutine( modifyTextInstances() );
 	}
 	
 

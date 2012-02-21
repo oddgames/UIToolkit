@@ -79,15 +79,15 @@ public class TextManager : MonoBehaviour
 		text2.setColorForAllLetters( Color.green );
 		
 		yield return new WaitForSeconds( 2.0f );
-		text3.clear();
+		text3.destroy();
 		
 		yield return new WaitForSeconds( 1.0f );
-		text4.clear();
-		text2.clear();
+		text4.destroy();
+		text2.destroy();
 		
 		yield return new WaitForSeconds( 1.0f );
-		textWrap1.clear();
-		textWrap2.clear();
+		textWrap1.destroy();
+		textWrap2.destroy();
 	}
 
 }

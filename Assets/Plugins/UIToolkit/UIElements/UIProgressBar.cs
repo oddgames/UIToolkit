@@ -4,30 +4,29 @@ using System;
 
 public class UIProgressBar : UISprite
 {
-	public bool resizeTextureOnChange = false;
 	public bool rightToLeft;
 	
 	private float _value = 0;
 	private UISprite _bar;
 	private float _barOriginalWidth;
 	private UIUVRect _barOriginalUVframe;
+	private bool _resizeTextureOnChange = false;
 	
 	
-	
-	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos )
+	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, int depth = 2, bool barInFront = true )
 	{
-		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, false );
+		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, false, depth, barInFront );
 	}
 
 
-	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft )
+	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft, int depth = 2, bool barInFront = true )
 	{
-		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, rightToLeft );
+		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, rightToLeft, depth, barInFront );
 	}
 
 	
 	// the bars x/y coordinates should be relative to the borders
-	public static UIProgressBar create( UIToolkit manager, string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft )
+	public static UIProgressBar create( UIToolkit manager, string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft, int depth, bool barInFront = true )
 	{
 		var borderTI = manager.textureInfoForFilename( borderFilename );
 	
@@ -36,11 +35,12 @@ public class UIProgressBar : UISprite
 		UISprite bar;
 		
 		if( rightToLeft )
-			bar = manager.addSprite( barFilename, borderxPos - barxPos + ((int)borderTI.frame.width), borderyPos + baryPos, 2 );
+			bar = manager.addSprite( barFilename, borderxPos - barxPos + ((int)borderTI.frame.width), borderyPos + baryPos, depth );
 		else
-			bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, 2 );
+			bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, depth );
 
-		var progressBar = new UIProgressBar( manager, borderFrame, 1, borderTI.uvRect, bar );
+		var barDepth = barInFront ? depth - 1 : depth + 1;
+		var progressBar = new UIProgressBar( manager, borderFrame, barDepth, borderTI.uvRect, bar );
 		progressBar.rightToLeft = rightToLeft;
 		
 		return progressBar;
@@ -56,6 +56,12 @@ public class UIProgressBar : UISprite
 		// Save the bars original size
 		_barOriginalWidth = _bar.width;
 		_barOriginalUVframe = _bar.uvFrame;
+
+		// Update the bar size based on the value
+		if (rightToLeft)
+			_bar.setSize(_value * -_barOriginalWidth, _bar.height);
+		else
+			_bar.setSize(_value * _barOriginalWidth, _bar.height);
 		
 		manager.addSprite( this );
 	}
@@ -76,7 +82,39 @@ public class UIProgressBar : UISprite
 			_bar.hidden = value;
         }
     }
-	
+
+
+    public bool resizeTextureOnChange
+    {
+        get { return _resizeTextureOnChange; }
+        set
+        {
+            if (_resizeTextureOnChange != value)
+            {
+                // Update the bar UV's if resizeTextureOnChange is set
+                if (value)
+                {
+                    UIUVRect newUVframe = _barOriginalUVframe;
+                    newUVframe.uvDimensions.x *= _value;
+                    _bar.uvFrame = newUVframe;
+                }
+                // Set original uv if not
+                else
+                {
+                    _bar.uvFrame = _barOriginalUVframe;
+                }
+
+                // Update the bar size based on the value
+                if (rightToLeft)
+                    _bar.setSize(_value * -_barOriginalWidth, _bar.height);
+                else
+                    _bar.setSize(_value * _barOriginalWidth, _bar.height);
+
+                _resizeTextureOnChange = value;
+            }
+        }
+    }
+
 	
 	public override void destroy()
 	{

@@ -44,6 +44,11 @@ public class UISprite : UIObject, IPositionable
     public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ) : base()
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
+        if (gameObjectOriginInCenter)
+        {
+            _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
+            _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
+        }
 		
 		// Setup our GO
 		client.transform.position = new Vector3( frame.x, -frame.y, depth ); // Depth will affect z-index

@@ -19,28 +19,23 @@ public class UISlider : UITouchableSprite
 	
 	
 	// The knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
-	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
+	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout, int depth = 2, bool knobInFront = true )
 	{
-		return create( UI.firstToolkit, knobFilename, trackFilename, trackxPos, trackyPos, layout );
+		return create( UI.firstToolkit, knobFilename, trackFilename, trackxPos, trackyPos, layout, depth, knobInFront );
 	}
 
 	
-	public static UISlider create( UIToolkit manager, string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout )
+	public static UISlider create( UIToolkit manager, string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout, int depth = 2, bool knobInFront = true )
 	{
 		// create the track first so we can use its dimensions to position the knob		
 		var trackTI = manager.textureInfoForFilename( trackFilename );
 		var trackFrame = new Rect( trackxPos, trackyPos, trackTI.frame.width, trackTI.frame.height );
-		
-		// position the knob based on the knobs size, layout and the track size
-		if( layout == UISliderLayout.Horizontal )
-			trackyPos += (int)trackTI.frame.height / 2;
-		else
-			trackxPos += (int)trackTI.frame.width / 2;
 
 		// create a knob using our cacluated position
-		var knob = manager.addSprite( knobFilename, trackxPos, trackyPos, 1, true );
+		var knobDepth = knobInFront ? depth - 1 : depth + 1;
+		var knob = manager.addSprite( knobFilename, trackxPos, trackyPos, knobDepth, true );
 		
-		return new UISlider( manager, trackFrame, 2, trackTI.uvRect, knob, layout );
+		return new UISlider( manager, trackFrame, depth, trackTI.uvRect, knob, layout );
 	}
 	
 
@@ -54,6 +49,7 @@ public class UISlider : UITouchableSprite
 		
 		// setup the min/max position values for the sliderKnob
 		updateSliderKnobConstraints();
+        updateSliderKnobWithNormalizedValue(_value);
 		
 		manager.addTouchableSprite( this );
 	}
@@ -80,6 +76,18 @@ public class UISlider : UITouchableSprite
 			
 			// pass the call down to our knob
 			_sliderKnob.hidden = value;
+        }
+    }
+
+
+    public override Color color
+    {
+        get { return base.color; }
+        set
+        {
+            base.color = value;
+            // Cascade color to knob
+            _sliderKnob.color = value;
         }
     }
 
@@ -118,32 +126,37 @@ public class UISlider : UITouchableSprite
 		// setup the min/max position values for the sliderKnob
 		if( layout == UISliderLayout.Horizontal )
 		{
-			_knobMinimumXY = position.x + _sliderKnob.width / 2;
-			_knobMaximumXY = position.x + width - _sliderKnob.width / 2;
+            _knobMaximumXY = (width - _sliderKnob.width) / 2f;
+            _knobMinimumXY = -_knobMaximumXY;
 		}
 		else
 		{
-			_knobMinimumXY = position.y - height + _sliderKnob.height / 2;
-			_knobMaximumXY = position.y - _sliderKnob.height / 2;
+            _knobMaximumXY = (height - _sliderKnob.height) / 2f;
+            _knobMinimumXY = -_knobMaximumXY;
 		}
+
+        float hdFactor = UI.instance.isHD ? 0.5f : 1f;
+        _knobMaximumXY *= hdFactor;
+        _knobMinimumXY *= hdFactor;
 	}
 
 
 	// Takes in a value from 0 - 1 and sets the sliderKnob based on it
 	private void updateSliderKnobWithNormalizedValue( float normalizedKnobValue )
 	{
+        float offsetX = 0f, offsetY = 0f;
+        float relativeKnobValue = normalizedKnobValue - 0.5f;
+        float hdFactor = UI.instance.isHD ? 0.5f : 1f;
 		if( layout == UISliderLayout.Horizontal )
 		{
-			float newKnobPosition = Mathf.Clamp( position.x + normalizedKnobValue * width, _knobMinimumXY, _knobMaximumXY );
-			_sliderKnob.position = new Vector3( newKnobPosition, _sliderKnob.position.y, _sliderKnob.position.z );
+            offsetX = Mathf.Clamp((width - _sliderKnob.width) * hdFactor * relativeKnobValue, _knobMinimumXY, _knobMaximumXY);
 		}
 		else
 		{
-			// inverse the value because 1 is our peak value but that corresponds to a lower y coordinate due to 0 being on top
-			normalizedKnobValue = 1 - normalizedKnobValue;
-			float newKnobPosition = Mathf.Clamp( position.y - normalizedKnobValue * height, _knobMinimumXY, _knobMaximumXY );
-			_sliderKnob.position = new Vector3( _sliderKnob.position.x, newKnobPosition, _sliderKnob.position.z );
+            offsetY = -Mathf.Clamp((height - _sliderKnob.height) * hdFactor * relativeKnobValue, _knobMinimumXY, _knobMaximumXY);
 		}
+
+        _sliderKnob.pixelsFromCenter((int)offsetY, (int)offsetX);
 	}
 
 	
@@ -152,8 +165,17 @@ public class UISlider : UITouchableSprite
 	{
 		Vector2 localTouchPosition = this.inverseTranformPoint( touchPos );
 
-		// Calculate the normalized value (0 - 1) based on the touchPosition
-		float normalizedValue = ( layout == UISliderLayout.Horizontal ) ? ( localTouchPosition.x / width ) : ( ( height - localTouchPosition.y ) / height );
+        // Calculate the normalized value (0 - 1) based on the touchPosition
+        float normalizedValue = 0f;
+        if (layout == UISliderLayout.Horizontal)
+        {
+            normalizedValue = (localTouchPosition.x - _sliderKnob.width / 2f) / (width - _sliderKnob.width);
+        }
+        else
+        {
+            normalizedValue = 1f - (localTouchPosition.y - _sliderKnob.height / 2f) / (height - _sliderKnob.height);
+        }
+
 		this.value = normalizedValue;
 
 		// If the delegate wants continuous updates, send one along

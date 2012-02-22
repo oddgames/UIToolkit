@@ -124,7 +124,18 @@ public class UIButton : UITouchableSprite
 		// If the touch was inside our touchFrame and we have an action, call it
 		if( touchWasInsideTouchFrame && onTouchUpInside != null )
 			onTouchUpInside( this );
-	}
+    }
+
+    public override void destroy()
+    {
+        base.destroy();
+
+        highlighted = false;
+    }
+
+
+
+
 
 
 }

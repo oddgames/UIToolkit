@@ -10,7 +10,6 @@ Products
 Xcode/
 Temp/*
 Library
-!Library/*.asset
 
 /UIToolkit.csproj
 /UIToolkit.sln

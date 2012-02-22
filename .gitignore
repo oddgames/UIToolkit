@@ -9,9 +9,7 @@ Products
 # Unity junk files
 Xcode/
 Temp/*
-Library/*
-!Library/*.asset
-
+Library
 
 /UIToolkit.csproj
 /UIToolkit.sln

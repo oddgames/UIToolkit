@@ -132,12 +132,12 @@ public class UISwipeDetector : UITouchableSprite
 		// Check the delta move positions.  We can rule out at least 2 directions
 		if( touch.deltaPosition.x > 0.0f )
 			touchInfo.swipeDetectionState &= ~SwipeDirection.Left;
-		else
+		if( touch.deltaPosition.x < 0.0f )
 			touchInfo.swipeDetectionState &= ~SwipeDirection.Right;
 		
 		if( touch.deltaPosition.y < 0.0f )
-			touchInfo.swipeDetectionState &= ~SwipeDirection.Up;
-		else
+			touchInfo.swipeDetectionState &= ~SwipeDirection.Up;			
+		if( touch.deltaPosition.y > 0.0f )
 			touchInfo.swipeDetectionState &= ~SwipeDirection.Down;
 
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER

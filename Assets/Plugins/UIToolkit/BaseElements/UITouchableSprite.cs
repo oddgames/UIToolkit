@@ -166,7 +166,7 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 				// if we have a hoveredUVframe use it
 				if( value )
 					uvFrame = hoveredUVframe;
-				else
+				else if (!_highlighted)
 					uvFrame = _tempUVframe;
 			}
 		}

@@ -10,11 +10,12 @@ Shader "UIToolkit/No Alpha"
 	{
 		Tags { "Queue" = "Transparent" }
 		
-		AlphaTest Greater .1
+		AlphaTest Greater .01
 		ColorMask RGBA
 		Cull Off
 		Lighting Off
 		ZWrite On
+		Fog { Mode Off }
 		
 		BindChannels
 		{

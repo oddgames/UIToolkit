@@ -68,7 +68,7 @@ public class TextManager : MonoBehaviour
 		textWrap2 = wrapText.addTextInstance( "This should be hyphenated. Check baseline - tytyt", 0, 0, 0.5f, 1, Color.green, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
         textWrap2.positionFromBottom( 0f );
 		
-		//StartCoroutine( modifyTextInstances() );
+		StartCoroutine( modifyTextInstances() );
 	}
 	
 

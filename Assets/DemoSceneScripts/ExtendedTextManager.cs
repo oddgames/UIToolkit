@@ -20,7 +20,7 @@ public class ExtendedTextManager : MonoBehaviour
 		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", Screen.width / 2, 0 );
 		text2 = text.addTextInstance( _counter.ToString(), Screen.width, 35, 1, 5, Color.black, UITextAlignMode.Right, UITextVerticalAlignMode.Middle );
 		
-		//StartCoroutine( modifyTextInstance() );
+		StartCoroutine( modifyTextInstance() );
 	}
 	
 	

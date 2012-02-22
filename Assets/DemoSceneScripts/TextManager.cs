@@ -20,7 +20,7 @@ public class TextManager : MonoBehaviour
 		// spawn new text instances showing off the relative positioning features by placing one text instance in each corner
 		// Uses default color, scale, alignment, and depth.
 		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", 0, 0 );
-        text1.pixelsFromTopLeft( 0, 0 );
+        text1.pixelsFromTop( 0, 0 );
 		
 
 		text2 = text.addTextInstance( "testing small bitmap fonts", 0, 0, 0.3f );

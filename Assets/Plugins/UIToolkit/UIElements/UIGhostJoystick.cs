@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class UIGhostJoystick : UITouchableSprite
@@ -7,6 +8,7 @@ public class UIGhostJoystick : UITouchableSprite
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
 	public bool normalize = true; // Normalize output after the dead-zone?  If true, we start at 0 even though the joystick is moved deadZone pixels already
 	public UIUVRect highlightedUVframe = UIUVRect.zero; // Highlighted UV's for the joystick
+	public Color fadeRate = Color.clear;
 	
 	private UISprite _joystickSprite;
 	private UISprite _backgroundSprite;
@@ -107,6 +109,68 @@ public class UIGhostJoystick : UITouchableSprite
 		}
 		_joystickSprite.localPosition = new Vector3(-1000, -1000, -1000);
 		_joystickSprite.hidden = true;
+	}
+
+	private void hideJoystick() {
+		if (fadeRate == Color.clear) {
+			resetJoystick();
+		} else {
+			joystickPosition.x = joystickPosition.y = 0.0f;
+
+			// If we have a highlightedUVframe, swap the original back in
+			if( highlightedUVframe != UIUVRect.zero )
+				_joystickSprite.uvFrame = _tempUVframe;
+
+			UI.instance.StartCoroutine(animateFadeOut());
+		}
+	}
+
+	private static Color clampColor(Color c) {
+		if (c.r <= 0f)
+			c.r = 0f;
+		if (c.g <= 0f)
+			c.g = 0f;
+		if (c.b <= 0f)
+			c.b = 0f;
+		if (c.a <= 0f)
+			c.a = 0f;
+		return c;
+	}
+
+	private IEnumerator animateFadeOut() {
+		Color tmp;
+
+		while (currentTouchId == -1) {
+			yield return null;
+
+			bool quit = false;
+
+			tmp = _joystickSprite.color;
+			tmp = clampColor(tmp - fadeRate * Time.deltaTime);
+			if (tmp == Color.clear) {
+				quit = true;
+			}
+			_joystickSprite.color = tmp;
+
+			if (_backgroundSprite != null) {
+				tmp = _backgroundSprite.color;
+				tmp = clampColor(tmp - fadeRate * Time.deltaTime);
+				_backgroundSprite.color = tmp;
+			}
+
+			if (quit) {
+				break;
+			}
+		}
+
+		_joystickSprite.color = Color.white;
+		if (_backgroundSprite != null) {
+			_backgroundSprite.color = Color.white;
+		}
+
+		if (currentTouchId == -1) {
+			resetJoystick();
+		}
 	}
 
 	private void displayJoystick(Vector2 localTouchPos)
@@ -219,10 +283,10 @@ public class UIGhostJoystick : UITouchableSprite
 		// Set highlighted to avoid calling super
 		highlighted = false;
 		
-		// Reset back to default state
-		this.resetJoystick();
-
 		currentTouchId = -1;
+
+		// Reset back to default state
+		this.hideJoystick();
 	}
 	
 }

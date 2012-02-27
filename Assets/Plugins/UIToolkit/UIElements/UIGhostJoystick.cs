@@ -9,6 +9,7 @@ public class UIGhostJoystick : UITouchableSprite
 	public bool normalize = true; // Normalize output after the dead-zone?  If true, we start at 0 even though the joystick is moved deadZone pixels already
 	public UIUVRect highlightedUVframe = UIUVRect.zero; // Highlighted UV's for the joystick
 	public Color fadeRate = Color.clear;
+	public bool clamp = true; // Clamp joystick to edge
 	
 	private UISprite _joystickSprite;
 	private UISprite _backgroundSprite;
@@ -175,6 +176,20 @@ public class UIGhostJoystick : UITouchableSprite
 
 	private void displayJoystick(Vector2 localTouchPos)
 	{
+		if (clamp) {
+			float edge = maxJoystickMovement*resolutionDivisor * 1.3f;
+
+			if (localTouchPos.x - edge < 0f)
+				localTouchPos.x = edge;
+			else if (localTouchPos.x + edge > Screen.width)
+				localTouchPos.x = Screen.width - edge;
+
+			if (localTouchPos.y + edge >= 0f)
+				localTouchPos.y = -edge;
+			else if (localTouchPos.y - edge <= -Screen.height)
+				localTouchPos.y = edge - Screen.height;
+		}
+
 		_joystickCenter = localTouchPos;
 
 		_joystickSprite.localPosition = _joystickCenter;

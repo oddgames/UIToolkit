@@ -76,7 +76,7 @@ public class UI : MonoBehaviour
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 		var deviceAllowsHD = true;
 #else
-		var deviceAllowsHD = ( allowPod4GenHD && iPhoneSettings.generation == iPhoneGeneration.iPodTouch4Gen ) || iPhoneSettings.generation != iPhoneGeneration.iPodTouch4Gen;
+		var deviceAllowsHD = ( allowPod4GenHD && iPhone.generation == iPhoneGeneration.iPodTouch4Gen ) || iPhone.generation != iPhoneGeneration.iPodTouch4Gen;
 #endif
 		if( autoTextureSelectionForHD && deviceAllowsHD )
 		{

@@ -43,6 +43,18 @@ public class UIGhostJoystick : UITouchableSprite
 			base.hidden = value;
         }
     }
+
+	public override bool disabled
+	{
+		set
+		{
+			if (value == _disabled)
+				return;
+			_disabled = value;
+
+			resetJoystick();
+		}
+	}
 	
 	
 	public static UIGhostJoystick create( string joystickFilename, Rect hitArea )
@@ -110,6 +122,9 @@ public class UIGhostJoystick : UITouchableSprite
 		}
 		_joystickSprite.localPosition = new Vector3(-1000, -1000, -1000);
 		_joystickSprite.hidden = true;
+
+		highlighted = false;
+		currentTouchId = -1;
 	}
 
 	private void hideJoystick() {
@@ -252,6 +267,9 @@ public class UIGhostJoystick : UITouchableSprite
 #endif
 	{
 		if (currentTouchId != -1)
+			return;
+
+		if (disabled)
 			return;
 
 		currentTouchId = touch.fingerId;

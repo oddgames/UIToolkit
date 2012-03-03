@@ -47,7 +47,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			_hidden = value;
 
 			// apply state to the children
-			foreach (var child in _children)
+			foreach( var child in _children )
 				child.hidden = value;
 		}
 	}
@@ -57,8 +57,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// <summary>
 	/// We need the layout type set from the getgo so we can default to vertical
 	/// </summary>
-	public UIAbstractContainer()
-		: this(UILayoutType.Vertical)
+	public UIAbstractContainer() : this(UILayoutType.Vertical)
 	{ }
 
 
@@ -77,11 +76,12 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// <summary>
 	/// Adds a UISprite to the container and sets it to lay itself out
 	/// </summary>
-	public virtual void addChild(params UISprite[] children)
+	public virtual void addChild( params UISprite[] children )
 	{
-		foreach (var child in children) {
+		foreach( var child in children )
+		{
 			child.parentUIObject = this;
-			_children.Add(child);
+			_children.Add( child );
 		}
 
 		layoutChildren();
@@ -92,18 +92,18 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// Removes a child from the container and optionally from it's manager.  If it is removed from
 	/// it's manager it is no longer in existance so be sure to null out any references to it.
 	/// </summary>
-	public void removeChild(UISprite child, bool removeFromManager)
+	public void removeChild( UISprite child, bool removeFromManager )
 	{
 #if UNITY_EDITOR
 		// sanity check while we are in the editor
 		if (!_children.Contains(child))
 			throw new System.Exception("could not find child in UIAbstractContainer: " + child);
 #endif
-		_children.Remove(child);
+		_children.Remove( child );
 		layoutChildren();
 
-		if (removeFromManager)
-			child.manager.removeElement(child);
+		if( removeFromManager )
+			child.manager.removeElement( child );
 	}
 
 
@@ -132,14 +132,15 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// </summary>
 	protected virtual void layoutChildren()
 	{
-		if (_suspendUpdates)
+		if( _suspendUpdates )
 			return;
 
 		// Get HD factor
 		float hdFactor = UI.instance.isHD ? 0.5f : 1f;
 
 		// rules for vertical and horizontal layouts
-		if (_layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical) {
+		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )
+		{
 			// start with the insets, then add each object + spacing then end with insets
 			_contentWidth = _edgeInsets.left;
 			_contentHeight = _edgeInsets.top + _scrollPosition;
@@ -148,33 +149,36 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			var anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
 			anchorInfo.ParentUIObject = this;
 
-			if (_layoutType == UIAbstractContainer.UILayoutType.Horizontal) {
+			if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal )
+			{
 				// Set anchor information
-				switch (_verticalAlignMode) {
-				case UIContainerVerticalAlignMode.Top:
-					anchorInfo.UIyAnchor = UIyAnchor.Top;
-					anchorInfo.ParentUIyAnchor = UIyAnchor.Top;
-					anchorInfo.OffsetY = _edgeInsets.top * hdFactor;
-					break;
-				case UIContainerVerticalAlignMode.Middle:
-					anchorInfo.UIyAnchor = UIyAnchor.Center;
-					anchorInfo.ParentUIyAnchor = UIyAnchor.Center;
-					break;
-				case UIContainerVerticalAlignMode.Bottom:
-					anchorInfo.UIyAnchor = UIyAnchor.Bottom;
-					anchorInfo.ParentUIyAnchor = UIyAnchor.Bottom;
-					anchorInfo.OffsetY = _edgeInsets.bottom * hdFactor;
-					break;
+				switch( _verticalAlignMode )
+				{
+					case UIContainerVerticalAlignMode.Top:
+						anchorInfo.UIyAnchor = UIyAnchor.Top;
+						anchorInfo.ParentUIyAnchor = UIyAnchor.Top;
+						anchorInfo.OffsetY = _edgeInsets.top * hdFactor;
+						break;
+					case UIContainerVerticalAlignMode.Middle:
+						anchorInfo.UIyAnchor = UIyAnchor.Center;
+						anchorInfo.ParentUIyAnchor = UIyAnchor.Center;
+						break;
+					case UIContainerVerticalAlignMode.Bottom:
+						anchorInfo.UIyAnchor = UIyAnchor.Bottom;
+						anchorInfo.ParentUIyAnchor = UIyAnchor.Bottom;
+						anchorInfo.OffsetY = _edgeInsets.bottom * hdFactor;
+						break;
 				}
 
 				var i = 0;
 				var lastIndex = _children.Count;
-				foreach (var item in _children) {
-					if (item.hidden) {
+				foreach( var item in _children )
+				{
+					if( item.hidden )
 						lastIndex--;
-					}
+
 					// we add spacing for all but the first and last
-					if (i != 0 && i != lastIndex)
+					if( i != 0 && i != lastIndex )
 						_contentWidth += _spacing;
 
 					// Set anchor offset
@@ -185,7 +189,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 					_contentWidth += item.width;
 
 					// height will just be the height of the tallest item
-					if (_contentHeight < item.height)
+					if( _contentHeight < item.height )
 						_contentHeight = item.height;
 
 					i++;
@@ -194,42 +198,48 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			else // vertical alignment
 			{
 				// Set anchor information
-				switch (_alignMode) {
-				case UIContainerAlignMode.Left:
-					anchorInfo.UIxAnchor = UIxAnchor.Left;
-					anchorInfo.ParentUIxAnchor = UIxAnchor.Left;
-					anchorInfo.OffsetX = _edgeInsets.left * hdFactor;
-					break;
-				case UIContainerAlignMode.Center:
-					anchorInfo.UIxAnchor = UIxAnchor.Center;
-					anchorInfo.ParentUIxAnchor = UIxAnchor.Center;
-					break;
-				case UIContainerAlignMode.Right:
-					anchorInfo.UIxAnchor = UIxAnchor.Right;
-					anchorInfo.ParentUIxAnchor = UIxAnchor.Right;
-					anchorInfo.OffsetX = _edgeInsets.right * hdFactor;
-					break;
+				switch( _alignMode )
+				{
+					case UIContainerAlignMode.Left:
+						anchorInfo.UIxAnchor = UIxAnchor.Left;
+						anchorInfo.ParentUIxAnchor = UIxAnchor.Left;
+						anchorInfo.OffsetX = _edgeInsets.left * hdFactor;
+						break;
+					case UIContainerAlignMode.Center:
+						anchorInfo.UIxAnchor = UIxAnchor.Center;
+						anchorInfo.ParentUIxAnchor = UIxAnchor.Center;
+						break;
+					case UIContainerAlignMode.Right:
+						anchorInfo.UIxAnchor = UIxAnchor.Right;
+						anchorInfo.ParentUIxAnchor = UIxAnchor.Right;
+						anchorInfo.OffsetX = _edgeInsets.right * hdFactor;
+						break;
 				}
 
 				var i = 0;
 				var lastIndex = _children.Count;
-				foreach (var item in _children) {
-					if (item.hidden) {
+				foreach( var item in _children )
+				{
+					if( item.hidden )
 						lastIndex--;
-					}
+
 					// we add spacing for all but the first and last
-					if (i != 0 && i != lastIndex)
+					if( i != 0 && i != lastIndex )
 						_contentHeight += _spacing;
 
 					// Set anchor offset
 					anchorInfo.OffsetY = _contentHeight * hdFactor;
+					
+					// dont overwrite the sprites origin anchor!
+					anchorInfo.OriginUIxAnchor = item.anchorInfo.OriginUIxAnchor;
+					anchorInfo.OriginUIyAnchor = item.anchorInfo.OriginUIyAnchor;
 					item.anchorInfo = anchorInfo;
 
 					// all items get their height added
 					_contentHeight += item.height;
 
 					// width will just be the width of the widest item
-					if (_contentWidth < item.width)
+					if( _contentWidth < item.width )
 						_contentWidth = item.width;
 
 					i++;
@@ -240,13 +250,16 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			_contentWidth += _edgeInsets.right;
 			_contentHeight += _edgeInsets.bottom;
 		}
-		else if (_layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout) {
-			foreach (var item in _children) {
-				if (!item.hidden) {
-					item.localPosition = new Vector3(item.position.x, item.position.y, item.position.z);
+		else if( _layoutType == UIAbstractContainer.UILayoutType.AbsoluteLayout )
+		{
+			foreach( var item in _children )
+			{
+				if( !item.hidden )
+				{
+					item.localPosition = new Vector3( item.position.x, item.position.y, item.position.z );
 
 					// find the width that contains the item with the largest offset/width
-					if (_contentWidth < item.localPosition.x + item.width)
+					if( _contentWidth < item.localPosition.x + item.width )
 						_contentWidth = item.localPosition.x + item.width;
 
 					// find the height that contains the item with the largest offset/height
@@ -257,9 +270,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		}
 
 		// Refresh child position to proper positions
-		foreach (var item in _children) {
+		foreach( var item in _children )
 			item.refreshPosition();
-		}
 	}
 
 
@@ -268,7 +280,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		base.transformChanged();
 		layoutChildren();
 	}
-
+	
+	
 	public void matchSizeToContentSize()
 	{
 		_width = _contentWidth;

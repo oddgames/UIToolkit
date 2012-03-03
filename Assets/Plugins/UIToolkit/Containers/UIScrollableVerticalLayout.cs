@@ -20,46 +20,90 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	private Vector2 _lastTouchPosition;
 	private ITouchable _activeTouchable;
 	private bool _isDragging;
+	private bool _isDraggingPastExtents;
 	private Queue<float> _velocities = new Queue<float>( TOTAL_VELOCITY_SAMPLE_COUNT );
 
 
-	public UIScrollableVerticalLayout(int spacing)
-		: base(UILayoutType.Vertical, spacing)
+	public UIScrollableVerticalLayout( int spacing ) : base( UILayoutType.Vertical, spacing )
+	{}
+	
+	
+	private IEnumerator springBackToBounds()
 	{
+		var targetScrollPosition = 0f;
+		if( _scrollPosition > 0 ) // stretching down
+			targetScrollPosition = _maxEdgeInset.y;
+		else
+			targetScrollPosition = _minEdgeInset.y;
+		
+		while( !_isDragging )
+		{
+			// how far from the top/bottom are we?
+			var distanceFromTarget = _scrollPosition - targetScrollPosition;
 
+			// we need to know the percentage we are from the source
+			var percentFromSource = distanceFromTarget / height;
+			
+			// how many pixels should we snap back?
+			var factor = Mathf.Abs( Mathf.Pow( 2, percentFromSource * percentFromSource ) - 0.9f );
+			var snapBack = distanceFromTarget * factor;
+
+			_scrollPosition -= snapBack;
+			layoutChildren();
+
+			// once we are moving less then a 1/2 pixel stop the animation
+			if( Mathf.Abs( snapBack ) < 0.5f )
+				break;
+
+			yield return null;
+		}
+		
+		_isDraggingPastExtents = false;
 	}
 
 
 	private IEnumerator decelerate()
 	{
-		// get the average velocity by summing all the velocities and dividing by count
-		float total = 0;
-		foreach (var v in _velocities)
-			total += v;
-
-		var avgVelocity = total / _velocities.Count;
-
-		while (!_isDragging) {
-			var deltaMovement = avgVelocity * Time.deltaTime;
-			var newTop = _scrollPosition - deltaMovement;
-
-			// make sure we have some velocity and we are within our bounds
-			if( Mathf.Abs( avgVelocity ) > 25 )
+		if( _isDraggingPastExtents )
+		{
+			_manager.StartCoroutine( springBackToBounds() );
+		}
+		else
+		{
+			// get the average velocity by summing all the velocities and dividing by count
+			float total = 0;
+			foreach( var v in _velocities )
+				total += v;
+	
+			var avgVelocity = total / _velocities.Count;
+			
+			while( !_isDragging )
 			{
-				if (newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y)
+				var deltaMovement = avgVelocity * Time.deltaTime;
+				var newTop = _scrollPosition - deltaMovement;
+	
+				// make sure we have some velocity and we are within our bounds
+				if( Mathf.Abs( avgVelocity ) > 25 )
 				{
-					_scrollPosition = newTop;
-					layoutChildren();
-					avgVelocity *= SCROLL_DECELERATION_MODIFIER;
-
-					yield return null;
-				} else {
-					_scrollPosition = Mathf.Clamp(newTop, _minEdgeInset.y, _maxEdgeInset.y);
-					layoutChildren();
+					if( newTop < _maxEdgeInset.y && newTop > _minEdgeInset.y )
+					{
+						_scrollPosition = newTop;
+						layoutChildren();
+						avgVelocity *= SCROLL_DECELERATION_MODIFIER;
+	
+						yield return null;
+					}
+					else
+					{
+						_scrollPosition = Mathf.Clamp( newTop, _minEdgeInset.y, _maxEdgeInset.y );
+						layoutChildren();
+						break;
+					}
+				}
+				else
+				{
 					break;
 				}
-			} else {
-				break;
 			}
 		}
 	}
@@ -102,19 +146,21 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	}
 
 
-	private void ClipChild(UISprite child)
+	private void clipChild( UISprite child )
 	{
 		var topContained = child.position.y < -touchFrame.yMin && child.position.y > -touchFrame.yMax;
 		var bottomContained = child.position.y - child.height < -touchFrame.yMin && child.position.y - child.height > -touchFrame.yMax;
 
 		// first, handle if we are fully visible
-		if (topContained && bottomContained) {
+		if( topContained && bottomContained )
+		{
 			// unclip if we are clipped
 			if (child.clipped)
 				child.clipped = false;
 			child.hidden = false;
 		}
-		else if (topContained || bottomContained) {
+		else if( topContained || bottomContained )
+		{
 			// wrap the changes in a call to beginUpdates to avoid changing verts more than once
 			child.beginUpdates();
 
@@ -122,14 +168,14 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 
 			// are we clipping the top or bottom?
 			if (topContained) // clipping the bottom
- 						{
+ 			{
 				var clippedHeight = child.position.y + touchFrame.yMax;
 
 				child.uvFrameClipped = child.uvFrame.rectClippedToBounds(child.width / child.scale.x, clippedHeight / child.scale.y, false, child.manager.textureSize);
 				child.setClippedSize(child.width / child.scale.x, clippedHeight / child.scale.y, false);
 			}
 			else // clipping the top, so we need to adjust the position.y as well
- 						{
+ 			{
 				var clippedHeight = child.height - child.position.y - touchFrame.yMin;
 
 				child.uvFrameClipped = child.uvFrame.rectClippedToBounds(child.width / child.scale.x, clippedHeight / child.scale.y, true, child.manager.textureSize);
@@ -146,40 +192,48 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 
 		// Recurse
 
-		RecurseChildren(child);
+		recurseChildren(child);
 
 	}
-	private void RecurseChildren(UIObject child)
+	
+	
+	private void recurseChildren( UIObject child )
 	{
-		foreach (Transform t in child.client.transform) {
+		foreach( Transform t in child.client.transform )
+		{
 			UIElement uie = t.GetComponent<UIElement>();
-			if (uie != null) {
+			if( uie != null )
+			{
 				UIObject o = t.GetComponent<UIElement>().UIObject;
-				if (o != null) {
+				if (o != null)
+				{
 					UISprite s = o as UISprite;
-					if (s != null) {
-						ClipChild(s);
+					if (s != null)
+					{
+						clipChild(s);
 					}
-					else {
+					else
+					{
 						UITextInstance ti = o as UITextInstance;
-						if (ti != null) {
+						if( ti != null )
+						{
 							// Special handeling for text
-							foreach (UISprite glyph in ti.textSprites) {
-								ClipChild(glyph);
-							}
+							foreach( UISprite glyph in ti.textSprites )
+								clipChild( glyph );
 						}
-						RecurseChildren(ti);
+						recurseChildren( ti );
 					}
 				}
 			}
 		}
 	}
+	
+	
 	protected override void clipToBounds()
 	{
 		// clip hidden children
-		foreach (var child in _children) {
-			ClipChild(child);
-		}
+		foreach( var child in _children )
+			clipChild( child );
 	}
 
 
@@ -193,7 +247,8 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 #endif
 	{
 		// sanity check in case we lost a touch (happens with Unity on occassion)
-		if (_activeTouchable != null) {
+		if( _activeTouchable != null )
+		{
 			// we dont pass onTouchEnded here because technically we are still over the ITouchable
 			_activeTouchable.highlighted = false;
 			_activeTouchable = null;
@@ -212,7 +267,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 
 
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchMoved(UIFakeTouch touch, Vector2 touchPos)
+	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
 #else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 #endif
@@ -222,21 +277,44 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		_lastTouch = touch;
 
 		// once we move too far unhighlight and stop tracking the touchable
-		if (Mathf.Abs(_deltaTouch) > TOUCH_MAX_DELTA_FOR_ACTIVATION && _activeTouchable != null) {
-			_activeTouchable.onTouchEnded(touch, touchPos, true);
+		if( _activeTouchable != null && Mathf.Abs( _deltaTouch ) > TOUCH_MAX_DELTA_FOR_ACTIVATION )
+		{
+			_activeTouchable.onTouchEnded( touch, touchPos, true );
 			_activeTouchable = null;
 		}
 
 
 		var newTop = _scrollPosition - touch.deltaPosition.y;
-		newTop = Mathf.Clamp(newTop, _minEdgeInset.y, _maxEdgeInset.y);
+		
+		// are we dragging above/below the scrollables boundaries?
+		_isDraggingPastExtents = ( newTop > _maxEdgeInset.y || newTop < _minEdgeInset.y );
+		
+		// if we are dragging past our extents dragging is no longer 1:1. we apply an exponential falloff
+		if( _isDraggingPastExtents )
+		{
+			// how far from the top/bottom are we?
+			var distanceFromSource = 0f;
+			
+			if( newTop > 0 ) // stretching down
+				distanceFromSource = newTop;
+			else
+				distanceFromSource = Mathf.Abs( _contentSize.y + newTop - height );
+			
+			// we need to know the percentage we are from the source
+			var percentFromSource = distanceFromSource / height;
+			
+			// apply exponential falloff so that the further we are from source the less 1 pixel drag actually goes
+			newTop = _scrollPosition - ( touch.deltaPosition.y * Mathf.Pow( 0.04f, percentFromSource ) );
+		}
+		
+		
 		_scrollPosition = newTop;
 		layoutChildren();
 
 		// pop any extra velocities and push the current velocity onto the stack
 		if( _velocities.Count == TOTAL_VELOCITY_SAMPLE_COUNT )
 			_velocities.Dequeue();
-		_velocities.Enqueue(touch.deltaPosition.y / Time.deltaTime);
+		_velocities.Enqueue( touch.deltaPosition.y / Time.deltaTime );
 	}
 
 
@@ -249,13 +327,15 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		_isDragging = false;
 
 		// pass on the touch if we still have an active touchable
-		if (_activeTouchable != null) {
-			_activeTouchable.onTouchEnded(touch, touchPos, true);
+		if( _activeTouchable != null )
+		{
+			_activeTouchable.onTouchEnded( touch, touchPos, true );
 			_activeTouchable.highlighted = false;
 			_activeTouchable = null;
 		}
-		else {
-			_manager.StartCoroutine(decelerate());
+		else
+		{
+			_manager.StartCoroutine( decelerate() );
 		}
 	}
 
@@ -274,10 +354,12 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	/// </summary>
 	public void scrollTo(int newTop, bool animated)
 	{
-		if (animated) {
-			_manager.StartCoroutine(scrollToInset(newTop));
+		if( animated )
+		{
+			_manager.StartCoroutine( scrollToInset( newTop ) );
 		}
-		else {
+		else
+		{
 			_scrollPosition = newTop;
 			layoutChildren();
 		}

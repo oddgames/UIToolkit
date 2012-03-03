@@ -6,7 +6,8 @@ using System.Collections;
 public class ScrollableContainerManager : MonoBehaviour
 {
 	private bool _movedContainer;
-	public UIToolkit TextManager;	
+	public UIToolkit textManager;	
+	
 	
 	void Start()
 	{
@@ -18,7 +19,11 @@ public class ScrollableContainerManager : MonoBehaviour
 		for( var i = 0; i < 20; i++ )
 		{
 			UITouchableSprite touchable;
-			if( i % 3 == 0 )
+			if( i == 4 ) // text sprite
+			{
+				touchable = UIButton.create( "emptyUp.png", "emptyDown.png", 0, 0 );
+			}
+			else if( i % 3 == 0 )
 			{
 				touchable = UIToggleButton.create( "cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0 );
 			}
@@ -30,25 +35,28 @@ public class ScrollableContainerManager : MonoBehaviour
 			{
 				touchable = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
 			}
-			if (i == 1) {
+			
+			if( i == 1 )
+			{
 				var ch = UIToggleButton.create("cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0);
 				ch.parentUIObject = touchable;
 				ch.pixelsFromRight(0);
 				ch.client.name = "TEST THINGY";
 				ch.scale = new Vector3(0.5f, 0.5f, 1);
 			}
-			if (i == 4) {
-				var text = new UIText(TextManager, "prototype", "prototype.png");
+			else if( i == 4 )
+			{
+				var text = new UIText( textManager, "prototype", "prototype.png" );
 
-				var helloText = text.addTextInstance("Child Text", 0, 0,0.5f,-1,Color.cyan,UITextAlignMode.Center,UITextVerticalAlignMode.Middle);
+				var helloText = text.addTextInstance( "Child Text", 0, 0,0.5f,-1,Color.blue,UITextAlignMode.Center,UITextVerticalAlignMode.Middle );
 				helloText.parentUIObject = touchable;
 				helloText.positionCenter();
 
 				var ch = UIToggleButton.create("cbUnchecked.png", "cbChecked.png", "cbDown.png", 0, 0);
 				ch.parentUIObject = helloText;
-				ch.pixelsFromRight(-16);
+				ch.pixelsFromRight( -16 );
 				ch.client.name = "subsub";
-				ch.scale = new Vector3(0.25f, 0.25f, -2);
+				ch.scale = new Vector3( 0.25f, 0.25f, -2 );
 			}
 
 			

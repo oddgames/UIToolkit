@@ -202,7 +202,7 @@ public static class UIRelative
     /// <returns></returns>
     public static float xAnchorAdjustment( UIxAnchor anchor, float width, UIxAnchor originAnchor )
     {
-        float adjustment = 0f;
+        var adjustment = 0f;
         switch( anchor )
         {
             case UIxAnchor.Left:
@@ -236,6 +236,7 @@ public static class UIRelative
                 }
                 break;
         }
+
         return adjustment;
     }
 

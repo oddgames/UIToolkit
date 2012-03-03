@@ -19,6 +19,7 @@ public class PanelManager : MonoBehaviour
 		optionsButton.animationDuration = 0.2f;
 		optionsButton.animationTargetScale = new Vector3( 1.4f, 1.4f, 1.4f );
 
+
 		// Scores button
 		var scores2 = UIContinuousButton.create("scoresUp.png", "scoresDown.png", 0, 0);
 		

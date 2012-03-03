@@ -45,7 +45,6 @@ public class LayoutContainerManager : MonoBehaviour
 		// VerticalLayout
 		var vBox = new UIVerticalLayout( 20 );
 		vBox.addChild( knob, toggleButton );
-		vBox.pixelsFromBottomRight( 10, 10 );
 
 		
 		// Layouts can be animated like any UIObject

@@ -28,7 +28,7 @@ public class UISprite : UIObject, IPositionable
     public Vector3 v4 = new Vector3();
 
 	protected UIUVRect _uvFrame; // UV coordinates and size for the sprite
-	protected UIUVRect _uvFrameClipped; // alternate UV coordinatest for when a sprite it clipped
+	protected UIUVRect _uvFrameClipped; // alternate UV coordinates for when a sprite it clipped
 	protected bool _clipped; // set to true when the sprite is clipped so the clipped uvFrame is used
 	private float _clippedTopYOffset;
 	
@@ -44,7 +44,7 @@ public class UISprite : UIObject, IPositionable
     public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ) : base()
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
-        if (gameObjectOriginInCenter)
+        if( gameObjectOriginInCenter )
         {
             _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
             _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
@@ -345,6 +345,7 @@ public class UISprite : UIObject, IPositionable
 		gameObjectOriginInCenter = true;
         _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
         _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
+
 		setSize( _width, _height );
 	}
 	

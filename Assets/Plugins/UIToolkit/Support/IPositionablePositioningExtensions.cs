@@ -460,6 +460,7 @@ public static class IPositionablePositioningExtensions
         // Refresh position
         sprite.refreshPosition();
     }
+	
 
     /// <summary>
     /// Positions a sprite relatively to the top-left corner of its parent.
@@ -468,10 +469,11 @@ public static class IPositionablePositioningExtensions
     /// <param name="sprite"></param>
     /// <param name="pixelsFromTop">Pixels from top - positive values places the sprite closer to the bottom</param>
     /// <param name="pixelsFromLeft">Pixels from left - positive values places the sprite closer to the right</param>
-    public static void pixelsFromTopLeft(this IPositionable sprite, int pixelsFromTop, int pixelsFromLeft)
+    public static void pixelsFromTopLeft( this IPositionable sprite, int pixelsFromTop, int pixelsFromLeft )
     {
-        sprite.pixelsFromTopLeft(pixelsFromTop, pixelsFromLeft, UIyAnchor.Top, UIxAnchor.Left);
+        sprite.pixelsFromTopLeft( pixelsFromTop, pixelsFromLeft, UIyAnchor.Top, UIxAnchor.Left );
     }
+	
 
     /// <summary>
     /// Positions a sprite relatively to the top-left corner of its parent, with specific local anchors.
@@ -482,7 +484,7 @@ public static class IPositionablePositioningExtensions
     /// <param name="pixelsFromLeft">Pixels from left - positive values places the sprite closer to the right</param>
     /// <param name="yAnchor">Sprite vertical anchor</param>
     /// <param name="xAnchor">Sprite horizontal anchor</param>
-    public static void pixelsFromTopLeft(this IPositionable sprite, int pixelsFromTop, int pixelsFromLeft, UIyAnchor yAnchor, UIxAnchor xAnchor)
+    public static void pixelsFromTopLeft( this IPositionable sprite, int pixelsFromTop, int pixelsFromLeft, UIyAnchor yAnchor, UIxAnchor xAnchor )
     {
         // Update anchor information
         UIAnchorInfo anchorInfo = sprite.anchorInfo;
@@ -864,34 +866,36 @@ public static class IPositionablePositioningExtensions
     /// Refreshes the sprite's position according to its anchor information.
     /// </summary>
     /// <param name="sprite"></param>
-    public static void refreshPosition(this IPositionable sprite)
+    public static void refreshPosition( this IPositionable sprite )
     {
         // Get sprite depth
-        float depth = sprite.position.z;
+        var depth = sprite.position.z;
+		
         // Get anchor info
-        UIAnchorInfo anchorInfo = sprite.anchorInfo;
+        var anchorInfo = sprite.anchorInfo;
 
         // Get parent anchor position
-        Vector3 position = parentAnchorPosition(anchorInfo.ParentUIObject, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor);
+        var position = parentAnchorPosition(anchorInfo.ParentUIObject, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor);
 
         // Add position offset
-        if (anchorInfo.UIPrecision == UIPrecision.Percentage)
+        if( anchorInfo.UIPrecision == UIPrecision.Percentage )
         {
-            position.x += UIRelative.xPercentFrom(anchorInfo.UIxAnchor, parentWidth(anchorInfo.ParentUIObject), anchorInfo.OffsetX);
-            position.y -= UIRelative.yPercentFrom(anchorInfo.UIyAnchor, parentHeight(anchorInfo.ParentUIObject), anchorInfo.OffsetY);
+            position.x += UIRelative.xPercentFrom( anchorInfo.UIxAnchor, parentWidth(anchorInfo.ParentUIObject), anchorInfo.OffsetX );
+            position.y -= UIRelative.yPercentFrom( anchorInfo.UIyAnchor, parentHeight(anchorInfo.ParentUIObject), anchorInfo.OffsetY );
         }
         else
         {
-            position.x += UIRelative.xPixelsFrom(anchorInfo.UIxAnchor, anchorInfo.OffsetX);
-            position.y -= UIRelative.yPixelsFrom(anchorInfo.UIyAnchor, anchorInfo.OffsetY);
+            position.x += UIRelative.xPixelsFrom( anchorInfo.UIxAnchor, anchorInfo.OffsetX );
+            position.y -= UIRelative.yPixelsFrom( anchorInfo.UIyAnchor, anchorInfo.OffsetY );
         }
 
         // Adjust for anchor offset
-        position.x -= UIRelative.xAnchorAdjustment(anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor);
-        position.y += UIRelative.yAnchorAdjustment(anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor);
-
+        position.x -= UIRelative.xAnchorAdjustment( anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor );
+        position.y += UIRelative.yAnchorAdjustment( anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor );
+		
         // Set depth
         position.z = depth;
+		
         // Set new position
         sprite.position = position;
     }
@@ -903,7 +907,7 @@ public static class IPositionablePositioningExtensions
     /// <param name="yAnchor">Vertical anchor</param>
     /// <param name="xAnchor">Horizontal anchor</param>
     /// <returns>Adjusted anchor position</returns>
-    private static Vector3 parentAnchorPosition(IPositionable sprite, UIyAnchor yAnchor, UIxAnchor xAnchor)
+    private static Vector3 parentAnchorPosition( IPositionable sprite, UIyAnchor yAnchor, UIxAnchor xAnchor )
     {
         Vector3 position;
         float width, height;

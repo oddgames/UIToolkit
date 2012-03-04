@@ -26,15 +26,16 @@ public class UIObject : System.Object, IPositionable
 	/// User data value which can be set at item creation time, and then
 	/// evaluated by event handlers.
 	/// </value>
-	public object userData { get; set; }
-
+	public object userData;
+	
+	
 	/// <summary>
 	/// Sets up the client GameObject along with it's layer and caches the transform
 	/// </summary>
 	public UIObject()
 	{
 		// Setup our GO
-		_client = new GameObject(this.GetType().Name);
+		_client = new GameObject( this.GetType().Name );
 		_client.transform.parent = UI.instance.transform; // Just for orginization in the hierarchy
 		_client.layer = UI.instance.layer; // Set the proper layer so we only render on the UI camera
 
@@ -44,6 +45,7 @@ public class UIObject : System.Object, IPositionable
 
 		// Cache the clientTransform
 		clientTransform = _client.transform;
+		
 		// Create a default anchor info object
 		_anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
 	}
@@ -133,7 +135,8 @@ public class UIObject : System.Object, IPositionable
 			}
 		}
 	}
-
+	
+	
 	public virtual Vector3 localScale
 	{
 		get { return clientTransform.localScale; }
@@ -170,11 +173,11 @@ public class UIObject : System.Object, IPositionable
 		get { return _parentUIObject; }
 		set
 		{
-			if (value == _parentUIObject)
+			if( value == _parentUIObject )
 				return;
 
 			// remove the old listener if we have one
-			if (_parentUIObject != null)
+			if( _parentUIObject != null )
 				_parentUIObject.onTransformChanged -= transformChanged;
 
 			// reparent the UIObject in the same UIToolkit tree as it's children
@@ -184,16 +187,18 @@ public class UIObject : System.Object, IPositionable
 			_parentUIObject = value;
 
 			// if we got a null value, then we are being removed from the UIObject so reparent to our manager
-			if (_parentUIObject != null) {
+			if( _parentUIObject != null )
+			{
 				clientTransform.parent = _parentUIObject.clientTransform;
 
 				// add the new listener
 				_parentUIObject.onTransformChanged += transformChanged;
 			}
-			else {
-				if (this is UISprite)
+			else
+			{
+				if( this is UISprite )
 					clientTransform.parent = ((UISprite)this).manager.transform;
-				else if (this is UITextInstance)
+				else if( this is UITextInstance )
 					clientTransform.parent = ((UITextInstance)this).manager.transform;
 				else
 					clientTransform.parent = null;

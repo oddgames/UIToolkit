@@ -7,81 +7,46 @@ public class UIProgressBar : UISprite
 	public bool rightToLeft;
 	
 	private float _value = 0;
-	private UISprite _bar;
 	private float _barOriginalWidth;
 	private UIUVRect _barOriginalUVframe;
 	private bool _resizeTextureOnChange = false;
 	
 	
-	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, int depth = 2, bool barInFront = true )
+	public static UIProgressBar create( string barFilename, int xPos, int yPos )
 	{
-		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, false, depth, barInFront );
+		return create( UI.firstToolkit, barFilename, xPos, yPos, false, 1 );
 	}
 
 
-	public static UIProgressBar create( string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft, int depth = 2, bool barInFront = true )
+	public static UIProgressBar create( UIToolkit manager, string barFilename, int xPos, int yPos, bool rightToLeft, int depth )
 	{
-		return create( UI.firstToolkit, barFilename, borderFilename, barxPos, baryPos, borderxPos, borderyPos, rightToLeft, depth, barInFront );
-	}
-
-	
-	// the bars x/y coordinates should be relative to the borders
-	public static UIProgressBar create( UIToolkit manager, string barFilename, string borderFilename, int barxPos, int baryPos, int borderxPos, int borderyPos, bool rightToLeft, int depth, bool barInFront = true )
-	{
-		var borderTI = manager.textureInfoForFilename( borderFilename );
-	
-		var borderFrame = new Rect( borderxPos, borderyPos, borderTI.frame.width, borderTI.frame.height );
-		
-		UISprite bar;
+		var textureInfo = manager.textureInfoForFilename( barFilename );
+		var frame = new Rect( xPos, yPos, textureInfo.frame.width, textureInfo.frame.height );
 		
 		if( rightToLeft )
-			bar = manager.addSprite( barFilename, borderxPos - barxPos + ((int)borderTI.frame.width), borderyPos + baryPos, depth );
-		else
-			bar = manager.addSprite( barFilename, borderxPos + barxPos, borderyPos + baryPos, depth );
+			frame.x = xPos + (int)textureInfo.frame.width;
 
-		var barDepth = barInFront ? depth - 1 : depth + 1;
-		var progressBar = new UIProgressBar( manager, borderFrame, barDepth, borderTI.uvRect, bar );
-		progressBar.rightToLeft = rightToLeft;
+		var progressBar = new UIProgressBar( manager, frame, depth, textureInfo.uvRect, rightToLeft );
 		
 		return progressBar;
 	}
 	
 	
-	public UIProgressBar( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, UISprite bar ):base( frame, depth, uvFrame )
+	public UIProgressBar( UIToolkit manager, Rect frame, int depth, UIUVRect uvFrame, bool rightToLeft ):base( frame, depth, uvFrame )
 	{
-		// Save the bar and make it a child of the container/border for organization purposes
-		_bar = bar;
-		_bar.parentUIObject = this;
+		manager.addSprite( this );
 		
 		// Save the bars original size
-		_barOriginalWidth = _bar.width;
-		_barOriginalUVframe = _bar.uvFrame;
+		_barOriginalWidth = frame.width;
+		_barOriginalUVframe = uvFrame;
+		this.rightToLeft = rightToLeft;
 
 		// Update the bar size based on the value
-		if (rightToLeft)
-			_bar.setSize(_value * -_barOriginalWidth, _bar.height);
+		if( rightToLeft )
+			setSize( _value * -_barOriginalWidth, frame.height );
 		else
-			_bar.setSize(_value * _barOriginalWidth, _bar.height);
-		
-		manager.addSprite( this );
+			setSize( _value * _barOriginalWidth, frame.height );
 	}
-
-
-    public override bool hidden
-    {
-        get { return ___hidden; }
-        set
-        {
-            // No need to do anything if we're already in this state:
-            if( value == ___hidden )
-                return;
-			
-			base.hidden = value;
-			
-			// pass the call down to our bar
-			_bar.hidden = value;
-        }
-    }
 
 
     public bool resizeTextureOnChange
@@ -89,44 +54,36 @@ public class UIProgressBar : UISprite
         get { return _resizeTextureOnChange; }
         set
         {
-            if (_resizeTextureOnChange != value)
+            if( _resizeTextureOnChange != value )
             {
                 // Update the bar UV's if resizeTextureOnChange is set
-                if (value)
+                if( value )
                 {
                     UIUVRect newUVframe = _barOriginalUVframe;
                     newUVframe.uvDimensions.x *= _value;
-                    _bar.uvFrame = newUVframe;
+                    uvFrame = newUVframe;
                 }
-                // Set original uv if not
-                else
+                else // Set original uv if not
                 {
-                    _bar.uvFrame = _barOriginalUVframe;
+                    uvFrame = _barOriginalUVframe;
                 }
 
                 // Update the bar size based on the value
-                if (rightToLeft)
-                    _bar.setSize(_value * -_barOriginalWidth, _bar.height);
+                if( rightToLeft )
+                    setSize( _value * -_barOriginalWidth, height );
                 else
-                    _bar.setSize(_value * _barOriginalWidth, _bar.height);
+                    setSize( _value * _barOriginalWidth, height );
 
                 _resizeTextureOnChange = value;
             }
         }
     }
-
 	
-	public override void destroy()
-	{
-		_bar.destroy();
-		base.destroy();
-	}
 
 	// Current value of the progress bar.  Value is always between 0 and 1.
 	public float value
 	{
 		get { return _value; }
-		
 		set
 		{
 			if( value != _value )
@@ -140,17 +97,15 @@ public class UIProgressBar : UISprite
 					// Set the uvFrame's width based on the value
 					UIUVRect newUVframe = _barOriginalUVframe;
 					newUVframe.uvDimensions.x *= _value;
-					_bar.uvFrame = newUVframe;
+					uvFrame = newUVframe;
 				}
 
 				// Update the bar size based on the value
 				if( rightToLeft )
-					_bar.setSize( _value * -_barOriginalWidth, _bar.height );	
+					setSize( _value * -_barOriginalWidth, height );	
 				else
-					_bar.setSize( _value * _barOriginalWidth, _bar.height );
+					setSize( _value * _barOriginalWidth, height );
 			}
 		}
 	}
-
-	
 }

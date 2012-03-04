@@ -1,14 +1,54 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Collections;
+
 
 /// <summary>
 /// Container class that is 
 /// </summary>
 public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouchable, IComparable
 {
+	#region properties and fields
+	
 	protected UIToolkit _manager; // Reference to the sprite manager in which this sprite resides
 	protected Vector2 _minEdgeInset; // lets us know how far we can scroll
+	
+	protected const int TOTAL_VELOCITY_SAMPLE_COUNT = 3;
+	protected const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
+	protected float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.instance.isHD ? 10 : 5;
+	protected const float CONTENT_TOUCH_DELAY = 0.1f;
+	
+	protected bool _isDragging;
+	protected bool _isDraggingPastExtents;
+	protected Queue<float> _velocities = new Queue<float>( TOTAL_VELOCITY_SAMPLE_COUNT );
+	
+	// touch handling helpers
+	protected float _deltaTouch;
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	protected UIFakeTouch _lastTouch;
+#else
+	protected Touch _lastTouch;
+#endif
+	protected Vector2 _lastTouchPosition;
+	protected ITouchable _activeTouchable;
+	
+	// paging
+	public bool pagingEnabled; // enables paging support which will snap scrolling. page size is the container width
+	
+	
+	public override float width
+	{
+		get { return _touchFrame.width; }
+	}
+
+
+	public override float height
+	{
+		get { return _touchFrame.height; }
+	}
+	
+	#endregion
 	
 	
 	public UIAbstractTouchableContainer( UILayoutType layoutType, int spacing ) : this( UI.firstToolkit, layoutType, spacing )
@@ -25,9 +65,226 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	}
 	
 	
-	protected abstract void clipToBounds();
+	/// <summary>
+	/// Springs the scrollable back to its bounds.
+	/// </summary>
+	/// <returns>
+	/// The back to bounds.
+	/// </returns>
+	/// <param name='elasticityModifier'>
+	/// lower numbers will snap back slower than higher
+	/// </param>
+	protected IEnumerator springBackToBounds( float elasticityModifier )
+	{
+		var targetScrollPosition = 0f;
+		if( _scrollPosition < 0 ) // stretching up
+			targetScrollPosition = _minEdgeInset.x;
+		
+		while( !_isDragging )
+		{
+			// how far from the top/bottom are we?
+			var distanceFromTarget = _scrollPosition - targetScrollPosition;
+
+			// we need to know the percentage we are from the source
+			var divisor = layoutType == UIAbstractContainer.UILayoutType.Horizontal ? width : height;
+			var percentFromSource = distanceFromTarget / divisor;
+			
+			// how many pixels should we snap back?
+			var factor = Mathf.Abs( Mathf.Pow( elasticityModifier, percentFromSource * percentFromSource ) - 0.9f );
+			var snapBack = distanceFromTarget * factor;
+
+			_scrollPosition -= snapBack;
+			layoutChildren();
+
+			// once we are moving less then a 1/2 pixel stop the animation
+			if( Mathf.Abs( snapBack ) < 0.5f )
+				break;
+
+			yield return null;
+		}
+		
+		_isDraggingPastExtents = false;
+	}
 	
 	
+	protected IEnumerator decelerate()
+	{
+		if( _isDraggingPastExtents )
+		{
+			yield return _manager.StartCoroutine( springBackToBounds( 2f ) );
+		}
+		else
+		{
+			// get the average velocity by summing all the velocities and dividing by count
+			float total = 0;
+			foreach( var v in _velocities )
+				total += v;
+	
+			var avgVelocity = total / _velocities.Count;
+			var elasticDecelerationModifier = 0.7f;
+			
+			while( !_isDragging )
+			{
+				var deltaMovement = avgVelocity * Time.deltaTime;
+				var newOffset = _scrollPosition;
+				
+				if( layoutType == UIAbstractContainer.UILayoutType.Horizontal )
+					newOffset += deltaMovement;
+				else
+					newOffset -= deltaMovement;
+	
+				
+				var absVelocity = Mathf.Abs( avgVelocity );
+				
+				// if paging is enabled once we slow down we will snap to a page
+				if( pagingEnabled && absVelocity < 900 )
+				{
+					// if we are past the extents let the handler below do the scrolling
+					if( !_isDraggingPastExtents )
+						scrollToNearestPage();
+					break;
+				}
+				
+				// make sure we have some velocity and we are within our bounds
+				if( absVelocity < 25 )
+					break;
+				
+				// use x for horizontal and y for vertical
+				float lowerBounds;
+				if( layoutType == UIAbstractContainer.UILayoutType.Horizontal )
+					lowerBounds = _minEdgeInset.x;
+				else
+					lowerBounds = _minEdgeInset.y;
+				
+				if( newOffset < 0 && newOffset > lowerBounds )
+				{
+					_scrollPosition = newOffset;
+					layoutChildren();
+					avgVelocity *= SCROLL_DECELERATION_MODIFIER;
+
+					yield return null;
+				}
+				else
+				{
+					_isDraggingPastExtents = true;
+					
+					_scrollPosition = newOffset;
+					layoutChildren();
+					avgVelocity *= elasticDecelerationModifier;
+					
+					// we up the elasticDecelerationModifier each iteration
+					elasticDecelerationModifier -= 0.1f;
+					
+					if( elasticDecelerationModifier <= 0 )
+						break;
+					
+					yield return null;
+				}
+			}
+			
+			if( _isDraggingPastExtents )
+				yield return _manager.StartCoroutine( springBackToBounds( 0.9f ) );
+		}
+	}
+	
+	
+	private void scrollToNearestPage()
+	{
+		// which page is closest?
+		var page = Mathf.RoundToInt( Math.Abs( _scrollPosition ) / width );
+		scrollToPage( page );
+	}
+
+
+	protected IEnumerator scrollToInset( int target )
+	{
+		var start = _scrollPosition;
+		var startTime = Time.time;
+		var duration = 0.4f;
+		var running = true;
+
+		while( !_isDragging && running )
+		{
+			// Get our easing position
+			var easPos = Mathf.Clamp01( ( Time.time - startTime ) / duration );
+			easPos = Easing.Quartic.easeOut( easPos );
+
+			_scrollPosition = (int)Mathf.Lerp( start, target, easPos );
+			layoutChildren();
+
+			if( ( startTime + duration ) <= Time.time )
+				running = false;
+
+			yield return null;
+		}
+		layoutChildren();
+	}
+	
+
+	protected IEnumerator checkDelayedContentTouch()
+	{
+		yield return new WaitForSeconds( CONTENT_TOUCH_DELAY );
+
+		if( _isDragging && Mathf.Abs( _deltaTouch ) < TOUCH_MAX_DELTA_FOR_ACTIVATION )
+		{
+			var fixedTouchPosition = new Vector2( _lastTouch.position.x, Screen.height - _lastTouch.position.y );
+			_activeTouchable = getButtonForScreenPosition( fixedTouchPosition );
+			if( _activeTouchable != null )
+				_activeTouchable.onTouchBegan( _lastTouch, fixedTouchPosition );
+		}
+	}
+	
+	
+	protected abstract void clipChild( UISprite child );
+	
+	
+	protected void clipToBounds()
+	{
+		// clip hidden children
+		foreach( var child in _children )
+			clipChild( child );
+	}
+	
+	
+	protected void recurseAndClipChildren( UIObject child )
+	{
+		foreach( Transform t in child.client.transform )
+		{
+			UIElement uie = t.GetComponent<UIElement>();
+			if( uie != null )
+			{
+				UIObject o = t.GetComponent<UIElement>().UIObject;
+				if( o != null )
+				{
+					UISprite s = o as UISprite;
+					if( s != null )
+					{
+						clipChild( s );
+					}
+					else
+					{
+						UITextInstance ti = o as UITextInstance;
+						if( ti != null )
+						{
+							// Special handeling for text
+							foreach( UISprite glyph in ti.textSprites )
+								clipChild( glyph );
+						}
+						recurseAndClipChildren( ti );
+					}
+				}
+			}
+		}
+	}
+
+
+	protected override void layoutChildren()
+	{
+		base.layoutChildren();
+		clipToBounds();
+	}
+
+
 	public override void transformChanged()
 	{
 		// we moved so adjust the touchFrame
@@ -61,7 +318,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	}
 	
 	
-	ITouchable TestTouchable( UIObject touchableObj, Vector2 touchPosition )
+	ITouchable testTouchable( UIObject touchableObj, Vector2 touchPosition )
 	{
 		foreach( Transform t in touchableObj.client.transform )
 		{
@@ -71,7 +328,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 				UIObject o = t.GetComponent<UIElement>().UIObject;
 				if( o != null )
 				{
-					var touched = TestTouchable( o, touchPosition );
+					var touched = testTouchable( o, touchPosition );
 					if( touched != null )
 						return touched;
 				}
@@ -98,7 +355,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 			var touchable = _children[i];
 			if( touchable != null )
 			{
-				ITouchable touched = TestTouchable( touchable, touchPosition ); // Recursive
+				ITouchable touched = testTouchable( touchable, touchPosition ); // Recursive
 				if( touched != null )
 					return touched;
 			}
@@ -127,14 +384,27 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	}
 	
 	
-	// Touch handlers.  Subclasses should override these to get their specific behaviour
+	// Touch handlers.  Subclasses should override onTouchMoved
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 	public virtual void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
 #else
 	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
 #endif
 	{
-		
+		// sanity check in case we lost a touch (happens with Unity on occassion)
+		if( _activeTouchable != null )
+		{
+			// we dont pass onTouchEnded here because technically we are still over the ITouchable
+			_activeTouchable.highlighted = false;
+			_activeTouchable = null;
+		}
+
+		_deltaTouch = 0;
+		_isDragging = true;
+		_velocities.Clear();
+
+		// kick off a new check
+		_manager.StartCoroutine( checkDelayedContentTouch() );
 	}
 
 
@@ -154,10 +424,45 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 #endif
 	{
-		
+		_isDragging = false;
+
+		// pass on the touch if we still have an active touchable
+		if( _activeTouchable != null )
+		{
+			_activeTouchable.onTouchEnded( touch, touchPos, true );
+			_activeTouchable.highlighted = false;
+			_activeTouchable = null;
+		}
+		else
+		{
+			_manager.StartCoroutine( decelerate() );
+		}
 	}
 	
 	#endregion
+	
+
+	/// <summary>
+	/// Scrolls to the new offset (using the edgeInsets so 0 is the top and scrolling goes towards negatives)
+	/// </summary>
+	public void scrollTo( int newOffset, bool animated )
+	{
+		if( animated )
+		{
+			_manager.StartCoroutine( scrollToInset( newOffset ) );
+		}
+		else
+		{
+			_scrollPosition = newOffset;
+			layoutChildren();
+		}
+	}
+	
+	
+	public void scrollToPage( int page )
+	{
+		_manager.StartCoroutine( scrollToInset( (int)( -page * width ) ) );
+	}
 	
 	
 	/// <summary>
@@ -169,19 +474,6 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		calculateMinMaxInsets();
 	}
 	
-	
-	public override float width
-	{
-		get { return _touchFrame.width; }
-	}
-
-
-	public override float height
-	{
-		get { return _touchFrame.height; }
-	}
-
-
 	
 	/// <summary>
 	/// Override so that we can remove the touchable sprites. The container needs to manage all touches.

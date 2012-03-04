@@ -73,7 +73,7 @@ public class KitchenSinkManager : MonoBehaviour
 		
 
 		// Progress/Health bar
-		var progressBar = UIProgressBar.create( "progressBar.png", "progressBarBorder.png", 5, 3, 0, 0 );
+		var progressBar = UIProgressBar.create( "progressBar.png", 0, 0 );
 		progressBar.positionFromBottomLeft( .05f, .02f );
 		progressBar.resizeTextureOnChange = true;
 		progressBar.value = 0.4f;

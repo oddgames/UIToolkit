@@ -15,7 +15,11 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
+		
+		// paging will snap to the nearest page when scrolling
+		scrollable.pagingEnabled = true;
 		scrollable.position = new Vector3( 20, -50, 0 );
+		
 		var height = UI.instance.isHD ? 150 : 300;
 		scrollable.setSize( Screen.width / 1.4f, height );
 		
@@ -78,42 +82,6 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 			scrollable.addChild( touchable );
 		}
 		scrollable.endUpdates();
-		
-		/*
-		// click to scroll to a specific offset
-		var scores = UIButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );
-		scores.positionFromTopRight( 0, 0 );
-		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		scores.onTouchUpInside += ( sender ) =>
-		{
-			scrollable.scrollTo( -10, true );
-		};
-		
-		
-		scores = UIButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );
-		scores.positionFromBottomRight( 0, 0 );
-		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		scores.onTouchUpInside += ( sender ) =>
-		{
-			scrollable.scrollTo( -600, true );
-		};
-		
-		
-		scores = UIButton.create( "scoresUp.png", "scoresDown.png", 0, 0 );
-		scores.centerize();
-		scores.positionFromTopRight( 0.5f, 0 );
-		scores.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		scores.onTouchUpInside += ( sender ) =>
-		{
-			var target = scrollable.position;
-			var moveBy = _movedContainer ? -100 : 100;
-			if( !UI.instance.isHD )
-				moveBy /= 2;
-			target.x += moveBy * 2;
-			target.y += moveBy;
-			scrollable.positionTo( 0.4f, target, Easing.Quintic.easeIn );
-			_movedContainer = !_movedContainer;
-		};
-		*/
 	}
+
 }

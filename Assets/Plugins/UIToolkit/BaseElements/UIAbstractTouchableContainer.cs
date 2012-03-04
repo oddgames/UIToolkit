@@ -137,7 +137,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 				var absVelocity = Mathf.Abs( avgVelocity );
 				
 				// if paging is enabled once we slow down we will snap to a page
-				if( pagingEnabled && absVelocity < 900 )
+				if( pagingEnabled && absVelocity < 2500 )
 				{
 					// if we are past the extents let the handler below do the scrolling
 					if( !_isDraggingPastExtents )

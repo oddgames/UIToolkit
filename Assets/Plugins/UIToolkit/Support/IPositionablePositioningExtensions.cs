@@ -862,6 +862,7 @@ public static class IPositionablePositioningExtensions
         sprite.anchorInfo = anchorInfo;
     }
 
+
     /// <summary>
     /// Refreshes the sprite's position according to its anchor information.
     /// </summary>
@@ -875,7 +876,7 @@ public static class IPositionablePositioningExtensions
         var anchorInfo = sprite.anchorInfo;
 
         // Get parent anchor position
-        var position = parentAnchorPosition(anchorInfo.ParentUIObject, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor);
+        var position = parentAnchorPosition( anchorInfo.ParentUIObject, anchorInfo.ParentUIyAnchor, anchorInfo.ParentUIxAnchor );
 
         // Add position offset
         if( anchorInfo.UIPrecision == UIPrecision.Percentage )
@@ -892,13 +893,14 @@ public static class IPositionablePositioningExtensions
         // Adjust for anchor offset
         position.x -= UIRelative.xAnchorAdjustment( anchorInfo.UIxAnchor, sprite.width, anchorInfo.OriginUIxAnchor );
         position.y += UIRelative.yAnchorAdjustment( anchorInfo.UIyAnchor, sprite.height, anchorInfo.OriginUIyAnchor );
-		
+
         // Set depth
         position.z = depth;
 		
         // Set new position
         sprite.position = position;
     }
+
 
     /// <summary>
     /// Returns anchor position for a given parent and fallback to Screen if parent is null.

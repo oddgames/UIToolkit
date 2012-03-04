@@ -8,9 +8,7 @@ using System.Collections;
 public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouchable, IComparable
 {
 	protected UIToolkit _manager; // Reference to the sprite manager in which this sprite resides
-	protected Vector2 _contentSize;
-	protected Vector2 _minEdgeInset;
-	protected Vector2 _maxEdgeInset;
+	protected Vector2 _minEdgeInset; // lets us know how far we can scroll
 	
 	
 	public UIAbstractTouchableContainer( UILayoutType layoutType, int spacing ) : this( UI.firstToolkit, layoutType, spacing )
@@ -38,6 +36,15 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		// call through to base which will relayout our children
 		base.transformChanged();
 	}
+	
+	
+	public override void endUpdates()
+	{
+		base.endUpdates();
+	
+		// after updates finish and everything is layed out we can grab the content size
+		calculateMinMaxInsets();
+	}
 
 	
 	/// <summary>
@@ -46,54 +53,53 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	/// </summary>
 	private void calculateMinMaxInsets()
 	{
-		_minEdgeInset.x = _contentSize.x - _touchFrame.width;
-		_minEdgeInset.y = -_contentSize.y + _touchFrame.height;
-		
-		_maxEdgeInset.y = 0;
-		_maxEdgeInset.x = 0;
+		_minEdgeInset.x = -_contentWidth + _touchFrame.width;
+		_minEdgeInset.y = -_contentHeight + _touchFrame.height;
 		
 		// now that we have new insets clip
 		clipToBounds();
 	}
-
-	ITouchable TestTouchable(UIObject touchableObj, Vector2 touchPosition)
+	
+	
+	ITouchable TestTouchable( UIObject touchableObj, Vector2 touchPosition )
 	{
-
-
-		foreach (Transform t in touchableObj.client.transform) {
+		foreach( Transform t in touchableObj.client.transform )
+		{
 			UIElement uie = t.GetComponent<UIElement>();
-			if (uie != null) {
+			if( uie != null )
+			{
 				UIObject o = t.GetComponent<UIElement>().UIObject;
-				if (o != null) {
-					var touched = TestTouchable(o, touchPosition);
-					if (touched != null)
+				if( o != null )
+				{
+					var touched = TestTouchable( o, touchPosition );
+					if( touched != null )
 						return touched;
 				}
 			}
 		}
 
 		ITouchable touchable = touchableObj as ITouchable;
-		if (touchable != null) {
-			if (touchable.hitTest(touchPosition))
+		if( touchable != null )
+		{
+			if( touchable.hitTest( touchPosition ) )
 				return touchable as ITouchable;
 		}
 
-
-
 		return null;
 	}
-
+	
+	
 	protected ITouchable getButtonForScreenPosition( Vector2 touchPosition )
 	{
 		// we loop backwards so that any clipped elements at the top dont try to override the hitTest
 		// due to their frame overlapping the touchable below
-		for( int i = _children.Count - 1; i >= 0; i-- )
+		for( var i = _children.Count - 1; i >= 0; i-- )
 		{
 			var touchable = _children[i];
 			if( touchable != null )
 			{
-				ITouchable touched = TestTouchable(touchable, touchPosition); // Recursive
-				if (touched != null)
+				ITouchable touched = TestTouchable( touchable, touchPosition ); // Recursive
+				if( touched != null )
 					return touched;
 			}
 		}
@@ -162,7 +168,8 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		_touchFrame = new Rect( position.x, -position.y, width, height );
 		calculateMinMaxInsets();
 	}
-
+	
+	
 	public override float width
 	{
 		get { return _touchFrame.width; }
@@ -183,11 +190,11 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	{
 		base.addChild( children );
 		
-		// after the children are added we can grab the width/height which are freshly calculated
-		_contentSize.x = _contentWidth;
-		_contentSize.y = _contentHeight;
-		calculateMinMaxInsets();
+		// after the children are added we can grab the width/height which are freshly calculated if _suspendUpdates is false
+		if( !_suspendUpdates )
+			calculateMinMaxInsets();
 		
+		// we will manually handle touches so remove any children that are touchable
 		foreach( var child in children )
 		{
 			if( child is ITouchable )

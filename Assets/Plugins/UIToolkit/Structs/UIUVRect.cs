@@ -5,9 +5,10 @@ public struct UIUVRect
 {
 	public Vector2 lowerLeftUV;
 	public Vector2 uvDimensions;
-	public bool clippingTop; // used internally for clipping
+	public UIClippingPlane clippingPlane; // used internally for clipping
 	
 	private Vector2 _originalCoordinates; // used internally for clipping
+	private int _originalWidth; // used internally for clipping
 
 
 	/// <summary>
@@ -23,29 +24,49 @@ public struct UIUVRect
 	{
 		_originalCoordinates.x = x;
 		_originalCoordinates.y = y;
+		_originalWidth = width;
 		
 		lowerLeftUV = new Vector2( x / textureSize.x, 1.0f - ( ( y + height ) / textureSize.y ) );
 		uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
-		clippingTop = false;
+		clippingPlane = UIClippingPlane.None;
 	}
+
 	
-	
-	public UIUVRect rectClippedToBounds( float width, float height, bool clippingTop, Vector2 textureSize )
+	public UIUVRect rectClippedToBounds( float width, float height, UIClippingPlane clippingPlane, Vector2 textureSize )
 	{
 		var uv = this;
-		uv.clippingTop = clippingTop;
+		uv.clippingPlane = clippingPlane;
 		
-		// if we are clipping the top, only the uvDimensions need adjusting
-		if( clippingTop )
+		// if we are clipping the top or right, only the uvDimensions need adjusting
+		switch( clippingPlane )
 		{
-			uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
+			case UIClippingPlane.Left:
+			{
+				var widthDifference = _originalWidth - width;
+			
+				uv.lowerLeftUV = new Vector2( ( ( _originalCoordinates.x + widthDifference ) / textureSize.x ), 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
+				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
+				break;
+			}
+			case UIClippingPlane.Right:
+			{
+				uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
+				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
+				break;
+			}
+			case UIClippingPlane.Top:
+			{
+				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
+				break;
+			}
+			case UIClippingPlane.Bottom:
+			{
+				uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
+				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
+				break;
+			}
 		}
-		else
-		{
-			uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-			uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
-		}
-		
+
 		return uv;
 	}
 	

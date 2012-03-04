@@ -23,10 +23,10 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	public UIEdgeInsets _edgeInsets; // pixel padding insets for top, left, bottom and right
 	public UIEdgeInsets edgeInsets { get { return _edgeInsets; } set { _edgeInsets = value; layoutChildren(); } } // relayout when edgeInsets changes
 
-	protected float _scrollPosition; // scroll position calculated from the top
+	protected float _scrollPosition; // scroll position calculated from the top (vertical) or left (horizontal)
 
 	protected List<UISprite> _children = new List<UISprite>();
-	private bool _suspendUpdates; // when true, layoutChildren will do nothing
+	protected bool _suspendUpdates; // when true, layoutChildren will do nothing
 
 
 	protected float _contentWidth;
@@ -42,7 +42,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		set
 		{
 			// No need to do anything if we're already in this state
-			if (value == _hidden)
+			if( value == _hidden )
 				return;
 			_hidden = value;
 
@@ -57,14 +57,14 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// <summary>
 	/// We need the layout type set from the getgo so we can default to vertical
 	/// </summary>
-	public UIAbstractContainer() : this(UILayoutType.Vertical)
-	{ }
+	public UIAbstractContainer() : this( UILayoutType.Vertical )
+	{}
 
 
 	/// <summary>
 	/// We need the layout type set from the getgo so we can lay things out properly
 	/// </summary>
-	public UIAbstractContainer(UILayoutType layoutType)
+	public UIAbstractContainer( UILayoutType layoutType )
 	{
 		_layoutType = layoutType;
 
@@ -96,8 +96,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	{
 #if UNITY_EDITOR
 		// sanity check while we are in the editor
-		if (!_children.Contains(child))
-			throw new System.Exception("could not find child in UIAbstractContainer: " + child);
+		if( !_children.Contains( child ) )
+			throw new System.Exception( "could not find child in UIAbstractContainer: " + child );
 #endif
 		_children.Remove( child );
 		layoutChildren();
@@ -120,7 +120,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	/// <summary>
 	/// Commits any update made after beginUpdates was called
 	/// </summary>
-	public void endUpdates()
+	public virtual void endUpdates()
 	{
 		_suspendUpdates = false;
 		layoutChildren();
@@ -143,7 +143,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		{
 			// start with the insets, then add each object + spacing then end with insets
 			_contentWidth = _edgeInsets.left;
-			_contentHeight = _edgeInsets.top + _scrollPosition;
+			_contentHeight = _edgeInsets.top;
 
 			// create UIAnchorInfo to control positioning
 			var anchorInfo = UIAnchorInfo.DefaultAnchorInfo();
@@ -182,7 +182,12 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 						_contentWidth += _spacing;
 
 					// Set anchor offset
-					anchorInfo.OffsetX = _contentWidth * hdFactor;
+					anchorInfo.OffsetX = ( _contentWidth + _scrollPosition ) * hdFactor;
+					
+					// dont overwrite the sprites origin anchor!
+					anchorInfo.OriginUIxAnchor = item.anchorInfo.OriginUIxAnchor;
+					anchorInfo.OriginUIyAnchor = item.anchorInfo.OriginUIyAnchor;
+
 					item.anchorInfo = anchorInfo;
 
 					// all items get their width added
@@ -228,7 +233,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 						_contentHeight += _spacing;
 
 					// Set anchor offset
-					anchorInfo.OffsetY = _contentHeight * hdFactor;
+					anchorInfo.OffsetY = ( _contentHeight + _scrollPosition ) * hdFactor;
 					
 					// dont overwrite the sprites origin anchor!
 					anchorInfo.OriginUIxAnchor = item.anchorInfo.OriginUIxAnchor;

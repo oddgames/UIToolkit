@@ -16,19 +16,22 @@ public class UILanguageManager
     private delegate string OnLoadLanguage(string language);
     private static event OnLoadLanguage onLoadLanguage;
     #endregion
-
+	
+	
     #region Static Variables
     private static Dictionary<string, UILanguageManager> _languageManagers;
     private static Dictionary<string, string> _languages;
     private static string _currentLanguage = string.Empty;
     #endregion
-
+	
+	
     #region Private Variables
     private Dictionary<string, string> _texts;
     private string _filename;
     private string _localLanguage;
     #endregion
-
+	
+	
     /// <summary>
     /// Constructs an UILanguageManager with custom filename.
     /// </summary>
@@ -38,7 +41,8 @@ public class UILanguageManager
         _filename = filename;
         _localLanguage = loadLanguageTextsFromJSON(_currentLanguage);
     }
-
+	
+	
     #region Static Methods
     /// <summary>
     /// Returns an UILanguageManager which loads translations based on the provided filename.
@@ -197,7 +201,8 @@ public class UILanguageManager
         }
     }
     #endregion
-
+	
+	
     #region Class Methods
     /// <summary>
     /// String accessor for translations.
@@ -295,4 +300,5 @@ public class UILanguageManager
         return language;
     }
     #endregion
+	
 }

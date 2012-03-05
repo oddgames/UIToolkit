@@ -77,8 +77,13 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	protected IEnumerator springBackToBounds( float elasticityModifier )
 	{
 		var targetScrollPosition = 0f;
-		if( _scrollPosition < 0 ) // stretching up
-			targetScrollPosition = _minEdgeInset.x;
+		if( _scrollPosition < 0 ) // stretching up or right
+		{
+			if( layoutType == UIAbstractContainer.UILayoutType.Horizontal )
+				targetScrollPosition = _minEdgeInset.x;
+			else
+				targetScrollPosition = _minEdgeInset.y;
+		}
 		
 		while( !_isDragging )
 		{

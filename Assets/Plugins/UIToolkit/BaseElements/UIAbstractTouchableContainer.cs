@@ -78,7 +78,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	{
 		var targetScrollPosition = 0f;
 		if( _scrollPosition < 0 ) // stretching up
-			targetScrollPosition = _minEdgeInset.x;
+			targetScrollPosition = _minEdgeInset.y;
 		
 		while( !_isDragging )
 		{

@@ -83,6 +83,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			child.parentUIObject = this;
 			_children.Add( child );
 		}
+		_children.Sort();
 
 		layoutChildren();
 	}

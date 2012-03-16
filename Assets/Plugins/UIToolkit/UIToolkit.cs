@@ -205,6 +205,9 @@ public class UIToolkit : UISpriteManager
 	public void addToTouchables( ITouchable touchable )
 	{
 		_touchableSprites.Add( touchable );
+		// Sort the sprites container
+		_touchableSprites.Sort();
+
 	}
 
 	#endregion;

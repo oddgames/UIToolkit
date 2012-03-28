@@ -1,5 +1,8 @@
 using UnityEngine;
+using System;
 using System.Collections;
+using System.Reflection;
+
 
 public enum UIMouseState { UpThisFrame, DownThisFrame, HeldDown };
 
@@ -11,6 +14,23 @@ public struct UIFakeTouch
 	public float deltaTime;
 	//public int tapCount;
 	public TouchPhase phase;
+	
+	
+	public static Touch createTouch( int finderId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase )
+	{
+		var self = new Touch();
+		ValueType valueSelf = self;
+		var type = typeof( Touch );
+		
+		type.GetField( "m_FingerId", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, finderId );
+		type.GetField( "m_TapCount", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, tapCount );
+		type.GetField( "m_Position", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, position );
+		type.GetField( "m_PositionDelta", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, deltaPos );
+		type.GetField( "m_TimeDelta", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, timeDelta );
+		type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, phase );
+		
+		return (Touch)valueSelf;
+	}
 	
 	
 	public static UIFakeTouch fromTouch( Touch touch )

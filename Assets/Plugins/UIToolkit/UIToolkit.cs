@@ -21,6 +21,13 @@ public class UIToolkit : UISpriteManager
 	
 	#region MonoBehaviour Functions
 	
+	public bool useOutsideTouchControl = false; // if true, toolkit does not receive touches
+
+	// used by outside touch controllers
+	public List<ITouchable> touchableSprites {
+		get { return _touchableSprites; } 
+	}
+	
 	protected override void Awake()
 	{
 		// Set instance to this so we can be accessed from anywhere
@@ -36,6 +43,7 @@ public class UIToolkit : UISpriteManager
 
 	protected void Update()
 	{
+		if ( useOutsideTouchControl ) return;
 		// only do our touch processing if we have some touches
 		if( Input.touchCount > 0 )
 		{

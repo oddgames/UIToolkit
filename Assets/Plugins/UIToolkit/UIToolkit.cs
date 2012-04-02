@@ -184,10 +184,7 @@ public class UIToolkit : UISpriteManager
 			addSprite( touchableSprite as UISprite );
 			
 		// Add the sprite to our touchables and sort them		
-		_touchableSprites.Add( touchableSprite as ITouchable );
-		
-		// Sort the sprites container
-		_touchableSprites.Sort();
+		addToTouchables( touchableSprite );
 	}
 	
 	

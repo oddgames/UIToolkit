@@ -228,6 +228,70 @@ public class UISprite : UIObject, IPositionable
 		updateTransform();
 	}
 
+	public override void clipToRect(Rect r, bool recursive)
+	{
+		bool topContained = position.y < -r.yMin && position.y > -r.yMax;
+		bool bottomContained = position.y - height < -r.yMin && position.y - height > -r.yMax;
+
+		bool leftContained = position.x >= r.xMin && position.x <= r.xMax;
+		bool rightContained = position.x + width >= r.xMin && position.x + width <= r.xMax;
+
+		// first, handle if we are fully visible
+		if (topContained && bottomContained && leftContained && rightContained)
+		{
+			// unclip if we are clipped
+			if(clipped)
+				clipped = false;
+			hidden = false;
+		}
+		else if ((topContained || bottomContained) && (leftContained || rightContained))
+		{
+			// wrap the changes in a call to beginUpdates to avoid changing verts more than once
+			beginUpdates();
+			hidden = false;
+
+			// TODO: Handle clipping any sides at once. This'll be more flexible and should also simplify the code.
+			// Determine clipping side
+			if (!bottomContained)
+			{
+				var clippedHeight = position.y + r.yMax;
+
+				uvFrameClipped = uvFrame.rectClippedToBounds( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Bottom, manager.textureSize );
+				setClippedSize( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Bottom );
+			}
+			else if (!topContained)
+			{
+				var clippedHeight = height - position.y - r.yMin;
+
+				uvFrameClipped = uvFrame.rectClippedToBounds( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Top, manager.textureSize );
+				setClippedSize( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Top );
+			}
+			else if (!rightContained) // clipping the right
+			{
+				var clippedWidth = r.xMax - position.x;
+
+				uvFrameClipped = uvFrame.rectClippedToBounds( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Right, manager.textureSize );
+				setClippedSize( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Right );
+			}
+			else if (!leftContained) // clipping the left, so we need to adjust the position.x as well
+			{
+				var clippedWidth = width + position.x - r.xMin;
+
+				uvFrameClipped = uvFrame.rectClippedToBounds( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Left, manager.textureSize );
+				setClippedSize( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Left );
+			}
+
+			// commit the changes
+			endUpdates();
+		}
+		else
+		{
+			// fully outside our bounds
+			hidden = true;
+		}
+
+		base.clipToRect(r, recursive);
+	}
 	
 	public override void transformChanged()
 	{

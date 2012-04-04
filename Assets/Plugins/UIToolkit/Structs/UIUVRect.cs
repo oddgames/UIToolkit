@@ -45,27 +45,24 @@ public struct UIUVRect
 				var widthDifference = _originalWidth - width;
 			
 				uv.lowerLeftUV = new Vector2( ( ( _originalCoordinates.x + widthDifference ) / textureSize.x ), 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
 				break;
 			}
 			case UIClippingPlane.Right:
 			{
 				uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
 				break;
 			}
 			case UIClippingPlane.Top:
 			{
-				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
 				break;
 			}
 			case UIClippingPlane.Bottom:
 			{
 				uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-				uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
 				break;
 			}
 		}
+		uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
 
 		return uv;
 	}

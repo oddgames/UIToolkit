@@ -9,57 +9,6 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	public UIScrollableVerticalLayout( int spacing ) : base( UILayoutType.Vertical, spacing )
 	{}
 
-
-	protected override void clipChild( UISprite child )
-	{
-		var topContained = child.position.y < -touchFrame.yMin && child.position.y > -touchFrame.yMax;
-		var bottomContained = child.position.y - child.height < -touchFrame.yMin && child.position.y - child.height > -touchFrame.yMax;
-
-		// first, handle if we are fully visible
-		if( topContained && bottomContained )
-		{
-			// unclip if we are clipped
-			if( child.clipped )
-				child.clipped = false;
-			child.hidden = false;
-		}
-		else if( topContained || bottomContained )
-		{
-			// wrap the changes in a call to beginUpdates to avoid changing verts more than once
-			child.beginUpdates();
-
-			child.hidden = false;
-
-			// are we clipping the top or bottom?
-			if( topContained ) // clipping the bottom
- 			{
-				var clippedHeight = child.position.y + touchFrame.yMax;
-
-				child.uvFrameClipped = child.uvFrame.rectClippedToBounds( child.width / child.scale.x, clippedHeight / child.scale.y, UIClippingPlane.Bottom, child.manager.textureSize );
-				child.setClippedSize( child.width / child.scale.x, clippedHeight / child.scale.y, UIClippingPlane.Bottom );
-			}
-			else // clipping the top, so we need to adjust the position.y as well
- 			{
-				var clippedHeight = child.height - child.position.y - touchFrame.yMin;
-
-				child.uvFrameClipped = child.uvFrame.rectClippedToBounds( child.width / child.scale.x, clippedHeight / child.scale.y, UIClippingPlane.Top, child.manager.textureSize );
-				child.setClippedSize( child.width / child.scale.x, clippedHeight / child.scale.y, UIClippingPlane.Top );
-			}
-
-			// commit the changes
-			child.endUpdates();
-		}
-		else
-		{
-			// fully outside our bounds
-			child.hidden = true;
-		}
-
-		// Recurse
-		recurseAndClipChildren( child );
-	}
-	
-
 	#region ITouchable
 
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER

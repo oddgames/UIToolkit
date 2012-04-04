@@ -9,56 +9,6 @@ public class UIScrollableHorizontalLayout : UIAbstractTouchableContainer
 	public UIScrollableHorizontalLayout( int spacing ) : base( UILayoutType.Horizontal, spacing )
 	{}
 
-	
-	protected override void clipChild( UISprite child )
-	{
-		var leftContained = child.position.x >= touchFrame.xMin && child.position.x <= touchFrame.xMax;
-		var rightContained = child.position.x + child.width >= touchFrame.xMin && child.position.x + child.width <= touchFrame.xMax;
-		
-		// first, handle if we are fully visible
-		if( leftContained && rightContained )
-		{
-			// unclip if we are clipped
-			if( child.clipped )
-				child.clipped = false;
-			child.hidden = false;
-		}
-		else if( leftContained || rightContained )
-		{
-			// wrap the changes in a call to beginUpdates to avoid changing verts more than once
-			child.beginUpdates();
-			child.hidden = false;
-			
-			// are we clipping the left or right?
-			if( leftContained ) // clipping the right
- 			{
-				var clippedWidth = touchFrame.xMax - child.position.x;
-				
-				child.uvFrameClipped = child.uvFrame.rectClippedToBounds( clippedWidth / child.scale.x, child.height / child.scale.y, UIClippingPlane.Right, child.manager.textureSize );
-				child.setClippedSize( clippedWidth / child.scale.x, child.height / child.scale.y, UIClippingPlane.Right );
-			}
-			else // clipping the left, so we need to adjust the position.x as well
- 			{
-				var clippedWidth = child.width + child.position.x - touchFrame.xMin;
-				
-				child.uvFrameClipped = child.uvFrame.rectClippedToBounds( clippedWidth / child.scale.x, child.height / child.scale.y, UIClippingPlane.Left, child.manager.textureSize );
-				child.setClippedSize( clippedWidth / child.scale.x, child.height / child.scale.y, UIClippingPlane.Left );
-			}
-
-			// commit the changes
-			child.endUpdates();
-		}
-		else
-		{
-			// fully outside our bounds
-			child.hidden = true;
-		}
-
-		// Recurse
-		recurseAndClipChildren( child );
-	}
-	
-	
 	#region ITouchable
 
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER

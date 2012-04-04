@@ -212,6 +212,17 @@ public class UIObject : System.Object, IPositionable
 
 	#endregion
 
+	public virtual void clipToRect(Rect r, bool recursive = true)
+	{
+		if (recursive) {
+			foreach (Transform t in client.transform) {
+				UIElement uie = t.GetComponent<UIElement>();
+				if (uie != null) {
+					uie.UIObject.clipToRect(r);
+				}
+			}
+		}
+	}
 
 	public virtual void transformChanged()
 	{

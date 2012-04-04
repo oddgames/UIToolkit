@@ -333,6 +333,14 @@ public class UITextInstance : UIObject, IPositionable
 		applyColorToSprites();
 	}
 
+	public override void clipToRect(Rect r, bool recursive) {
+		// Special handling for text
+		foreach (UISprite glyph in textSprites) {
+			glyph.clipToRect(r, false);
+		}
+
+		base.clipToRect(r, recursive);
+	}
 	
 	/// <summary>
 	/// Overide transformChanged so that 

@@ -239,49 +239,12 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		}
 	}
 	
-	
-	protected abstract void clipChild( UISprite child );
-	
-	
 	protected void clipToBounds()
 	{
 		// clip hidden children
 		foreach( var child in _children )
-			clipChild( child );
+			child.clipToRect(touchFrame);
 	}
-	
-	
-	protected void recurseAndClipChildren( UIObject child )
-	{
-		foreach( Transform t in child.client.transform )
-		{
-			UIElement uie = t.GetComponent<UIElement>();
-			if( uie != null )
-			{
-				UIObject o = t.GetComponent<UIElement>().UIObject;
-				if( o != null )
-				{
-					UISprite s = o as UISprite;
-					if( s != null )
-					{
-						clipChild( s );
-					}
-					else
-					{
-						UITextInstance ti = o as UITextInstance;
-						if( ti != null )
-						{
-							// Special handeling for text
-							foreach( UISprite glyph in ti.textSprites )
-								clipChild( glyph );
-						}
-						recurseAndClipChildren( ti );
-					}
-				}
-			}
-		}
-	}
-
 
 	protected override void layoutChildren()
 	{

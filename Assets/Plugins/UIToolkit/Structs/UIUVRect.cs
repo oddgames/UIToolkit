@@ -5,11 +5,6 @@ public struct UIUVRect
 {
 	public Vector2 lowerLeftUV;
 	public Vector2 uvDimensions;
-	public UIClippingPlane clippingPlane; // used internally for clipping
-	
-	private Vector2 _originalCoordinates; // used internally for clipping
-	private int _originalWidth; // used internally for clipping
-
 
 	/// <summary>
 	/// Convenience property to return a UVRect of all zeros
@@ -22,51 +17,35 @@ public struct UIUVRect
 	/// </summary>
 	public UIUVRect( int x, int y, int width, int height, Vector2 textureSize )
 	{
-		_originalCoordinates.x = x;
-		_originalCoordinates.y = y;
-		_originalWidth = width;
-		
 		lowerLeftUV = new Vector2( x / textureSize.x, 1.0f - ( ( y + height ) / textureSize.y ) );
 		uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
-		clippingPlane = UIClippingPlane.None;
 	}
 
-	
-	public UIUVRect rectClippedToBounds( float width, float height, UIClippingPlane clippingPlane, Vector2 textureSize )
+	private static float lerp(float x, float x1, float y0, float y1)
 	{
-		var uv = this;
-		uv.clippingPlane = clippingPlane;
-		
-		// if we are clipping the top or right, only the uvDimensions need adjusting
-		switch( clippingPlane )
-		{
-			case UIClippingPlane.Left:
-			{
-				var widthDifference = _originalWidth - width;
-			
-				uv.lowerLeftUV = new Vector2( ( ( _originalCoordinates.x + widthDifference ) / textureSize.x ), 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-				break;
-			}
-			case UIClippingPlane.Right:
-			{
-				uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-				break;
-			}
-			case UIClippingPlane.Top:
-			{
-				break;
-			}
-			case UIClippingPlane.Bottom:
-			{
-				uv.lowerLeftUV = new Vector2( _originalCoordinates.x / textureSize.x, 1.0f - ( ( _originalCoordinates.y + height ) / textureSize.y ) );
-				break;
-			}
-		}
-		uv.uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
-
-		return uv;
+		return y0 + x * ((y1 - y0)/x1);
 	}
-	
+
+	public UIUVRect Intersect(Rect localVisibleRect, Vector2 texSize)
+	{
+		float spr_w = Mathf.Abs(uvDimensions.x * texSize.x);
+		float spr_h = Mathf.Abs(uvDimensions.y * texSize.y);
+
+		float base_uv_l = lowerLeftUV.x;
+		float base_uv_r = lowerLeftUV.x + uvDimensions.x;
+		float base_uv_u = lowerLeftUV.y + uvDimensions.y;
+		float base_uv_b = lowerLeftUV.y;
+
+		float uv_l = lerp(localVisibleRect.xMin, spr_w, base_uv_l, base_uv_r);
+		float uv_r = lerp(localVisibleRect.xMax, spr_w, base_uv_l, base_uv_r);
+		float uv_u = lerp(localVisibleRect.yMin, spr_h, base_uv_u, base_uv_b);
+		float uv_b = lerp(localVisibleRect.yMax, spr_h, base_uv_u, base_uv_b);
+
+		UIUVRect r;
+		r.lowerLeftUV = new Vector2(uv_l, uv_b);
+		r.uvDimensions = new Vector2(uv_r - uv_l, uv_u - uv_b);
+		return r;
+	}
 	
 	public float getWidth( Vector2 textureSize )
 	{

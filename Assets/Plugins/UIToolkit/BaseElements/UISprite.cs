@@ -11,8 +11,6 @@ public class UISprite : UIObject, IPositionable
 	
     public new float width { get { return _width * scale.x; } }  // Width and Height of the sprite in worldspace units.
     public new float height { get { return _height * scale.y; } }
-	private float _clippedWidth;
-	private float _clippedHeight;
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
     
     public Color _color; // The color to be used by all four vertices
@@ -27,11 +25,11 @@ public class UISprite : UIObject, IPositionable
     public Vector3 v3 = new Vector3();
     public Vector3 v4 = new Vector3();
 
-	protected UIUVRect _uvFrame; // UV coordinates and size for the sprite
-	protected UIUVRect _uvFrameClipped; // alternate UV coordinates for when a sprite it clipped
+	private UIUVRect _originalUV; // UV coordinates and size for the sprite
+	private UIUVRect _displayUV; // final UV coords used for displaying, after possible clipping
 	protected bool _clipped; // set to true when the sprite is clipped so the clipped uvFrame is used
-	private float _clippedTopYOffset;
-	private float _clippedLeftXOffset;
+	private Rect _localClipRect; // clipping rect in local space (with origin on upper-left corner of sprite)
+	private Rect _localVisibleRect;
 	
     protected Vector3[] meshVerts; // Pointer to the array of vertices in the mesh
     protected Vector2[] uvs; // Pointer to the array of UVs in the mesh
@@ -42,7 +40,7 @@ public class UISprite : UIObject, IPositionable
 	{}
 	
 
-    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ) : base()
+    public UISprite( Rect frame, int depth, UIUVRect uvFrame_, bool gameObjectOriginInCenter ) : base()
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
         if( gameObjectOriginInCenter )
@@ -58,7 +56,7 @@ public class UISprite : UIObject, IPositionable
 		_width = frame.width;
 		_height = frame.height;
 		
-		_uvFrame = uvFrame;
+		uvFrame = uvFrame_;
     }
 	
 	
@@ -73,47 +71,36 @@ public class UISprite : UIObject, IPositionable
 	/// </summary>
 	public virtual UIUVRect uvFrame
 	{
-		get { return _clipped ? _uvFrameClipped : _uvFrame; }
+		get { return _originalUV; }
 		set
 		{
 			// Dont bother changing if the new value isn't different
-			if( _uvFrame != value )
-			{
-				_uvFrame = value;
-				
-				// if we are clipped, we need to provide a new, clipped frame here as well as set the _uvFrame
-				if( _clipped )
-				{
-					var clippedWidth = _uvFrameClipped.getWidth( manager.textureSize );
-					var clippedHeight = _uvFrameClipped.getHeight( manager.textureSize );
-					
-					_uvFrameClipped = value.rectClippedToBounds( clippedWidth, clippedHeight, _uvFrameClipped.clippingPlane, manager.textureSize );
-				}
-				
-				manager.updateUV( this );
-			}
-		}
-	}
-	
-	
-	/// <summary>
-	/// Alternate uvFrame for when the sprite is clipped. Set to UIUVRect.zero to remove clipping or set
-	/// clipped to false.
-	/// Note: setting this automatically sets the sprite as clipped
-	/// </summary>
-	public virtual UIUVRect uvFrameClipped
-	{
-		get { return _uvFrameClipped; }
-		set
-		{
-			_uvFrameClipped = value;
-				
-			// if we were not set to zero then we use the clipped frame
-			_clipped = value != UIUVRect.zero;
-			manager.updateUV( this );
+			if (_originalUV == value)
+				return;
+
+			_originalUV = value;
+			updateDisplayUV();
 		}
 	}
 
+	public virtual UIUVRect displayUV { get { return _displayUV; } }
+	
+	private void updateDisplayUV()
+	{
+		if (clipped) {
+			Rect r = _localVisibleRect;
+			if (gameObjectOriginInCenter) {
+				r.x += _width / 2;
+				r.y += _height / 2;
+			}
+			_displayUV = _originalUV.Intersect(r, manager.textureSize);
+		} else {
+			_displayUV = _originalUV;
+		}
+
+		if (!_suspendUpdates && manager)
+			manager.updateUV(this);
+	}
 
     public virtual bool hidden
     {
@@ -132,22 +119,51 @@ public class UISprite : UIObject, IPositionable
     }
 	
 	
-	public bool clipped
+	public bool clipped { get { return _clipped; } }
+
+	private void updateVisibleRect()
 	{
-		get { return _clipped; }
-		set
-		{
-			if( value == _clipped )
-				return;
-			
-			_clipped = value;
-			_clippedTopYOffset = _clippedLeftXOffset = 0;
-			
-			updateVertPositions();
-			manager.updateUV( this );
+		if (clipped) {
+			float newX = Mathf.Max(_localClipRect.xMin, 0f) / scale.x;
+			float newY = Mathf.Max(_localClipRect.yMin, 0f) / scale.y;
+			float newWidth  = Mathf.Min(_localClipRect.xMax, width) / scale.x - newX;
+			float newHeight = Mathf.Min(_localClipRect.yMax, height) / scale.y - newY;
+			if (gameObjectOriginInCenter) {
+				newX -= _width / 2;
+				newY -= _height / 2;
+			}
+			_localVisibleRect = new Rect(newX, newY, newWidth, newHeight);
+		} else {
+			if (gameObjectOriginInCenter) {
+				_localVisibleRect = new Rect(-_width / 2, -height / 2, _width, _height);
+			} else {
+				_localVisibleRect = new Rect(0f, 0f, _width, _height);
+			}
 		}
 	}
-	
+
+	private void disableClipping()
+	{
+		if (!clipped)
+			return;
+
+		_clipped = false;
+		updateVisibleRect();
+
+		updateVertPositions();
+		updateDisplayUV();
+	}
+
+	private void enableClipping(Rect localClipRect)
+	{
+		_clipped = true;
+
+		_localClipRect = localClipRect;
+		updateVisibleRect();
+
+		updateVertPositions();
+		updateDisplayUV();
+	}
 
 	#region Transform passthrough properties so we can update necessary verts when changes occur
 	
@@ -224,70 +240,58 @@ public class UISprite : UIObject, IPositionable
 	public void endUpdates()
 	{
 		_suspendUpdates = false;
+		updateDisplayUV();
 		updateVertPositions();
 		updateTransform();
 	}
 
 	public override void clipToRect(Rect r, bool recursive)
 	{
-		bool topContained = position.y < -r.yMin && position.y > -r.yMax;
-		bool bottomContained = position.y - height < -r.yMin && position.y - height > -r.yMax;
+		// Transform rect into local sprite space
+		Rect lr = r;
+		if (gameObjectOriginInCenter) {
+			// Apply fixup so that clipping is uniform
+			lr.x -= position.x - width / 2;
+			lr.y -= -position.y - height / 2;
+		} else {
+			lr.x -= position.x;
+			lr.y -= -position.y;
+		}
 
-		bool leftContained = position.x >= r.xMin && position.x <= r.xMax;
-		bool rightContained = position.x + width >= r.xMin && position.x + width <= r.xMax;
+		// Check if sprite is fully contained inside clip rect
+		bool fullyContained =
+			lr.x <= 0f &&
+			lr.y <= 0f &&
+			lr.x + lr.width > width &&
+			lr.y + lr.height > height;
 
 		// first, handle if we are fully visible
-		if (topContained && bottomContained && leftContained && rightContained)
-		{
+		if (fullyContained) {
 			// unclip if we are clipped
-			if(clipped)
-				clipped = false;
+			if (clipped)
+				disableClipping();
 			hidden = false;
-		}
-		else if ((topContained || bottomContained) && (leftContained || rightContained))
-		{
-			// wrap the changes in a call to beginUpdates to avoid changing verts more than once
-			beginUpdates();
-			hidden = false;
+		} else {
+			// Check if sprite is fully outside clip rect
+			bool fullyOutside =
+				lr.x > width ||
+				lr.y > height ||
+				lr.x + lr.width < 0f ||
+				lr.y + lr.height < 0f;
 
-			// TODO: Handle clipping any sides at once. This'll be more flexible and should also simplify the code.
-			// Determine clipping side
-			if (!bottomContained)
-			{
-				var clippedHeight = position.y + r.yMax;
+			if (fullyOutside) {
+				// fully outside our bounds
+				hidden = true;
+			} else {
+				// wrap the changes in a call to beginUpdates to avoid changing verts more than once
+				beginUpdates();
 
-				uvFrameClipped = uvFrame.rectClippedToBounds( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Bottom, manager.textureSize );
-				setClippedSize( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Bottom );
+				hidden = false;
+				enableClipping(lr);
+
+				// commit the changes
+				endUpdates();
 			}
-			else if (!topContained)
-			{
-				var clippedHeight = height - position.y - r.yMin;
-
-				uvFrameClipped = uvFrame.rectClippedToBounds( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Top, manager.textureSize );
-				setClippedSize( width / scale.x, clippedHeight / scale.y, UIClippingPlane.Top );
-			}
-			else if (!rightContained) // clipping the right
-			{
-				var clippedWidth = r.xMax - position.x;
-
-				uvFrameClipped = uvFrame.rectClippedToBounds( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Right, manager.textureSize );
-				setClippedSize( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Right );
-			}
-			else if (!leftContained) // clipping the left, so we need to adjust the position.x as well
-			{
-				var clippedWidth = width + position.x - r.xMin;
-
-				uvFrameClipped = uvFrame.rectClippedToBounds( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Left, manager.textureSize );
-				setClippedSize( clippedWidth / scale.x, height / scale.y, UIClippingPlane.Left );
-			}
-
-			// commit the changes
-			endUpdates();
-		}
-		else
-		{
-			// fully outside our bounds
-			hidden = true;
 		}
 
 		base.clipToRect(r, recursive);
@@ -315,7 +319,9 @@ public class UISprite : UIObject, IPositionable
     {
         _width = width;
         _height = height;
-		
+
+		updateVisibleRect();
+
 		updateVertPositions();
         updateTransform();
     }
@@ -326,67 +332,12 @@ public class UISprite : UIObject, IPositionable
 	/// </summary>
 	public void updateVertPositions()
 	{
-		var width = _clipped ? _clippedWidth : _width;
-		var height = _clipped ? _clippedHeight : _height;
-		
-		if( gameObjectOriginInCenter )
-		{
-			// Some objects need to rotate so we set the origin at the center of the GO
-			v1 = new Vector3( -width / 2 + _clippedLeftXOffset, height / 2 - _clippedTopYOffset, 0 );   // Upper-left
-			v2 = new Vector3( -width / 2 + _clippedLeftXOffset, -height / 2 - _clippedTopYOffset, 0 );  // Lower-left
-			v3 = new Vector3( width / 2 + _clippedLeftXOffset, -height / 2 - _clippedTopYOffset, 0 );   // Lower-right
-			v4 = new Vector3( width / 2 + _clippedLeftXOffset, height / 2 - _clippedTopYOffset, 0 );    // Upper-right
-		}
-		else
-		{
-			// Make the origin the top-left corner of the GO
-			v1 = new Vector3( _clippedLeftXOffset, -_clippedTopYOffset, 0 );   // Upper-left
-			v2 = new Vector3( _clippedLeftXOffset, -height - _clippedTopYOffset, 0 );  // Lower-left
-			v3 = new Vector3( width + _clippedLeftXOffset, -height - _clippedTopYOffset, 0 );   // Lower-right
-			v4 = new Vector3( width + _clippedLeftXOffset, -_clippedTopYOffset, 0 );    // Upper-right
-		}
+		v1 = new Vector3(_localVisibleRect.xMin, -_localVisibleRect.yMin, 0f); // Upper-left
+		v2 = new Vector3(_localVisibleRect.xMin, -_localVisibleRect.yMax, 0f); // Lower-left
+		v3 = new Vector3(_localVisibleRect.xMax, -_localVisibleRect.yMax, 0f); // Lower-right
+		v4 = new Vector3(_localVisibleRect.xMax, -_localVisibleRect.yMin, 0f); // Upper-right
 	}
 	
-	
-	/// <summary>
-    /// Sets the physical dimensions of the sprite in the XY plane to be used when clipped. We need separate sizes because
-    /// the sprite should still have the same height/width for measuring even though it is clipped by another view.
-    /// Note: setting this DOES NOT automatically set the sprite as clipped. Size should be set after uvFrameClipped!
-    /// </summary>
-    public void setClippedSize( float width, float height, UIClippingPlane clippingPlane )
-    {
-		_clippedWidth = width;
-		_clippedHeight = height;
-		
-		switch( clippingPlane )
-		{
-			case UIClippingPlane.Left:
-			{
-				_clippedLeftXOffset = _width - _clippedWidth;
-				break;
-			}
-			case UIClippingPlane.Right:
-			{
-				_clippedLeftXOffset = 0;
-				break;
-			}
-			case UIClippingPlane.Top:
-			{
-				_clippedTopYOffset = _height - _clippedHeight;
-				break;
-			}
-			case UIClippingPlane.Bottom:
-			{
-				_clippedTopYOffset = 0;
-				break;
-			}
-		}
-
-		updateVertPositions();
-		updateTransform();
-	}
-	
-
     /// <summary>
     /// Sets the vertex and UV buffers this sprite has been assigned
     /// </summary>
@@ -422,15 +373,15 @@ public class UISprite : UIObject, IPositionable
 		
 		// offset our sprite in the x and y direction to "fix" the change that occurs when we reset to center
 		var pos = clientTransform.position;
-		pos.x += _width / 2;
-		pos.y -= _height / 2;
+		pos.x += width / 2;
+		pos.y -= height / 2;
 		clientTransform.position = pos;
 		
 		gameObjectOriginInCenter = true;
         _anchorInfo.OriginUIxAnchor = UIxAnchor.Center;
         _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
 
-		setSize( _width, _height );
+		updateVisibleRect();
 	}
 	
 

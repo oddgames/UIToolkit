@@ -57,12 +57,10 @@ public class UIKnob : UITouchableSprite
 	// Sets the uvFrame of the original GUISprite and resets the _normalUVFrame for reference when highlighting
 	public override UIUVRect uvFrame
 	{
-		get { return _uvFrame; }
-		set
-		{
-			_uvFrame = value;
+		get { return base.uvFrame; }
+		set {
+			base.uvFrame = value;
 			_tempUVframe = value;
-			manager.updateUV( this );
 		}
 	}
 

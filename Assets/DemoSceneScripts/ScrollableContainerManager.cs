@@ -70,7 +70,8 @@ public class ScrollableContainerManager : MonoBehaviour
 				button.onTouchUpInside += ( sender ) => Debug.Log( "touched button: " + j );
 			}
 
-			
+			// Centerized sprites work properly!
+			touchable.centerize();
 			scrollable.addChild( touchable );
 		}
 		

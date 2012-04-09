@@ -54,19 +54,16 @@ public class UIButton : UITouchableSprite
 
 	#endregion;
 
-
-	// Sets the uvFrame of the original UISprite and resets the _normalUVFrame for reference when highlighting
+	// Sets the uvFrame of the original GUISprite and resets the _normalUVFrame for reference when highlighting
 	public override UIUVRect uvFrame
 	{
-		get { return _clipped ? _uvFrameClipped : _uvFrame; }
-		set
-		{
-			_uvFrame = value;
-			manager.updateUV( this );
+		get { return base.uvFrame; }
+		set {
+			base.uvFrame = value;
+			_tempUVframe = value;
 		}
 	}
 
-	
 	public override bool highlighted
 	{
 		set

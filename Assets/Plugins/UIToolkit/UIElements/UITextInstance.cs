@@ -335,6 +335,7 @@ public class UITextInstance : UIObject, IPositionable
 
 	public override void clipToRect(Rect r, bool recursive) {
 		// Special handling for text
+		// TODO determine text bounding box and use this to early out
 		foreach (UISprite glyph in textSprites) {
 			glyph.clipToRect(r, false);
 		}

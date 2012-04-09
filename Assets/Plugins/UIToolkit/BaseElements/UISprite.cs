@@ -268,9 +268,12 @@ public class UISprite : UIObject, IPositionable
 		// first, handle if we are fully visible
 		if (fullyContained) {
 			// unclip if we are clipped
-			if (clipped)
+			if (hidden || clipped) {
 				disableClipping();
-			hidden = false;
+				hidden = false;
+
+				base.clipToRect(r, recursive);
+			}
 		} else {
 			// Check if sprite is fully outside clip rect
 			bool fullyOutside =
@@ -280,8 +283,12 @@ public class UISprite : UIObject, IPositionable
 				lr.y + lr.height < 0f;
 
 			if (fullyOutside) {
-				// fully outside our bounds
-				hidden = true;
+				if (!hidden) {
+					// fully outside our bounds
+					hidden = true;
+
+					base.clipToRect(r, recursive);
+				}
 			} else {
 				// wrap the changes in a call to beginUpdates to avoid changing verts more than once
 				beginUpdates();
@@ -291,10 +298,10 @@ public class UISprite : UIObject, IPositionable
 
 				// commit the changes
 				endUpdates();
+
+				base.clipToRect(r, recursive);
 			}
 		}
-
-		base.clipToRect(r, recursive);
 	}
 	
 	public override void transformChanged()

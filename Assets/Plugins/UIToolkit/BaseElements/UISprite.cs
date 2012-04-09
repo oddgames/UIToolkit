@@ -382,6 +382,8 @@ public class UISprite : UIObject, IPositionable
         _anchorInfo.OriginUIyAnchor = UIyAnchor.Center;
 
 		updateVisibleRect();
+		updateVertPositions();
+		updateDisplayUV();
 	}
 	
 

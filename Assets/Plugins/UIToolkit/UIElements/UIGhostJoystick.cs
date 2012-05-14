@@ -14,7 +14,6 @@ public class UIGhostJoystick : UITouchableSprite
 	private Vector2 _joystickCenter;
 
 	public float maxJoystickMovement = 20.0f; // max distance from _joystickCenter that the joystick will move
-	private float resolutionDivisor;
 	private UIToolkit _manager; // we need this for getting at texture details after the constructor
 
 	private int currentTouchId = -1;
@@ -71,9 +70,8 @@ public class UIGhostJoystick : UITouchableSprite
 		
 		manager.addTouchableSprite( this );
 		_manager = manager;
-
-		resolutionDivisor = UIRelative.pixelDensityMultiplier();
 	}
+	
 	
 	// Sets the image to be displayed when the joystick is highlighted
 	public void setJoystickHighlightedFilename( string filename )
@@ -128,15 +126,14 @@ public class UIGhostJoystick : UITouchableSprite
 		Vector2 newPosition = localTouchPosition;
 
 		float sqrlen = newPosition.sqrMagnitude;
-		if (sqrlen > maxJoystickMovement*maxJoystickMovement*resolutionDivisor*resolutionDivisor) {
-			newPosition = newPosition.normalized * maxJoystickMovement*resolutionDivisor;
-		}
+		if( sqrlen > maxJoystickMovement * maxJoystickMovement * UI.scaleFactor * UI.scaleFactor )
+			newPosition = newPosition.normalized * maxJoystickMovement * UI.scaleFactor;
 		
 		// Set the new position and update the transform
-		_joystickSprite.localPosition = new Vector2(newPosition.x + _joystickCenter.x, _joystickCenter.y + newPosition.y);
+		_joystickSprite.localPosition = new Vector2( newPosition.x + _joystickCenter.x, _joystickCenter.y + newPosition.y );
 		
 		// Get a value between -1 and 1 for position
-		joystickPosition = newPosition / (maxJoystickMovement*resolutionDivisor);
+		joystickPosition = newPosition / ( maxJoystickMovement * UI.scaleFactor );
 		
 		// Adjust for dead zone	
 		float absoluteX = Mathf.Abs( joystickPosition.x );
@@ -150,7 +147,7 @@ public class UIGhostJoystick : UITouchableSprite
 		else if( normalize )
 		{
 			// Rescale the output after taking the dead zone into account
-			joystickPosition.x = Mathf.Sign(joystickPosition.x) * (absoluteX - deadZone.x) / (1 - deadZone.x);
+			joystickPosition.x = Mathf.Sign( joystickPosition.x ) * ( absoluteX - deadZone.x ) / ( 1 - deadZone.x );
 		}
 		
 		if( absoluteY < deadZone.y )
@@ -161,7 +158,7 @@ public class UIGhostJoystick : UITouchableSprite
 		else if( normalize )
 		{
 			// Rescale the output after taking the dead zone into account
-			joystickPosition.y = Mathf.Sign(joystickPosition.y) * (absoluteY - deadZone.y) / (1 - deadZone.y);
+			joystickPosition.y = Mathf.Sign( joystickPosition.y ) * ( absoluteY - deadZone.y ) / ( 1 - deadZone.y );
 		}
 	}
 	

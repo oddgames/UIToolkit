@@ -135,7 +135,7 @@ public class UISlider : UITouchableSprite
             _knobMinimumXY = -_knobMaximumXY;
 		}
 
-        float hdFactor = UI.instance.isHD ? 0.5f : 1f;
+        var hdFactor = UI.isHD ? 0.5f : 1f;
         _knobMaximumXY *= hdFactor;
         _knobMinimumXY *= hdFactor;
 	}
@@ -146,7 +146,8 @@ public class UISlider : UITouchableSprite
 	{
         float offsetX = 0f, offsetY = 0f;
         float relativeKnobValue = normalizedKnobValue - 0.5f;
-        float hdFactor = UI.instance.isHD ? 0.5f : 1f;
+        var hdFactor = 1f / UI.scaleFactor;
+		
 		if( layout == UISliderLayout.Horizontal )
 		{
             offsetX = Mathf.Clamp((width - _sliderKnob.width) * hdFactor * relativeKnobValue, _knobMinimumXY, _knobMaximumXY);

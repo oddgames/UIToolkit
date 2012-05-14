@@ -17,7 +17,7 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
 		
-		var height = UI.instance.isHD ? 150 : 300;
+		var height = UI.isHD ? 150 : 300;
 		var width = Screen.width / 1.4f;
 		scrollable.setSize( width, height );
 		scrollable.position = new Vector3( ( Screen.width - width ) / 2, -Screen.height + height, 0 );
@@ -92,7 +92,7 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
 		
-		var widthAndHeight = UI.instance.isHD ? 500 : 250;
+		var widthAndHeight = UI.isHD ? 500 : 250;
 		scrollable.setSize( widthAndHeight, widthAndHeight );
 		scrollable.pagingEnabled = true;
 		

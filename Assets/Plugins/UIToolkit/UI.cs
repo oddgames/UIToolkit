@@ -24,8 +24,10 @@ public class UI : MonoBehaviour
 	public bool autoTextureSelectionForHD = false;
 	public bool allowPod4GenHD = true; // if false, iPod touch 4G will not take part in HD mode
 	public int maxWidthOrHeightForSD = 960; // if the width/height of the screen equals or exceeds this size HD mode will be triggered
-	[HideInInspector]
-	public bool isHD = false;
+	
+	
+	public static bool isHD = false;
+	public static int scaleFactor = 1; // we use int's for ease of life. this allows enough flexibility (1x, 2x, 3x, etc) and keeps things simple
 	public string hdExtension = "2x";
 	
 
@@ -91,6 +93,7 @@ public class UI : MonoBehaviour
 				Debug.Log( "switching to 2x GUI texture" );
 #endif
 				isHD = true;
+				scaleFactor = 2;
 			}
 		}
 		

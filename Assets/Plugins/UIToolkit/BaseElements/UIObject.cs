@@ -71,7 +71,7 @@ public class UIObject : System.Object, IPositionable
 		set
 		{
 			clientTransform.position = value;
-			if (onTransformChanged != null)
+			if( onTransformChanged != null )
 				onTransformChanged();
 		}
 	}
@@ -83,7 +83,7 @@ public class UIObject : System.Object, IPositionable
 		set
 		{
 			clientTransform.localPosition = value;
-			if (onTransformChanged != null)
+			if( onTransformChanged != null )
 				onTransformChanged();
 		}
 	}
@@ -95,7 +95,7 @@ public class UIObject : System.Object, IPositionable
 		set
 		{
 			clientTransform.eulerAngles = value;
-			if (onTransformChanged != null)
+			if( onTransformChanged != null )
 				onTransformChanged();
 		}
 	}
@@ -106,7 +106,8 @@ public class UIObject : System.Object, IPositionable
 		get
 		{
 			Vector3 localScale = clientTransform.localScale;
-			if (_parentUIObject != null) {
+			if( _parentUIObject != null )
+			{
 				Vector3 parentScale = _parentUIObject.scale;
 				localScale.x *= parentScale.x;
 				localScale.y *= parentScale.y;
@@ -117,20 +118,24 @@ public class UIObject : System.Object, IPositionable
 		set
 		{
 			Vector3 localScale = value;
-			if (_parentUIObject != null) {
+			if( _parentUIObject != null )
+			{
 				Vector3 parentScale = _parentUIObject.scale;
 				localScale.x /= parentScale.x;
 				localScale.y /= parentScale.y;
 				localScale.z /= parentScale.z;
 			}
 			clientTransform.localScale = localScale;
+			
 			// If auto refresh is on, don't call onTransformChanged
 			// as it will be called later when position is updated
-			if (autoRefreshPositionOnScaling) {
+			if( autoRefreshPositionOnScaling )
+			{
 				this.refreshPosition();
 			}
-			else {
-				if (onTransformChanged != null)
+			else
+			{
+				if( onTransformChanged != null )
 					onTransformChanged();
 			}
 		}
@@ -143,13 +148,16 @@ public class UIObject : System.Object, IPositionable
 		set
 		{
 			clientTransform.localScale = value;
+			
 			// If auto refresh is on, don't call onTransformChanged
 			// as it will be called later when position is updated
-			if (autoRefreshPositionOnScaling) {
+			if( autoRefreshPositionOnScaling )
+			{
 				this.refreshPosition();
 			}
-			else {
-				if (onTransformChanged != null)
+			else
+			{
+				if( onTransformChanged != null )
 					onTransformChanged();
 			}
 		}
@@ -232,7 +240,8 @@ public class UIObject : System.Object, IPositionable
 	{
 		get { return _height; }
 	}
-
+	
+	
 	public UIAnchorInfo anchorInfo
 	{
 		get { return _anchorInfo; }

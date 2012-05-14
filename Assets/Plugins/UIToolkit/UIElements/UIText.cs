@@ -103,7 +103,7 @@ public class UIText : System.Object
 	private void loadConfigfile( string filename )
 	{
 		// should we load a double resolution font?
-		if( UI.instance.isHD )
+		if( UI.isHD )
 			filename = filename + UI.instance.hdExtension;
 	
 		var asset = Resources.Load( filename, typeof( TextAsset ) ) as TextAsset;
@@ -335,9 +335,7 @@ public class UIText : System.Object
 		int length = 0;
 		
 		// Use Double-size wrap length in HD mode.
-		float scaledWrapWidth = lineWrapWidth;
-		if( UI.instance.isHD )
-			scaledWrapWidth *= 2.0f;
+		var scaledWrapWidth = lineWrapWidth * UI.scaleFactor;
 		
 		switch( wrapMode )
 		{

@@ -16,7 +16,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	protected const int TOTAL_VELOCITY_SAMPLE_COUNT = 3;
 	protected const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
-	protected float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.instance.isHD ? 10 : 5;
+	protected float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.isHD ? 10 : 5;
 	protected const float CONTENT_TOUCH_DELAY = 0.1f;
 	
 	protected bool _isDragging;

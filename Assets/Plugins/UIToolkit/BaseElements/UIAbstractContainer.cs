@@ -136,7 +136,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 			return;
 
 		// Get HD factor
-		float hdFactor = UI.instance.isHD ? 0.5f : 1f;
+		var hdFactor = 1f / UI.scaleFactor;
 
 		// rules for vertical and horizontal layouts
 		if( _layoutType == UIAbstractContainer.UILayoutType.Horizontal || _layoutType == UIAbstractContainer.UILayoutType.Vertical )

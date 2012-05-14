@@ -6,15 +6,6 @@ public enum UIPrecision { Percentage, Pixel };
 
 public static class UIRelative
 {
-    /// <summary>
-    /// Determine if running in HD and multiply pixelOffsets accordingly.
-    /// </summary>
-    public static int pixelDensityMultiplier()
-    {
-        return UI.instance.isHD ? 2 : 1;
-    }
-	
-	
     #region Relative offset methods
 
     /// <summary>
@@ -118,7 +109,7 @@ public static class UIRelative
     public static float xPixelsFrom( UIxAnchor anchor, float pixelOffset )
     {
         // Get initial offset
-        float offset = pixelOffset * pixelDensityMultiplier();
+        float offset = pixelOffset * UI.scaleFactor;
 		
         // If anchor is right the offset is flipped
         if( anchor == UIxAnchor.Right )
@@ -138,7 +129,7 @@ public static class UIRelative
     public static float yPixelsFrom( UIyAnchor anchor, float pixelOffset )
     {
         // Get initial offset
-        float offset = pixelOffset * pixelDensityMultiplier();
+        float offset = pixelOffset * UI.scaleFactor;
 		
         // If anchor is bottom the offset is flipped
         if( anchor == UIyAnchor.Bottom )
@@ -158,7 +149,7 @@ public static class UIRelative
     public static float xPixelsTo( UIxAnchor anchor, float offset )
     {
         // Get initial fixed offset
-        float pixelOffset = offset / pixelDensityMultiplier();
+        float pixelOffset = offset / UI.scaleFactor;
 		
         // If anchor is right the fixed offset is flipped
         if( anchor == UIxAnchor.Right )
@@ -178,7 +169,7 @@ public static class UIRelative
     public static float yPixelsTo( UIyAnchor anchor, float offset )
     {
         // Get initial fixed offset
-        float pixelOffset = offset / pixelDensityMultiplier();
+        float pixelOffset = offset / UI.scaleFactor;
 		
         // If anchor is bottom the fixed offset is flipped
         if( anchor == UIyAnchor.Bottom )
@@ -206,27 +197,32 @@ public static class UIRelative
         switch( anchor )
         {
             case UIxAnchor.Left:
-                if (originAnchor == UIxAnchor.Center)
+			{
+                if( originAnchor == UIxAnchor.Center )
                 {
                     adjustment -= width / 2f;
                 }
-                else if (originAnchor == UIxAnchor.Right)
+                else if( originAnchor == UIxAnchor.Right )
                 {
                     adjustment -= width;
                 }
                 break;
+			}
             case UIxAnchor.Right:
-                if (originAnchor == UIxAnchor.Left)
+			{
+                if( originAnchor == UIxAnchor.Left )
                 {
                     adjustment += width;
                 }
-                else if (originAnchor == UIxAnchor.Center)
+                else if( originAnchor == UIxAnchor.Center )
                 {
                     adjustment += width / 2f;
                 }
                 break;
+			}
             case UIxAnchor.Center:
-                if (originAnchor == UIxAnchor.Left)
+			{
+                if( originAnchor == UIxAnchor.Left )
                 {
                     adjustment += width / 2f;
                 }
@@ -235,6 +231,7 @@ public static class UIRelative
                     adjustment -= width / 2f;
                 }
                 break;
+			}
         }
 
         return adjustment;
@@ -248,7 +245,7 @@ public static class UIRelative
     /// <param name="height">Sprite height</param>
     /// <param name="originAnchor">Sprite origin anchor</param>
     /// <returns></returns>
-    public static float yAnchorAdjustment(UIyAnchor anchor, float height, UIyAnchor originAnchor)
+    public static float yAnchorAdjustment( UIyAnchor anchor, float height, UIyAnchor originAnchor )
     {
         float adjustment = 0f;
         switch( anchor )
@@ -288,4 +285,5 @@ public static class UIRelative
     }
 
     #endregion
+	
 }

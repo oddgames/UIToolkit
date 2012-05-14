@@ -21,7 +21,7 @@ public class PanelManager : MonoBehaviour
 
 
 		// Scores button
-		var scores2 = UIContinuousButton.create("scoresUp.png", "scoresDown.png", 0, 0);
+		var scores2 = UIContinuousButton.create("scoresUp.png", "scoresDown.png", 0, 0 );
 		
 
 		

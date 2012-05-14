@@ -17,12 +17,10 @@ public struct UIEdgeOffsets
 	
 	public UIEdgeOffsets( int top, int left, int bottom, int right )
 	{
-		var multiplier = UI.instance.isHD ? 2 : 1;
-		
-		this.top = top * multiplier;
-		this.left = left * multiplier;
-		this.bottom = bottom * multiplier;
-		this.right = right * multiplier;
+		this.top = top * UI.scaleFactor;
+		this.left = left * UI.scaleFactor;
+		this.bottom = bottom * UI.scaleFactor;
+		this.right = right * UI.scaleFactor;
 	}
 	
 	

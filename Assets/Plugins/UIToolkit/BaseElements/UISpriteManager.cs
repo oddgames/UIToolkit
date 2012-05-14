@@ -92,36 +92,37 @@ public class UISpriteManager : MonoBehaviour
 	public void loadTextureAndPrepareForUse()
 	{
 		// load our texture, at 2x if necessary
-		if (UI.instance.isHD)
+		if( UI.isHD )
 			texturePackerConfigName = texturePackerConfigName + UI.instance.hdExtension;
 
-		var texture = (Texture)Resources.Load(texturePackerConfigName, typeof(Texture));
-		if (texture == null)
-			Debug.Log("UI texture is being autoloaded and it doesn't exist.  Cannot find texturePackerConfigName: " + texturePackerConfigName);
-		material.SetTexture("_MainTex", texture);
+		var texture = (Texture)Resources.Load( texturePackerConfigName, typeof(Texture) );
+		if( texture == null )
+			Debug.Log( "UI texture is being autoloaded and it doesn't exist.  Cannot find texturePackerConfigName: " + texturePackerConfigName );
+		material.mainTexture = texture;
 
 		// Cache our texture size
-		Texture t = material.GetTexture("_MainTex");
-		textureSize = new Vector2(t.width, t.height);
+		var t = material.mainTexture;
+		textureSize = new Vector2( t.width, t.height );
 
 		// load up the config file
-		textureDetails = loadTexturesFromTexturePackerJSON(texturePackerConfigName, textureSize);
+		textureDetails = loadTexturesFromTexturePackerJSON( texturePackerConfigName, textureSize );
 	}
 
 
-	public static Dictionary<string, UITextureInfo> loadTexturesFromTexturePackerJSON(string filename, Vector2 textureSize)
+	public static Dictionary<string, UITextureInfo> loadTexturesFromTexturePackerJSON( string filename, Vector2 textureSize )
 	{
 		var textures = new Dictionary<string, UITextureInfo>();
 
 		var asset = Resources.Load(filename, typeof(TextAsset)) as TextAsset;
-		if (asset == null)
-			Debug.LogError("Could not find Texture Packer json config file in Resources folder: " + filename);
+		if( asset == null )
+			Debug.LogError( "Could not find Texture Packer json config file in Resources folder: " + filename );
 
 		var jsonString = asset.text;
 		var decodedHash = jsonString.hashtableFromJson();
 		var frames = (IDictionary)decodedHash["frames"];
 
-		foreach (System.Collections.DictionaryEntry item in frames) {
+		foreach( System.Collections.DictionaryEntry item in frames )
+		{
 			// extract the info we need from the TexturePacker json file, mainly uvRect and size
 			var frame = (IDictionary)((IDictionary)item.Value)["frame"];
 			var frameX = int.Parse(frame["x"].ToString());
@@ -144,14 +145,14 @@ public class UISpriteManager : MonoBehaviour
 			var rotated = (bool)((IDictionary)item.Value)["rotated"];
 
 			var ti = new UITextureInfo();
-			ti.frame = new Rect(frameX, frameY, frameW, frameH);
-			ti.uvRect = new UIUVRect(frameX, frameY, frameW, frameH, textureSize);
-			ti.spriteSourceSize = new Rect(spriteSourceSizeX, spriteSourceSizeY, spriteSourceSizeW, spriteSourceSizeH);
-			ti.sourceSize = new Vector2(sourceSizeX, sourceSizeY);
+			ti.frame = new Rect( frameX, frameY, frameW, frameH );
+			ti.uvRect = new UIUVRect( frameX, frameY, frameW, frameH, textureSize );
+			ti.spriteSourceSize = new Rect( spriteSourceSizeX, spriteSourceSizeY, spriteSourceSizeW, spriteSourceSizeH );
+			ti.sourceSize = new Vector2( sourceSizeX, sourceSizeY );
 			ti.trimmed = trimmed;
 			ti.rotated = rotated;
 
-			textures.Add(item.Key.ToString(), ti);
+			textures.Add( item.Key.ToString(), ti );
 		}
 
 		// unload the asset
@@ -165,12 +166,12 @@ public class UISpriteManager : MonoBehaviour
 	/// <summary>
 	/// grabs the UITextureInfo for the given filename
 	/// </summary>
-	public UITextureInfo textureInfoForFilename(string filename)
+	public UITextureInfo textureInfoForFilename( string filename )
 	{
 #if UNITY_EDITOR
 		// sanity check while in editor
-		if (!textureDetails.ContainsKey(filename))
-			throw new Exception("can't find texture details for texture packer sprite:" + filename);
+		if( !textureDetails.ContainsKey( filename ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + filename );
 #endif
 		return textureDetails[filename];
 	}
@@ -179,7 +180,7 @@ public class UISpriteManager : MonoBehaviour
 	/// <summary>
 	/// grabs the uvRect for the given filename
 	/// </summary>
-	public UIUVRect uvRectForFilename(string filename)
+	public UIUVRect uvRectForFilename( string filename )
 	{
 #if UNITY_EDITOR
 		// sanity check while in editor
@@ -193,7 +194,7 @@ public class UISpriteManager : MonoBehaviour
 	/// <summary>
 	/// grabs the frame for the given filename
 	/// </summary>
-	public Rect frameForFilename(string filename)
+	public Rect frameForFilename( string filename )
 	{
 #if UNITY_EDITOR
 		// sanity check while in editor

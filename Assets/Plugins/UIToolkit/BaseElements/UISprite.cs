@@ -38,6 +38,9 @@ public class UISprite : UIObject, IPositionable
 	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
 	
 	
+	public UISprite(){}
+	
+	
 	public UISprite( Rect frame, int depth, UIUVRect uvFrame ) : this( frame, depth, uvFrame, false )
 	{}
 	

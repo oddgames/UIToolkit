@@ -42,7 +42,6 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 			{
 				touchable = UIButton.create( "optionsUp.png", "optionsDown.png", 0, 0 );
 			}
-			
 
 			if( i == 1 )
 			{
@@ -78,6 +77,9 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 				button.onTouchUpInside += ( sender ) => Debug.Log( "touched button: " + j );
 			}
 
+			// add random spacers every so often
+			if( i % 3 == 0 )
+				scrollable.addChild( new UISpacer( Random.Range( 10, 100 ), 40 ) );
 			
 			scrollable.addChild( touchable );
 		}
@@ -104,6 +106,7 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 			var button = UIButton.create( "marioPanel.png", "marioPanel.png", 0, 0 );
 			scrollable.addChild( button );
 		}
+		
 		scrollable.endUpdates();
 		scrollable.endUpdates(); // this is a bug. it shouldnt need to be called twice
 	}

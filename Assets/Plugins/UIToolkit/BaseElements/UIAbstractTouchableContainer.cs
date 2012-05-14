@@ -463,6 +463,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		calculateMinMaxInsets();
 	}
 	
+	
 	/// <summary>
 	/// Clear all childs
 	/// </summary>
@@ -470,6 +471,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		_children.Clear();
 		layoutChildren();
 	}	
+	
 	
 	/// <summary>
 	/// Override so that we can remove the touchable sprites. The container needs to manage all touches.

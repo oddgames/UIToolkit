@@ -61,11 +61,7 @@ public class UISwipeDetector : UITouchableSprite
 	}
 	
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
-#endif
 	{
 		if( touchInfoArray[touch.fingerId] == null )
 			touchInfoArray[touch.fingerId] = new TouchInfo( swipesToDetect );
@@ -75,11 +71,7 @@ public class UISwipeDetector : UITouchableSprite
 	}
 
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
-#endif
 	{
 		if( processTouchInfoWithTouch( touchInfoArray[touch.fingerId], touch ) )
 		{
@@ -92,11 +84,7 @@ public class UISwipeDetector : UITouchableSprite
 
 
 /* Only used for debugging
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#endif
 	{
 		//Debug.Log( "TOUCH ENDED" );
 		//Debug.Log( string.Format( "x: {0}, y: {1}", touch.position.x, touch.position.y ) );
@@ -104,11 +92,7 @@ public class UISwipeDetector : UITouchableSprite
 */
 
 	
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	private bool processTouchInfoWithTouch( TouchInfo touchInfo, UIFakeTouch touch )
-#else
 	private bool processTouchInfoWithTouch( TouchInfo touchInfo, Touch touch )
-#endif
 	{
 		// If we already completed the swipe detection or if none are availalbe get out of here
 		if( touchInfo.swipeDetectionStatus != SwipeDetectionStatus.Waiting )

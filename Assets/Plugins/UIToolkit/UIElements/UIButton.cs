@@ -86,11 +86,7 @@ public class UIButton : UITouchableSprite
 
 
 	// Touch handlers
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
-#endif
 	{
 		highlighted = true;
 		
@@ -105,11 +101,7 @@ public class UIButton : UITouchableSprite
 
 
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#else
 	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#endif
 	{
 		// If someone has un-highlighted us through code we are deactivated 
 		// and should not fire the event
@@ -126,16 +118,11 @@ public class UIButton : UITouchableSprite
 			onTouchUpInside( this );
     }
 
+	
     public override void destroy()
     {
         base.destroy();
 
         highlighted = false;
     }
-
-
-
-
-
-
 }

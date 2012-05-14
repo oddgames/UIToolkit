@@ -4,18 +4,21 @@ using System.Collections;
 using System.Reflection;
 
 
-public enum UIMouseState { UpThisFrame, DownThisFrame, HeldDown };
 
-public struct UIFakeTouch
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+public enum UIMouseState
 {
-	public int fingerId;
-	public Vector2 position;
-	public Vector2 deltaPosition;
-	public float deltaTime;
-	//public int tapCount;
-	public TouchPhase phase;
-	
-	
+	UpThisFrame,
+	DownThisFrame,
+	HeldDown
+};
+
+
+/// <summary>
+/// this class now exists only to allow standalones/web players to create Touch objects
+/// </summary>
+public struct UITouchMaker
+{
 	public static Touch createTouch( int finderId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase )
 	{
 		var self = new Touch();
@@ -33,46 +36,37 @@ public struct UIFakeTouch
 	}
 	
 	
-	public static UIFakeTouch fromTouch( Touch touch )
+	public static Touch createTouchFromInput( UIMouseState mouseState, ref Vector2? lastMousePosition )
 	{
-		var fakeTouch = new UIFakeTouch();
-		fakeTouch.fingerId = touch.fingerId;
-		fakeTouch.position = touch.position;
-		fakeTouch.deltaPosition = touch.deltaPosition;
-		fakeTouch.deltaTime = touch.deltaTime;
-		fakeTouch.phase = touch.phase;
-		return fakeTouch;
-	}
-
-
-	public static UIFakeTouch fromInput( UIMouseState mouseState, ref Vector2? lastMousePosition )
-	{
-		var fakeTouch = new UIFakeTouch();
-		fakeTouch.fingerId = 2;
+		var self = new Touch();
+		ValueType valueSelf = self;
+		var type = typeof( Touch );
+		
+		var currentMousePosition = new Vector2( Input.mousePosition.x, Input.mousePosition.y );
 		
 		// if we have a lastMousePosition use it to get a delta
 		if( lastMousePosition.HasValue )
-			fakeTouch.deltaPosition = Input.mousePosition - (Vector3)lastMousePosition;
+			type.GetField( "m_PositionDelta", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, currentMousePosition - lastMousePosition );
 		
 		if( mouseState == UIMouseState.DownThisFrame ) // equivalent to touchBegan
 		{
-			fakeTouch.phase = TouchPhase.Began;
+			type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Began );
 			lastMousePosition = Input.mousePosition;
 		}
 		else if( mouseState == UIMouseState.UpThisFrame ) // equivalent to touchEnded
 		{
-			fakeTouch.phase = TouchPhase.Ended;
+			type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Ended );
 			lastMousePosition = null;
 		}
 		else // UIMouseState.HeldDown - equivalent to touchMoved/Stationary
 		{
-			fakeTouch.phase = TouchPhase.Moved;
+			type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Moved );
 			lastMousePosition = Input.mousePosition;
 		}
 		
-		fakeTouch.position = new Vector2( Input.mousePosition.x, Input.mousePosition.y );
+		type.GetField( "m_Position", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, currentMousePosition );
 		
-		return fakeTouch;
+		return (Touch)valueSelf;
 	}
-
 }
+#endif

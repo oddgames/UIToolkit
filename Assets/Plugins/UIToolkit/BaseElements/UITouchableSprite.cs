@@ -211,31 +211,19 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	#region ITouchable
 	
 	// Touch handlers.  Subclasses should override these to get their specific behaviour
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public virtual void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
-#endif
 	{
 		highlighted = true;
 	}
 
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public virtual void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
-#endif
 	{
 
 	}
 	
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public virtual void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#else
 	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#endif
 	{
 		highlighted = false;
 	}

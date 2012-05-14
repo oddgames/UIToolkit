@@ -61,11 +61,7 @@ public class UIScrollableHorizontalLayout : UIAbstractTouchableContainer
 	
 	#region ITouchable
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
-#endif
 	{
 		// increment deltaTouch so we can pass on the touch if necessary
 		_deltaTouch += touch.deltaPosition.x;

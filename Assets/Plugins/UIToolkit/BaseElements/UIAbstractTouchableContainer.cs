@@ -25,11 +25,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	// touch handling helpers
 	protected float _deltaTouch;
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	protected UIFakeTouch _lastTouch;
-#else
 	protected Touch _lastTouch;
-#endif
 	protected Vector2 _lastTouchPosition;
 	protected ITouchable _activeTouchable;
 	
@@ -390,11 +386,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	
 	// Touch handlers.  Subclasses should override onTouchMoved
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public virtual void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
-#endif
 	{
 		// sanity check in case we lost a touch (happens with Unity on occassion)
 		if( _activeTouchable != null )
@@ -413,21 +405,13 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	}
 
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public virtual void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
-#endif
 	{
 
 	}
 
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public virtual void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#else
 	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-#endif
 	{
 		_isDragging = false;
 

@@ -43,18 +43,16 @@ public class UIToolkit : UISpriteManager
 
 	protected void Update()
 	{
-		if ( useOutsideTouchControl ) return;
+		if( useOutsideTouchControl )
+			return;
+		
 		// only do our touch processing if we have some touches
 		if( Input.touchCount > 0 )
 		{
 			// Examine all current touches
 			for( int i = 0; i < Input.touchCount; i++ )
 			{
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-				lookAtTouch( UIFakeTouch.fromTouch( Input.GetTouch( i ) ) );
-#else
 				lookAtTouch( Input.GetTouch( i ) );
-#endif
 			}
 		} // end if Input.touchCount
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
@@ -63,20 +61,19 @@ public class UIToolkit : UISpriteManager
 			// no touches. so check the mouse input if we are in the editor
 			
 			// check for each mouse state in turn, no elses here. They can all occur on the same frame!
-			
 			if( Input.GetMouseButtonDown( 0 ) )
 			{
-				lookAtTouch( UIFakeTouch.fromInput( UIMouseState.DownThisFrame, ref lastMousePosition ) );
+				lookAtTouch( UITouchMaker.createTouchFromInput( UIMouseState.DownThisFrame, ref lastMousePosition ) );
 			}
 
 			if( Input.GetMouseButton( 0 ) )
 			{
-				lookAtTouch( UIFakeTouch.fromInput( UIMouseState.HeldDown, ref lastMousePosition ) );
+				lookAtTouch( UITouchMaker.createTouchFromInput( UIMouseState.HeldDown, ref lastMousePosition ) );
 			}
 			
 			if( Input.GetMouseButtonUp( 0 ) )
 			{
-				lookAtTouch( UIFakeTouch.fromInput( UIMouseState.UpThisFrame, ref lastMousePosition ) );
+				lookAtTouch( UITouchMaker.createTouchFromInput( UIMouseState.UpThisFrame, ref lastMousePosition ) );
 			}			
 			
 			// handle hover states
@@ -221,11 +218,7 @@ public class UIToolkit : UISpriteManager
 	#region Touch management and analysis helpers
 	
 	// examines a touch and sends off began, moved and ended events
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	private void lookAtTouch( UIFakeTouch touch )
-#else
 	private void lookAtTouch( Touch touch )
-#endif
 	{
 		// tranform the touch position so the origin is in the top left
 		var fixedTouchPosition = new Vector2( touch.position.x, Screen.height - touch.position.y );

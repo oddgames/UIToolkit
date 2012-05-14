@@ -54,11 +54,7 @@ public class UIColorPicker : UITouchableSprite
 
 
 	// Touch handlers
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public override void onTouchBegan( Touch touch, Vector2 touchPos )
-#endif
 	{
 		highlighted = true;
 		
@@ -71,11 +67,7 @@ public class UIColorPicker : UITouchableSprite
 	}
 
 
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
-	public override void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
-#else
 	public override void onTouchMoved( Touch touch, Vector2 touchPos )
-#endif
 	{
 		Color oldColor = colorPicked;
 		Vector2 textureCoord = getTouchTextureCoords(touchPos);	

@@ -26,6 +26,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 	protected float _scrollPosition; // scroll position calculated from the top (vertical) or left (horizontal)
 
 	protected List<UISprite> _children = new List<UISprite>();
+	protected List<UITextInstance> _textChildren = new List<UITextInstance>();
 	protected bool _suspendUpdates; // when true, layoutChildren will do nothing
 
 
@@ -48,6 +49,8 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 
 			// apply state to the children
 			foreach( var child in _children )
+				child.hidden = value;
+			foreach( var child in _textChildren )
 				child.hidden = value;
 		}
 	}
@@ -86,7 +89,16 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 
 		layoutChildren();
 	}
+	public virtual void addText( params UITextInstance[] children )
+	{
+		foreach( var child in children )
+		{
+			//child.parentUIObject = this;
+			_textChildren.Add( child );
+		}
 
+		//layoutChildren();
+	}
 
 	/// <summary>
 	/// Removes a child from the container and optionally from it's manager.  If it is removed from

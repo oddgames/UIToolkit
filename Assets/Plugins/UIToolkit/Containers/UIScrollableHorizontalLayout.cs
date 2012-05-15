@@ -8,6 +8,8 @@ public class UIScrollableHorizontalLayout : UIAbstractTouchableContainer
 {
 	public UIScrollableHorizontalLayout( int spacing ) : base( UILayoutType.Horizontal, spacing )
 	{}
+	public UIScrollableHorizontalLayout( UIToolkit manager, int spacing ) : base(manager, UILayoutType.Horizontal, spacing )
+	{}
 
 	
 	protected override void clipChild( UISprite child )
@@ -70,7 +72,9 @@ public class UIScrollableHorizontalLayout : UIAbstractTouchableContainer
 		// once we move too far unhighlight and stop tracking the touchable
 		if( _activeTouchable != null && Mathf.Abs( _deltaTouch ) > TOUCH_MAX_DELTA_FOR_ACTIVATION )
 		{
-			_activeTouchable.onTouchEnded( touch, touchPos, true );
+			//this is broken and passes a touch through to the scrollable item even if scrolling
+			//_activeTouchable.onTouchEnded( touch, touchPos, true );
+			_activeTouchable.highlighted = false;
 			_activeTouchable = null;
 		}
 

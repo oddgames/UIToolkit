@@ -33,6 +33,17 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	public bool pagingEnabled; // enables paging support which will snap scrolling. page size is the container width
 	
 	
+	//private bool __hidden = false;
+	public virtual bool _hidden
+	{
+		get { return base.hidden; }
+		set
+		{
+			base.hidden=value;
+			_velocities.Clear();
+		}
+	}
+
 	public override float width
 	{
 		get { return _touchFrame.width; }
@@ -407,7 +418,12 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 
 	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
 	{
-
+		if( _activeTouchable != null )
+		{
+			// we dont pass onTouchEnded here because technically we are still over the ITouchable
+			_activeTouchable.highlighted = false;
+			_activeTouchable = null;
+		}
 	}
 
 
@@ -488,7 +504,10 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		foreach( var child in children )
 		{
 			if( child is ITouchable )
+			{
 				_manager.removeFromTouchables( child as ITouchable );
+				//child.manager.removeFromTouchables(child as ITouchable );
+			}
 		}
 	}
 	

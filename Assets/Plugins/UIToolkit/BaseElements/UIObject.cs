@@ -16,7 +16,7 @@ public class UIObject : System.Object, IPositionable
 	private UIObject _parentUIObject;
 	public virtual Color color { get; set; } // hack that is overridden in UISprite just for animation support
 	protected UIAnchorInfo _anchorInfo;
-	public bool autoRefreshPositionOnScaling = true;
+	public bool autoRefreshPositionOnScaling = false;	//true;
 	protected float _width, _height;
 
 	/// <summary>

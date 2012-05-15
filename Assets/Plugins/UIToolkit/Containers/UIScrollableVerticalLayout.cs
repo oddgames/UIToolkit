@@ -9,6 +9,9 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 	public UIScrollableVerticalLayout( int spacing ) : base( UILayoutType.Vertical, spacing )
 	{}
 
+	//add constructor so we can specify manager
+	public UIScrollableVerticalLayout( UIToolkit manager, int spacing ) : base( manager, UILayoutType.Vertical, spacing )
+	{}
 
 	protected override void clipChild( UISprite child )
 	{
@@ -71,7 +74,8 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		// once we move too far unhighlight and stop tracking the touchable
 		if( _activeTouchable != null && Mathf.Abs( _deltaTouch ) > TOUCH_MAX_DELTA_FOR_ACTIVATION )
 		{
-			_activeTouchable.onTouchEnded( touch, touchPos, true );
+			//_activeTouchable.onTouchEnded( touch, touchPos, true );
+			_activeTouchable.highlighted = false;
 			_activeTouchable = null;
 		}
 

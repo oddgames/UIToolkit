@@ -362,7 +362,7 @@ public class UISpriteManager : MonoBehaviour
 	/// <summary>
 	/// Shortcut for adding a new sprite using the raw materials
 	/// </summary>
-	private UISprite addSprite(Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter)
+	public UISprite addSprite(Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter)
 	{
 		// Create and initialize the new sprite
 		UISprite newSprite = new UISprite(frame, depth, uvFrame, gameObjectOriginInCenter);

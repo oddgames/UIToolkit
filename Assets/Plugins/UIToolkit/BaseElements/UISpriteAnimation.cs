@@ -33,7 +33,7 @@ public class UISpriteAnimation
 		_isPlaying = true;
 		
 		// loop while we are playing and we havent finished looping
-		while( _isPlaying && loopCount >= 0 )
+		while( _isPlaying && (loopCount > 0 || loopCount==-1))
 		{
 			// what frame are we on?
 			if( loopingForward )
@@ -45,7 +45,10 @@ public class UISpriteAnimation
 			if( currentFrame < 0 || currentFrame == totalFrames )
 			{
 				// finished a loop, increment loop counter, reverse loop direction if necessary and reset currentFrame
-				--loopCount;
+				if (loopCount>0)
+				{
+					--loopCount;
+				}
 				
 				if( loopReverse )
 					loopingForward = !loopingForward;

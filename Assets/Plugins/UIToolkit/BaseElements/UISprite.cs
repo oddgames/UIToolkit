@@ -36,11 +36,11 @@ public class UISprite : UIObject, IPositionable
     protected Vector3[] meshVerts; // Pointer to the array of vertices in the mesh
     protected Vector2[] uvs; // Pointer to the array of UVs in the mesh
 	protected Dictionary<string, UISpriteAnimation> spriteAnimations;
-	
+
+	protected List<UITextInstance> _children = new List<UITextInstance>();
 	
 	public UISprite(){}
-	
-	
+
 	public UISprite( Rect frame, int depth, UIUVRect uvFrame ) : this( frame, depth, uvFrame, false )
 	{}
 	
@@ -131,6 +131,10 @@ public class UISprite : UIObject, IPositionable
                 manager.hideSprite( this );
             else
                 manager.showSprite( this );
+
+			// apply state to the children
+			foreach( var child in _children )
+				child.hidden = value;
         }
     }
 	
@@ -388,9 +392,23 @@ public class UISprite : UIObject, IPositionable
 	// Removes the sprite from the mesh and destroys it's client GO
 	public virtual void destroy()
 	{
+		foreach( var child in _children )
+		{
+			 child.destroy();
+		}
 		manager.removeElement( this );
 	}
 
+	public virtual void addText( params UITextInstance[] children )
+	{
+		foreach( var child in children )
+		{
+			//child.parentUIObject = this;
+			_children.Add( child );
+		}
+
+		//layoutChildren();
+	}
 
 	#region Sprite Animation methods
 	

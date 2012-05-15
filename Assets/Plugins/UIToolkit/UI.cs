@@ -75,23 +75,24 @@ public class UI : MonoBehaviour
 		
 		// setup the HD flag
 		// handle texture loading if required
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER || UNITY_ANDROID
 		var deviceAllowsHD = true;
-#else
+	#else
 		var deviceAllowsHD = ( allowPod4GenHD && iPhone.generation == iPhoneGeneration.iPodTouch4Gen ) || iPhone.generation != iPhoneGeneration.iPodTouch4Gen;
-#endif
+	#endif
 		if( autoTextureSelectionForHD && deviceAllowsHD )
 		{
 			// are we laoding up a 2x texture?
-#if UNITY_EDITOR
-			if( Screen.width >= 500 || Screen.height >= 500 ) // for easier testing in the editor
-#else
+		//plw comment out the editor test...wondered why it wasnt working
+		//#if UNITY_EDITOR
+		//	if( Screen.width >= 500 || Screen.height >= 500 ) // for easier testing in the editor
+		//#else
 			if( Screen.width >= maxWidthOrHeightForSD || Screen.height >= maxWidthOrHeightForSD )
-#endif
+		//#endif
 			{
-#if UNITY_EDITOR
+			#if UNITY_EDITOR
 				Debug.Log( "switching to 2x GUI texture" );
-#endif
+			#endif
 				isHD = true;
 				scaleFactor = 2;
 			}
@@ -100,10 +101,10 @@ public class UI : MonoBehaviour
 		// grab all our child UIToolkits
 		_toolkitInstances = GetComponentsInChildren<UIToolkit>();
 		firstToolkit = _toolkitInstances[0];
-#if UNITY_EDITOR
+	#if UNITY_EDITOR
 		if( _toolkitInstances.Length == 0 )
 			throw new System.Exception( "Could not find any UIToolkit instances in children of UI" );
-#endif
+	#endif
 		
 		// kick off the loading of texture for any UIToolkits we have
 		foreach( var toolkit in _toolkitInstances )

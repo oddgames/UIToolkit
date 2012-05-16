@@ -60,8 +60,8 @@ public class UIZoomButton : UIButton
 	{
 		centerize();
 		autoRefreshPositionOnScaling = false;
-		_zoomInAnimation = new UIAnimation( this, 0.3f, UIAnimationProperty.Scale, new Vector3( 1, 1, 1 ), new Vector3( 1.3f, 1.3f, 1.3f ), Easing.Quartic.easeInOut );
-		_zoomOutAnimation = new UIAnimation( this, 0.3f, UIAnimationProperty.Scale, new Vector3( 1.3f, 1.3f, 1.3f ), new Vector3( 1, 1, 1 ), Easing.Quartic.easeInOut );
+		_zoomInAnimation = new UIAnimation( this, 0.3f, UIAnimationProperty.Scale, new Vector3( 1, 1, 1 ), new Vector3( 1.3f, 1.3f, 1.3f ), Easing.Quartic.easeInOut, true );
+		_zoomOutAnimation = new UIAnimation( this, 0.3f, UIAnimationProperty.Scale, new Vector3( 1.3f, 1.3f, 1.3f ), new Vector3( 1, 1, 1 ), Easing.Quartic.easeInOut, true );
 	}
 
 	#endregion;

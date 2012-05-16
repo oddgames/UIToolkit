@@ -36,7 +36,7 @@ public class UIAnimation
 	private Color targetColor;
 
 
-	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease, bool affectedByTimeScale = true)
+	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, System.Func<float, float> ease, bool affectedByTimeScale)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
@@ -51,7 +51,7 @@ public class UIAnimation
 	}
 
 
-	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease, bool affectedByTimeScale = true)
+	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, float startFloat, float targetFloat, System.Func<float, float> ease, bool affectedByTimeScale)
 	{
 		this.sprite = sprite;
 		this.duration = duration;
@@ -66,7 +66,7 @@ public class UIAnimation
 	}
 
 
-	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease, bool affectedByTimeScale = true)
+	public UIAnimation(UIObject sprite, float duration, UIAnimationProperty aniProperty, Color startColor, Color targetColor, System.Func<float, float> ease, bool affectedByTimeScale)
 	{
 		this.sprite = sprite;
 		this.duration = duration;

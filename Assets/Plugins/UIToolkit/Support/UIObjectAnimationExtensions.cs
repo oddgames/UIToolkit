@@ -197,7 +197,7 @@ public static class UIObjectAnimationExtensions
 	// Sets up and starts a new animation in a Coroutine - float version
 	private static UIAnimation animate( UIObject sprite, float duration, UIAnimationProperty aniProperty, float start, float target, UIEaseType ease )
 	{
-		UIAnimation ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease );
+		UIAnimation ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease, true );
 		UI.instance.StartCoroutine( ani.animate() );
 		
 		return ani;
@@ -222,7 +222,7 @@ public static class UIObjectAnimationExtensions
 	// Sets up and starts a new animation in a Coroutine - Color version
 	private static UIAnimation animate( UIObject sprite, float duration, UIAnimationProperty aniProperty, Color start, Color target, UIEaseType ease )
 	{
-		UIAnimation ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease );
+		UIAnimation ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease, true );
 		UI.instance.StartCoroutine( ani.animate() );
 		
 		return ani;
@@ -261,7 +261,7 @@ public static class UIObjectAnimationExtensions
 	// Sets up and starts a new animation in a Coroutine - Vector3 version
 	private static UIAnimation animate( UIObject sprite, float duration, UIAnimationProperty aniProperty, Vector3 start, Vector3 target, UIEaseType ease )
 	{
-		var ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease );
+		var ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease, true );
 		UI.instance.StartCoroutine( ani.animate() );
 		
 		return ani;

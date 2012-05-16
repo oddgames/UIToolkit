@@ -19,13 +19,13 @@ public class UISlider : UITouchableSprite
 	
 	
 	// The knobs x/y coordinates should be relative to the tracks and it is measured from the center of the knob
-	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout, int depth = 2, bool knobInFront = true )
+	public static UISlider create( string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout, int depth, bool knobInFront )
 	{
 		return create( UI.firstToolkit, knobFilename, trackFilename, trackxPos, trackyPos, layout, depth, knobInFront );
 	}
 
 	
-	public static UISlider create( UIToolkit manager, string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout, int depth = 2, bool knobInFront = true )
+	public static UISlider create( UIToolkit manager, string knobFilename, string trackFilename, int trackxPos, int trackyPos, UISliderLayout layout, int depth, bool knobInFront )
 	{
 		// create the track first so we can use its dimensions to position the knob		
 		var trackTI = manager.textureInfoForFilename( trackFilename );

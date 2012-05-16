@@ -75,7 +75,7 @@ public class UI : MonoBehaviour
 		
 		// setup the HD flag
 		// handle texture loading if required
-#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER || UNITY_ANDROID
 		var deviceAllowsHD = true;
 #else
 		var deviceAllowsHD = ( allowPod4GenHD && iPhone.generation == iPhoneGeneration.iPodTouch4Gen ) || iPhone.generation != iPhoneGeneration.iPodTouch4Gen;
@@ -83,11 +83,7 @@ public class UI : MonoBehaviour
 		if( autoTextureSelectionForHD && deviceAllowsHD )
 		{
 			// are we laoding up a 2x texture?
-#if UNITY_EDITOR
-			if( Screen.width >= 500 || Screen.height >= 500 ) // for easier testing in the editor
-#else
 			if( Screen.width >= maxWidthOrHeightForSD || Screen.height >= maxWidthOrHeightForSD )
-#endif
 			{
 #if UNITY_EDITOR
 				Debug.Log( "switching to 2x GUI texture" );

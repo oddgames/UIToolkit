@@ -238,6 +238,7 @@ public class UIText : System.Object
 				offsetY = _fontDetails[charId].offsety * scale;
 				dy = offsetY + fontLineSkip;
 			}
+			
 			// Extend end of line
 			lineEndChar = i;
 
@@ -287,7 +288,7 @@ public class UIText : System.Object
 			for ( var i = lineStartChar; i <= lineEndChar; i++ )
 			{
 				if( sprites[i] != null )
-					sprites[i].position = new Vector3( sprites[i].position.x - lineWidth/2.0f, sprites[i].position.y, sprites[i].position.z );
+					sprites[i].position = new Vector3( sprites[i].position.x - lineWidth / 2.0f, sprites[i].position.y, sprites[i].position.z );
 			}
 		} 
 		else if( instanceAlignMode == UITextAlignMode.Right )
@@ -417,7 +418,7 @@ public class UIText : System.Object
 					{
 						// Insert word
 						newText += words[i] + " ";
-						spaceLeft = spaceLeft - (size + spaceWidth);
+						spaceLeft = spaceLeft - ( size + spaceWidth );
 					}
 					
 				}
@@ -476,7 +477,8 @@ public class UIText : System.Object
 
 		// We scale the sprite this way so it will work with the container clipping
 		sprite.autoRefreshPositionOnScaling = false;
-		sprite.scale = new Vector3(scale, scale, 1);
+		sprite.scale = new Vector3( scale, scale, 1 );
+		
 		return sprite;
 	}
 	

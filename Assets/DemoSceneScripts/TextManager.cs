@@ -11,9 +11,10 @@ public class TextManager : MonoBehaviour
 	public bool setLowAsciiForcingMode = true;
 	public string highAsciiString = char.ConvertFromUtf32( 8220 ) + "Grand Central Station" + char.ConvertFromUtf32( 8221 );
 	
+	
 	void Start()
 	{
-		// setup our text instance which will parse our .fnt file and allow us to
+		// setup our UIText which will parse our .fnt file and allow us to create instances that use it
 		var text = new UIText( "prototype", "prototype.png" );
 
 		
@@ -21,10 +22,9 @@ public class TextManager : MonoBehaviour
 		// Uses default color, scale, alignment, and depth.
 		text1 = text.addTextInstance( "hello man.  I have a line\nbreak.", 0, 0 );
         text1.pixelsFromTop( 0, 0 );
-		
 
 		text2 = text.addTextInstance( "testing small bitmap fonts", 0, 0, 0.3f );
-        text2.pixelsFromBottomLeft( 25, 0 );
+        text2.pixelsFromBottomLeft( 2, 2 );
 		
 		
 		// Centering using alignment modes.
@@ -47,8 +47,8 @@ public class TextManager : MonoBehaviour
 		for( var i = 0; i < centeredText.Length; i++ )
 			colors.Add( Color.Lerp( Color.white, Color.magenta, (float)i / centeredText.Length ) );
 		
-		text5 = text.addTextInstance( centeredText, 0, 0, 1f, 4, colors.ToArray(), UITextAlignMode.Left, UITextVerticalAlignMode.Middle );
-        text5.positionFromLeft( -0.1f, 0f );
+		text5 = text.addTextInstance( centeredText, 0, 0, 1f, 4, colors.ToArray(), UITextAlignMode.Center, UITextVerticalAlignMode.Middle );
+		text5.positionCenter();
 		
 		
 		// Now center on right side.

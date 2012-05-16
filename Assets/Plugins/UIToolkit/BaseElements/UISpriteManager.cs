@@ -333,40 +333,40 @@ public class UISpriteManager : MonoBehaviour
 	/// <summary>
 	/// Adds a new sprite to the mix at the given position
 	/// </summary>
-	public UISprite addSprite(string name, int xPos, int yPos)
+	public UISprite addSprite( string name, int xPos, int yPos )
 	{
-		return addSprite(name, xPos, yPos, 1, false);
+		return addSprite( name, xPos, yPos, 1, false );
 	}
 
 
-	public UISprite addSprite(string name, int xPos, int yPos, int depth)
+	public UISprite addSprite( string name, int xPos, int yPos, int depth )
 	{
-		return addSprite(name, xPos, yPos, depth, false);
+		return addSprite( name, xPos, yPos, depth, false );
 	}
 
 
-	public UISprite addSprite(string name, int xPos, int yPos, int depth, bool gameObjectOriginInCenter)
+	public UISprite addSprite( string name, int xPos, int yPos, int depth, bool gameObjectOriginInCenter )
 	{
 #if UNITY_EDITOR
 		// sanity check while in editor
-		if (!textureDetails.ContainsKey(name))
-			throw new Exception("can't find texture details for texture packer sprite:" + name);
+		if( !textureDetails.ContainsKey( name ) )
+			throw new Exception( "can't find texture details for texture packer sprite:" + name );
 #endif
 		var textureInfo = textureDetails[name];
-		var positionRect = new Rect(xPos, yPos, textureInfo.frame.width, textureInfo.frame.height);
+		var positionRect = new Rect( xPos, yPos, textureInfo.frame.width, textureInfo.frame.height );
 
-		return this.addSprite(positionRect, textureInfo.uvRect, depth, gameObjectOriginInCenter);
+		return this.addSprite( positionRect, textureInfo.uvRect, depth, gameObjectOriginInCenter );
 	}
 
 
 	/// <summary>
 	/// Shortcut for adding a new sprite using the raw materials
 	/// </summary>
-	private UISprite addSprite(Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter)
+	private UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth, bool gameObjectOriginInCenter )
 	{
 		// Create and initialize the new sprite
-		UISprite newSprite = new UISprite(frame, depth, uvFrame, gameObjectOriginInCenter);
-		addSprite(newSprite);
+		UISprite newSprite = new UISprite( frame, depth, uvFrame, gameObjectOriginInCenter );
+		addSprite( newSprite );
 
 		return newSprite;
 	}

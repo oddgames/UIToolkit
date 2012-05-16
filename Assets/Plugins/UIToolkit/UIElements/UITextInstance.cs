@@ -48,7 +48,8 @@ public class UITextInstance : UIObject, IPositionable
             updateSize();
 		}
 	}
-
+	
+	
     public float textScale
     {
         get { return _scale; }
@@ -63,6 +64,7 @@ public class UITextInstance : UIObject, IPositionable
             updateSize();
         }
     }
+	
 	
 	private bool _hidden;
 	public bool hidden 
@@ -202,12 +204,12 @@ public class UITextInstance : UIObject, IPositionable
 		_text = text;
         _scale = scale;
 		this.colors = colors;
-        position = new Vector3(xPos, -yPos, depth);
+        position = new Vector3( xPos, -yPos, depth );
 		_hidden = false;
 
         // Set anchor alignment
         _alignMode = alignMode;
-        switch (alignMode)
+        switch( alignMode )
         {
             case UITextAlignMode.Left:
                 _anchorInfo.OriginUIxAnchor = UIxAnchor.Left;
@@ -219,9 +221,10 @@ public class UITextInstance : UIObject, IPositionable
                 _anchorInfo.OriginUIxAnchor = UIxAnchor.Right;
                 break;
         }
+		
         // Set anchor vertical alignment
         _verticalAlignMode = verticalAlignMode;
-        switch (verticalAlignMode)
+        switch( verticalAlignMode )
         {
             case UITextVerticalAlignMode.Top:
                 _anchorInfo.OriginUIyAnchor = UIyAnchor.Top;

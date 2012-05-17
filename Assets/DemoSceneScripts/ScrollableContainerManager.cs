@@ -12,6 +12,7 @@ public class ScrollableContainerManager : MonoBehaviour
 	void Start()
 	{
 		var scrollable = new UIScrollableVerticalLayout( 10 );
+		scrollable.alignMode = UIAbstractContainer.UIContainerAlignMode.Center;
 		scrollable.position = new Vector3( 0, -50, 0 );
 		var width = UI.isHD ? 300 : 150;
 		scrollable.setSize( width, Screen.height / 1.4f );

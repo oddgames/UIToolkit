@@ -174,9 +174,6 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
 				{
-					if( item.hidden )
-						lastIndex--;
-
 					// we add spacing for all but the first and last
 					if( i != 0 && i != lastIndex )
 						_contentWidth += _spacing;
@@ -225,15 +222,14 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 				var lastIndex = _children.Count;
 				foreach( var item in _children )
 				{
-					if( item.hidden )
-						lastIndex--;
-
+					Debug.Log("HHHH");
 					// we add spacing for all but the first and last
 					if( i != 0 && i != lastIndex )
 						_contentHeight += _spacing;
 
 					// Set anchor offset
 					anchorInfo.OffsetY = ( _contentHeight + _scrollPosition ) * hdFactor;
+					//anchorInfo.OffsetX = item.anchorInfo.OffsetX;
 					
 					// dont overwrite the sprites origin anchor!
 					anchorInfo.OriginUIxAnchor = item.anchorInfo.OriginUIxAnchor;

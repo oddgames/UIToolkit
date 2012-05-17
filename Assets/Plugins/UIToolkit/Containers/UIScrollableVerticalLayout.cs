@@ -109,7 +109,6 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 		_velocities.Enqueue( touch.deltaPosition.y / Time.deltaTime );
 	}
 
-
 	#endregion
 
 

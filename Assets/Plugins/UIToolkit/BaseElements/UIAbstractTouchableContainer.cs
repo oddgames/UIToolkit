@@ -488,7 +488,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		foreach( var child in children )
 		{
 			if( child is ITouchable )
-				_manager.removeFromTouchables( child as ITouchable );
+				child.manager.removeFromTouchables( child as ITouchable );
 		}
 	}
 	

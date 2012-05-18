@@ -27,8 +27,7 @@ public class UIObject : System.Object, IPositionable
 	/// evaluated by event handlers.
 	/// </value>
 	public object userData;
-	
-	
+
 	/// <summary>
 	/// Sets up the client GameObject along with it's layer and caches the transform
 	/// </summary>

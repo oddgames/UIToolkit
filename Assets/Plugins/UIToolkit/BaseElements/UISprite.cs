@@ -6,6 +6,7 @@ public class UISprite : UIObject, IPositionable
 {
     public UIToolkit manager = null; // Reference to the sprite manager in which this sprite resides
     public bool ___hidden = false; // Indicates whether this sprite is currently hidden (DO NOT ACCESS DIRECTLY)
+	private bool __inFocus = true;
 	public static readonly Rect _rectZero = new Rect( 0, 0, 0, 0 ); // used for disabled touch frames
 	private bool _suspendUpdates; // when true, updateTransform and updateVertPositions will do nothing until endUpdates is called
 	
@@ -137,6 +138,18 @@ public class UISprite : UIObject, IPositionable
 				child.hidden = value;
         }
     }
+
+	public virtual bool inFocus
+	{
+		get
+		{
+			return(__inFocus);
+		}
+		set
+		{
+			__inFocus=value;
+		}
+	}
 	
 	
 	public bool clipped

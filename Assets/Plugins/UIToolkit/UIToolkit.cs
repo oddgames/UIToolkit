@@ -289,7 +289,7 @@ public class UIToolkit : UISpriteManager
 		// Run through our touchables in order.  They are sorted by z-index already.
 		for( int i = 0, totalTouchables = _touchableSprites.Count; i < totalTouchables; i++ )
 		{
-			if( !_touchableSprites[i].hidden && _touchableSprites[i].hitTest( touchPosition ) )
+			if( !_touchableSprites[i].hidden && _touchableSprites[i].inFocus && _touchableSprites[i].hitTest( touchPosition ) )
 				return _touchableSprites[i];
 		}
 		

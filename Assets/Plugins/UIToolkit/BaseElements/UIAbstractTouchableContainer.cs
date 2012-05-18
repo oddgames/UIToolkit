@@ -411,6 +411,11 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		_isDragging = true;
 		_velocities.Clear();
 
+		if (!inFocus)
+		{
+			return;
+		}
+
 		// kick off a new check
 		_manager.StartCoroutine( checkDelayedContentTouch() );
 	}

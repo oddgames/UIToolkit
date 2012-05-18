@@ -9,6 +9,7 @@ public interface ITouchable
 #endif
 	bool highlighted { get; set; }
 	bool hidden { get; set; }
+	bool inFocus { get; set; }
 	Rect touchFrame { get; }
 	Vector3 position { get; set; }
 	

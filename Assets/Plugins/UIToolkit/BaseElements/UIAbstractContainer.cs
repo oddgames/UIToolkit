@@ -55,6 +55,30 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		}
 	}
 
+	/// <summary>
+	/// leaves the container and all its children visible
+	/// but removes focus (so a popup can be on top and take input)
+	/// </summary>
+	private bool _inFocus=true;
+	public bool inFocus
+	{
+		get
+		{
+			return(_inFocus);
+		}
+		set
+		{
+			if (value==_inFocus)
+			{
+				return;
+			}
+			_inFocus=value;
+			foreach (var child in _children)
+			{
+				child.inFocus=value;
+			}
+		}
+	}
 
 
 	/// <summary>

@@ -84,11 +84,11 @@ public class UIColorPicker : UITouchableSprite
 	private Vector2 getTouchTextureCoords( Vector2 touchPos )
 	{
 		float xChange = touchPos.x - position.x;
-		xChange = Mathf.Clamp( xChange, 0, width - 1 );
+		xChange = Mathf.Clamp( xChange + (0.5f * width), 0, width - 1 );
 		float xPos = textureCoords.x + xChange;
 				
-		float yChange = touchPos.y - -1 * ( position.y );
-		yChange = Mathf.Clamp( yChange, 1, height );
+		float yChange = touchPos.y - ( -1 * position.y );
+		yChange = Mathf.Clamp( yChange + (0.5f * height), 1, height );
 		float yPos = manager.textureSize.y - ( textureCoords.y + yChange );
 		
 		return new Vector2( xPos, yPos );

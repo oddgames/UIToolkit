@@ -32,6 +32,32 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter ):base( frame, depth, uvFrame, gameObjectOriginInCenter )
 	{
 	}
+	
+
+	#region Transform passthrough properties - we need to set the touchFrame dirty when these change
+	
+	public new Vector3 position
+	{
+		get { return clientTransform.position; }
+		set
+		{
+			clientTransform.position = value;
+			updateTransform();
+		}
+	}
+
+
+	public new Vector3 localPosition
+	{
+		get { return clientTransform.localPosition; }
+		set
+		{
+			clientTransform.localPosition = value;
+			updateTransform();
+		}
+	}
+	
+	#endregion
 
 	
 	#region Properties and Getters/Setters
@@ -76,7 +102,7 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 				
 				// grab the normal frame of the sprite then add the offsets to get our touch frames
 				// remembering to offset if we have our origin in the center
-				var normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width, height );
+				var normalFrame = new Rect( clientTransform.position.x, -clientTransform.position.y, width, height);
 				
 				if( gameObjectOriginInCenter )
 				{
@@ -89,7 +115,12 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 			}
 			
 			// Either return our highlighted or normal touch frame
-			return ( _highlighted ) ? _highlightedTouchFrame : _normalTouchFrame;
+			Rect result = ( _highlighted ) ? _highlightedTouchFrame : _normalTouchFrame;
+			result.width *= localScale.x * parent.localScale.x;
+			result.height *= localScale.y * parent.localScale.y;
+			
+			return result;
+			
 		}
 	}
 	
@@ -166,7 +197,7 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 				// if we have a hoveredUVframe use it
 				if( value )
 					uvFrame = hoveredUVframe;
-				else if (!_highlighted)
+				else
 					uvFrame = _tempUVframe;
 			}
 		}
@@ -211,19 +242,31 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 	#region ITouchable
 	
 	// Touch handlers.  Subclasses should override these to get their specific behaviour
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	public virtual void onTouchBegan( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
+#endif
 	{
 		highlighted = true;
 	}
 
 
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	public virtual void onTouchMoved( UIFakeTouch touch, Vector2 touchPos )
+#else
 	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
+#endif
 	{
 
 	}
 	
 
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
+	public virtual void onTouchEnded( UIFakeTouch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#else
 	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+#endif
 	{
 		highlighted = false;
 	}
@@ -244,4 +287,3 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
     }
 
 }
-

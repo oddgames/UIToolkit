@@ -9,6 +9,7 @@ public interface ITouchable
 #endif
 	bool highlighted { get; set; }
 	bool hidden { get; set; }
+	bool allowTouchBeganWhenMovedOver { get; set; } // if true, we allow a touch moved over the button to fire onTouchBegan
 	Rect touchFrame { get; }
 	Vector3 position { get; set; }
 	

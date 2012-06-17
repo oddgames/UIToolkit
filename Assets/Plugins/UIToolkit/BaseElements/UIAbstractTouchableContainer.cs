@@ -374,6 +374,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	public bool highlighted { get; set; } // not really used for containers
 	protected Rect _touchFrame;
 	public Rect touchFrame { get { return _touchFrame; } } // we dont allow setting through the setter. the method is empty only to implement the interface
+	public bool allowTouchBeganWhenMovedOver { get; set; }
 
 	
 	/// <summary>

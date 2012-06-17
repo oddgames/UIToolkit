@@ -381,7 +381,8 @@ public class UISpriteManager : MonoBehaviour
 		int i = 0;
 
 		// Find the first available sprite index
-		for (; i < _sprites.Length; i++) {
+		for(; i < _sprites.Length; i++)
+		{
 			if (_sprites[i] == null)
 				break;
 		}

@@ -146,6 +146,9 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 				touchFrameIsDirty = true;
         }
     }
+	
+	
+	public bool allowTouchBeganWhenMovedOver { get; set; }
 
 	
 	// indicates if the mouse pointer is hovering over this element

@@ -40,11 +40,13 @@ public class LayoutContainerManager : MonoBehaviour
 		// HorizontalLayout
 		var hBox = new UIHorizontalLayout( 20 );
 		hBox.addChild( playButton, scores, optionsButton );
-
+		
 		
 		// VerticalLayout
 		var vBox = new UIVerticalLayout( 20 );
 		vBox.addChild( knob, toggleButton );
+		vBox.matchSizeToContentSize();
+		vBox.positionFromTopRight( 0, 0 );
 
 		
 		// Layouts can be animated like any UIObject

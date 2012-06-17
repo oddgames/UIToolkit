@@ -24,9 +24,11 @@ public class UIToolkit : UISpriteManager
 	public bool useOutsideTouchControl = false; // if true, toolkit does not receive touches
 
 	// used by outside touch controllers
-	public List<ITouchable> touchableSprites {
+	public List<ITouchable> touchableSprites
+	{
 		get { return _touchableSprites; } 
 	}
+	
 	
 	protected override void Awake()
 	{
@@ -245,7 +247,6 @@ public class UIToolkit : UISpriteManager
 			{
 				// stationary should get touchMoved as well...I think...still testing all scenarious
 				// if we have a moving touch on a sprite keep sending touchMoved
-				//if( touch.phase == TouchPhase.Moved )
 				_spriteSelected[touch.fingerId].onTouchMoved( touch, fixedTouchPosition );
 			}
 			else if( _spriteSelected[touch.fingerId] != null )
@@ -253,6 +254,13 @@ public class UIToolkit : UISpriteManager
 				// If we have a button that isn't the selected button end the touch on it because we moved off of it
 				_spriteSelected[touch.fingerId].onTouchEnded( touch, fixedTouchPosition, false );
 				_spriteSelected[touch.fingerId] = null;
+			}
+			else if( button != null && _spriteSelected[touch.fingerId] == null && button.allowTouchBeganWhenMovedOver )
+			{
+				// this happens when we started a touch not over a button then the finger slid over the button. if the
+				// allowTouchBeganWhenMovedOver property is true, we count this as a touchBegan
+				_spriteSelected[touch.fingerId] = button;
+				button.onTouchBegan( touch, fixedTouchPosition );
 			}
 		}
 		else if( touchEnded )

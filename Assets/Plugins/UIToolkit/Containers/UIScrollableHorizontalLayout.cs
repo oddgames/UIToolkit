@@ -21,6 +21,7 @@ public class UIScrollableHorizontalLayout : UIAbstractTouchableContainer
 			// unclip if we are clipped
 			if( child.clipped )
 				child.clipped = false;
+
 			child.hidden = false;
 		}
 		else if( leftContained || rightContained )

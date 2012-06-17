@@ -11,9 +11,7 @@ public struct UIEdgeInsets
 	
 	// conveninece constructor to create insets evenly for all 4 sides
 	public UIEdgeInsets( int insetForAllSides ) : this( insetForAllSides, insetForAllSides, insetForAllSides, insetForAllSides )
-	{
-	
-	}
+	{}
 
 	
 	public UIEdgeInsets( int top, int left, int bottom, int right )

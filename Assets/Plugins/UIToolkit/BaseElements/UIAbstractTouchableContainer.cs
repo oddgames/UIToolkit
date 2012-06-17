@@ -31,6 +31,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	// paging
 	public bool pagingEnabled; // enables paging support which will snap scrolling. page size is the container width
+	public float pageWidth; // width for page snapping. should be set to the size of the items in the container
 	
 	
 	public override float width
@@ -55,7 +56,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	public UIAbstractTouchableContainer( UIToolkit manager, UILayoutType layoutType, int spacing ) : base( layoutType )
 	{
 		TOUCH_MAX_DELTA_FOR_ACTIVATION *= UI.scaleFactor;
-		_spacing = spacing;
+		_spacing = spacing * UI.scaleFactor;
 		_manager = manager;
 		
 		_manager.addToTouchables( this );
@@ -198,7 +199,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	private void scrollToNearestPage()
 	{
 		// which page is closest?
-		var page = Mathf.RoundToInt( Math.Abs( _scrollPosition ) / width );
+		var page = Mathf.RoundToInt( Math.Abs( _scrollPosition ) / ( pageWidth + spacing ) );
 		scrollToPage( page );
 	}
 
@@ -457,7 +458,9 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	public void scrollToPage( int page )
 	{
-		_manager.StartCoroutine( scrollToInset( (int)( -page * width ) ) );
+		// take the spacing into account when scrolling
+		var pageSpacing = page * spacing;
+		_manager.StartCoroutine( scrollToInset( (int)( -page * pageWidth - pageSpacing ) ) );
 	}
 	
 	

@@ -452,7 +452,7 @@ public class UISpriteManager : MonoBehaviour
 
 	public void showSprite(UISprite sprite)
 	{
-		if (!sprite.___hidden)
+		if( !sprite.___hidden )
 			return;
 
 		sprite.___hidden = false;

@@ -17,7 +17,7 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
 		
-		var height = UI.scaleFactor * 50;
+		var height = UI.scaleFactor * 50f;
 		var width = Screen.width / 1.4f;
 		scrollable.setSize( width, height );
 		scrollable.position = new Vector3( ( Screen.width - width ) / 2, -Screen.height + height, 0 );
@@ -88,19 +88,26 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 		
 		
 		
-		// add another scrollable, this one with paging enabled
-		scrollable = new UIScrollableHorizontalLayout( 0 );
-
+		// add another scrollable, this one with paging enabled.
+		scrollable = new UIScrollableHorizontalLayout( 20 );
+		
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
 		
-		var widthAndHeight = UI.scaleFactor * 250f;
-		scrollable.setSize( widthAndHeight, widthAndHeight );
+		height = UI.scaleFactor * 250f;
+		
+		// if you plan on making the scrollable wider than the item width you need to set your edgeInsets so that the
+		// left + right inset is equal to the extra width you set
+		scrollable.edgeInsets = new UIEdgeInsets( 0, 75, 0, 75 );		
+		width = UI.scaleFactor * ( 250f + 150f ); // item width + 150 extra width
+		scrollable.setSize( width, height );
+		
 		// paging will snap to the nearest page when scrolling
 		scrollable.pagingEnabled = true;
+		scrollable.pageWidth = 250f * UI.scaleFactor;
 		
 		// center the scrollable horizontally
-		scrollable.position = new Vector3( ( Screen.width - widthAndHeight ) / 2, 0, 0 );
+		scrollable.position = new Vector3( ( Screen.width - width ) / 2, 0, 0 );
 		
 		for( var i = 0; i < 5; i++ )
 		{

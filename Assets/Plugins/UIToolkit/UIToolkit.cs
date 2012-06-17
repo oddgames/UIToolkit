@@ -172,7 +172,7 @@ public class UIToolkit : UISpriteManager
 	}
 #endif
 
-	#endregion;
+	#endregion
 
 
 	#region Add/Remove Element and Button functions
@@ -214,7 +214,7 @@ public class UIToolkit : UISpriteManager
 
 	}
 
-	#endregion;
+	#endregion
 
 	
 	#region Touch management and analysis helpers
@@ -304,7 +304,7 @@ public class UIToolkit : UISpriteManager
 		return null;
 	}
 
-	#endregion;
+	#endregion
 
 
 }

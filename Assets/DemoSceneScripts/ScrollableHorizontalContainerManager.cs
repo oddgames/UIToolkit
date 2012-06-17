@@ -11,13 +11,13 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 	
 	void Start()
 	{
-		// add two scrollables: one with pageing enabled
+		// add two scrollables: one with paging enabled and one without
 		var scrollable = new UIScrollableHorizontalLayout( 10 );
 
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
 		
-		var height = UI.isHD ? 150 : 300;
+		var height = UI.scaleFactor * 50;
 		var width = Screen.width / 1.4f;
 		scrollable.setSize( width, height );
 		scrollable.position = new Vector3( ( Screen.width - width ) / 2, -Screen.height + height, 0 );
@@ -88,17 +88,18 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 		
 		
 		
-		// add another scrollable
+		// add another scrollable, this one with paging enabled
 		scrollable = new UIScrollableHorizontalLayout( 0 );
 
 		// we wrap the addition of all the sprites with a begin updates so it only lays out once when complete
 		scrollable.beginUpdates();
 		
-		var widthAndHeight = UI.isHD ? 500 : 250;
+		var widthAndHeight = UI.scaleFactor * 250f;
 		scrollable.setSize( widthAndHeight, widthAndHeight );
+		// paging will snap to the nearest page when scrolling
 		scrollable.pagingEnabled = true;
 		
-		// paging will snap to the nearest page when scrolling
+		// center the scrollable horizontally
 		scrollable.position = new Vector3( ( Screen.width - widthAndHeight ) / 2, 0, 0 );
 		
 		for( var i = 0; i < 5; i++ )
@@ -110,4 +111,5 @@ public class ScrollableHorizontalContainerManager : MonoBehaviour
 		scrollable.endUpdates();
 		scrollable.endUpdates(); // this is a bug. it shouldnt need to be called twice
 	}
+
 }

@@ -14,7 +14,7 @@ public class ScrollableContainerManager : MonoBehaviour
 		var scrollable = new UIScrollableVerticalLayout( 10 );
 		scrollable.alignMode = UIAbstractContainer.UIContainerAlignMode.Center;
 		scrollable.position = new Vector3( 0, -50, 0 );
-		var width = UI.isHD ? 300 : 150;
+		var width = UI.scaleFactor * 150;
 		scrollable.setSize( width, Screen.height / 1.4f );
 		
 		for( var i = 0; i < 20; i++ )
@@ -106,9 +106,8 @@ public class ScrollableContainerManager : MonoBehaviour
 		scores.onTouchUpInside += ( sender ) =>
 		{
 			var target = scrollable.position;
-			var moveBy = _movedContainer ? -100 : 100;
-			if( !UI.isHD )
-				moveBy /= 2;
+			var moveBy = _movedContainer ? -50 : 50;
+			moveBy *= UI.scaleFactor;
 			target.x += moveBy * 2;
 			target.y += moveBy;
 			scrollable.positionTo( 0.4f, target, Easing.Quintic.easeIn );

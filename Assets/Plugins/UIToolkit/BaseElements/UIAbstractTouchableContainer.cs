@@ -16,7 +16,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	protected const int TOTAL_VELOCITY_SAMPLE_COUNT = 3;
 	protected const float SCROLL_DECELERATION_MODIFIER = 0.93f; // how fast should we slow down
-	protected float TOUCH_MAX_DELTA_FOR_ACTIVATION = UI.isHD ? 10 : 5;
+	protected float TOUCH_MAX_DELTA_FOR_ACTIVATION = 5; // this is the SD setting. the constructor will modify this for HD/XD
 	protected const float CONTENT_TOUCH_DELAY = 0.1f;
 	
 	protected bool _isDragging;
@@ -54,6 +54,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	// Default constructor
 	public UIAbstractTouchableContainer( UIToolkit manager, UILayoutType layoutType, int spacing ) : base( layoutType )
 	{
+		TOUCH_MAX_DELTA_FOR_ACTIVATION *= UI.scaleFactor;
 		_spacing = spacing;
 		_manager = manager;
 		
@@ -97,12 +98,17 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 			_scrollPosition -= snapBack;
 			layoutChildren();
 
-			// once we are moving less then a 1/2 pixel stop the animation
-			if( Mathf.Abs( snapBack ) < 0.5f )
+			// once we are moving less then a 0.2 pixel stop the animation and hit out target
+			if( Mathf.Abs( snapBack ) < 0.2f )
+			{
+				_scrollPosition = targetScrollPosition;
 				break;
+			}
 
 			yield return null;
 		}
+		
+		layoutChildren();
 		
 		_isDraggingPastExtents = false;
 	}
@@ -213,7 +219,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 			_scrollPosition = (int)Mathf.Lerp( start, target, easPos );
 			layoutChildren();
 
-			if( ( startTime + duration ) <= Time.time )
+			if( easPos == 1 )
 				running = false;
 
 			yield return null;

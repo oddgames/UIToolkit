@@ -180,7 +180,7 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 
 					// Set anchor offset
 					anchorInfo.OffsetX = ( _contentWidth + _scrollPosition ) * hdFactor;
-					
+
 					// dont overwrite the sprites origin anchor!
 					anchorInfo.OriginUIxAnchor = item.anchorInfo.OriginUIxAnchor;
 					anchorInfo.OriginUIyAnchor = item.anchorInfo.OriginUIyAnchor;

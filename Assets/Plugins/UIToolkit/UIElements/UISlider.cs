@@ -135,7 +135,7 @@ public class UISlider : UITouchableSprite
             _knobMinimumXY = -_knobMaximumXY;
 		}
 
-        var hdFactor = UI.isHD ? 0.5f : 1f;
+        var hdFactor = 1f / UI.scaleFactor;
         _knobMaximumXY *= hdFactor;
         _knobMinimumXY *= hdFactor;
 	}

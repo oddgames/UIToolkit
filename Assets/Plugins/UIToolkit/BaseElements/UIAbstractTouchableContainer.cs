@@ -121,7 +121,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 		{
 			yield return _manager.StartCoroutine( springBackToBounds( 2f ) );
 		}
-		else
+		else if( _velocities.Count > 0 ) // bail out if we have no velocities!
 		{
 			// get the average velocity by summing all the velocities and dividing by count
 			float total = 0;
@@ -135,12 +135,11 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 			{
 				var deltaMovement = avgVelocity * Time.deltaTime;
 				var newOffset = _scrollPosition;
-				
+
 				if( layoutType == UIAbstractContainer.UILayoutType.Horizontal )
 					newOffset += deltaMovement;
 				else
 					newOffset -= deltaMovement;
-	
 				
 				var absVelocity = Mathf.Abs( avgVelocity );
 				

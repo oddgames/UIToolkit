@@ -183,43 +183,39 @@ public static class Easing
 
 	public static class Bounce
 	{
-		public static float easeIn( float t )
-		{
-			return 1 - easeOut( 1 - t );
-		}
-		
-		
-		public static float easeOut( float t )
-		{
-			if( t < ( 1 / 2.75f ) )
-			{
-				return 1;
-			}
-			else if( t < ( 2 / 2.75f ) )
-			{
-				t -= ( 1.5f / 2.75f );
-				return 7.5625f * t * t + 0.75f;
-			}
-			else if( t < ( 2.5f / 2.75f ) )
-			{
-				t -= ( 2.5f / 2.75f );
-				return 7.5625f * t * t + 0.9375f;
-			}
-			else
-			{
-				t -= ( 2.625f / 2.75f );
-				return 7.5625f * t * t + 0.984375f;
-			}			
-		}
-		
-		
-		public static float easeInOut( float t )
-		{
-			if( t <= 0.5f )
-				return Bounce.easeIn( t * 2 ) / 2;
-			else
-				return ( Bounce.easeOut( ( t - 0.5f ) * 2.0f ) / 2 ) + 0.5f;
-		}
+		const float b = 0f;
+		const float c = 1f;
+		const float d = 1f;
+	    public static float easeOut(float t)
+	    {
+	        if ((t /= d) < (1 / 2.75))
+	        {
+	            return c * (7.5625f * t * t) + b;
+	        }
+	        else if (t < (2 / 2.75))
+	        {
+	            return c * (7.5625f * (t -= (1.5f / 2.75f)) * t + .75f) + b;
+	        }
+	        else if (t < (2.5 / 2.75))
+	        {
+	            return c * (7.5625f * (t -= (2.25f / 2.75f)) * t + .9375f) + b;
+	        }
+	        else
+	        {
+	            return c * (7.5625f * (t -= (2.625f / 2.75f)) * t + .984375f) + b;
+	        }
+	    }
+	
+	    public static float easeIn(float t)
+	    {
+	        return c - easeOut(d - t) + b;
+	    }
+	
+	    public static float easeInOut(float t)
+	    {
+	        if (t < d / 2) return easeIn(t * 2) * 0.5f + b;
+	        else return easeOut(t * 2 - d) * .5f + c * 0.5f + b;
+	    }
 	}
 
 

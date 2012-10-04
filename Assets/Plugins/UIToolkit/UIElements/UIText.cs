@@ -598,8 +598,22 @@ public class UIText : System.Object
 	
 	public void updateText( UITextInstance textInstance )
 	{
+		// if our textInstance has a localScale of anything other than (1, 1, z), the child sprites generated here will have a weird local scale as well.
+		// so, lets reset our text instance to (1, 1, z) and then restore the previous local scale after drawText
+		Vector3 originalScale = textInstance.localScale;
+		bool scaleChanged = false;
+		if (originalScale.x != 1f || originalScale.y != 1f) {
+			textInstance.localScale = new Vector3(1f, 1f, originalScale.z);
+			scaleChanged = true;
+		}
+		
 		// kill the current text then draw some new text
 		drawText( textInstance, textInstance.xPos, textInstance.yPos, textInstance.textScale, textInstance.depth, textInstance.colors, textInstance.alignMode, textInstance.verticalAlignMode );
+		
+		// now restore the originalScale scale
+		if (scaleChanged) {
+			textInstance.localScale = originalScale;
+		}
 	}
 	
 	

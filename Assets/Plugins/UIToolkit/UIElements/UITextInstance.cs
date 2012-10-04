@@ -140,9 +140,11 @@ public class UITextInstance : UIObject, IPositionable
                     _anchorInfo.OriginUIxAnchor = UIxAnchor.Right;
                     break;
             }
-
-            _parentText.updateText(this);
-            updateSize();
+			
+			if (text.Length > 0) {
+	            _parentText.updateText(this);
+	            updateSize();
+			}
         }
     }
 
@@ -168,9 +170,11 @@ public class UITextInstance : UIObject, IPositionable
                     _anchorInfo.OriginUIyAnchor = UIyAnchor.Bottom;
                     break;
             }
-
-            _parentText.updateText(this);
-            updateSize();
+			
+			if (text.Length > 0) {
+	            _parentText.updateText(this);
+	            updateSize();
+			}
         }
     }
 

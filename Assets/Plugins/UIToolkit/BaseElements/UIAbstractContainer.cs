@@ -287,5 +287,9 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		_width = _contentWidth;
 		_height = _contentHeight;
 	}
-
+	
+	public void destroy()
+	{
+		GameObject.Destroy(client);
+	}
 }

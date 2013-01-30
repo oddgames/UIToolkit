@@ -105,7 +105,19 @@ public abstract class UIAbstractContainer : UIObject, IPositionable
 		if( removeFromManager )
 			child.manager.removeElement( child );
 	}
-
+	
+	/// <summary>
+	/// A way to remove a container and all it holds. 
+	/// </summary>
+	public void destroy()
+	{
+		while(_children.Count > 0)
+		{
+			removeChild(_children[0], true);
+		}
+		
+		Object.Destroy(client);
+	}
 
 	/// <summary>
 	/// Call this when changing multiple properties at once that result in autolayout.  Must be

@@ -66,20 +66,20 @@ public class UIControlTemplate : UITouchableSprite
 	}
 
 
-	// Touch handlers
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 	}
 
 
-public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
+public virtual void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 	}
 
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		highlighted = false;
 	}

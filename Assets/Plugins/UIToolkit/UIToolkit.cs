@@ -54,7 +54,7 @@ public class UIToolkit : UISpriteManager
 			// Examine all current touches
 			for( int i = 0; i < Input.touchCount; i++ )
 			{
-				lookAtTouch( Input.GetTouch( i ) );
+				lookAtTouch( wrapTouchInput(Input.GetTouch( i )) );
 			}
 		} // end if Input.touchCount
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
@@ -97,7 +97,20 @@ public class UIToolkit : UISpriteManager
 #endif
 	}
 
-
+	
+	protected UITouchWrapper wrapTouchInput(Touch input)
+	{
+		var newTouch = new UITouchWrapper();
+		newTouch.deltaTime = input.deltaTime;
+		newTouch.deltaPosition = input.deltaPosition;
+		newTouch.position = input.position;
+		newTouch.phase = input.phase;
+		newTouch.fingerId = input.fingerId;
+		newTouch.tapCount = input.tapCount;
+		newTouch.locked = true;
+		return newTouch;
+	}
+	
 	protected void LateUpdate()
 	{
 		// take care of updating our UVs, colors or bounds if necessary
@@ -217,10 +230,10 @@ public class UIToolkit : UISpriteManager
 	#endregion
 
 	
-	#region Touch management and analysis helpers
+	#region UITouchWrapper management and analysis helpers
 	
 	// examines a touch and sends off began, moved and ended events
-	private void lookAtTouch( Touch touch )
+	private void lookAtTouch( UITouchWrapper touch )
 	{
 		// tranform the touch position so the origin is in the top left
 		var fixedTouchPosition = new Vector2( touch.position.x, Screen.height - touch.position.y );

@@ -17,12 +17,12 @@ public interface ITouchable
 	bool hitTest( Vector2 point );
 	
 	
-	void onTouchBegan( Touch touch, Vector2 touchPos );
+	void onTouchBegan( UITouchWrapper touch, Vector2 touchPos );
 
 	
-	void onTouchMoved( Touch touch, Vector2 touchPos );
+	void onTouchMoved( UITouchWrapper touch, Vector2 touchPos );
 	
 
-	void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame );
+	void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame );
 
 }

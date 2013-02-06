@@ -85,8 +85,8 @@ public class UIButton : UITouchableSprite
 	}
 
 
-	// Touch handlers
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 		
@@ -101,7 +101,7 @@ public class UIButton : UITouchableSprite
 
 
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		// If someone has un-highlighted us through code we are deactivated 
 		// and should not fire the event

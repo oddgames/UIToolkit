@@ -125,9 +125,9 @@ public class UIKnob : UITouchableSprite
 	}
 	
 
-	#region Touch Handlers
+	#region UITouchWrapper Handlers
 
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 
@@ -135,13 +135,13 @@ public class UIKnob : UITouchableSprite
 	}
 
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		this.updateKnobForTouchPosition( touchPos );
 	}
 	
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		highlighted = false;
 		

@@ -146,7 +146,7 @@ public class UIStateButton : UIButton
 	}
 	
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		if( touchWasInsideTouchFrame )
 		{

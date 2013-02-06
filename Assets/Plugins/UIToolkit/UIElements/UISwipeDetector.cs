@@ -61,7 +61,7 @@ public class UISwipeDetector : UITouchableSprite
 	}
 	
 
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		if( touchInfoArray[touch.fingerId] == null )
 			touchInfoArray[touch.fingerId] = new TouchInfo( swipesToDetect );
@@ -71,7 +71,7 @@ public class UISwipeDetector : UITouchableSprite
 	}
 
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		if( processTouchInfoWithTouch( touchInfoArray[touch.fingerId], touch ) )
 		{
@@ -84,7 +84,7 @@ public class UISwipeDetector : UITouchableSprite
 
 
 /* Only used for debugging
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		//Debug.Log( "TOUCH ENDED" );
 		//Debug.Log( string.Format( "x: {0}, y: {1}", touch.position.x, touch.position.y ) );
@@ -92,7 +92,7 @@ public class UISwipeDetector : UITouchableSprite
 */
 
 	
-	private bool processTouchInfoWithTouch( TouchInfo touchInfo, Touch touch )
+	private bool processTouchInfoWithTouch( TouchInfo touchInfo, UITouchWrapper touch )
 	{
 		// If we already completed the swipe detection or if none are availalbe get out of here
 		if( touchInfo.swipeDetectionStatus != SwipeDetectionStatus.Waiting )

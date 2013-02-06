@@ -43,7 +43,7 @@ public class TouchInfo
 	}
 	
 
-	public void resetWithTouch( Touch touch )
+	public void resetWithTouch( UITouchWrapper touch )
 	{
 		// Initialize the detectionState only with the swipe types we want to listen for
 		swipeDetectionState = swipesToDetect;

@@ -62,7 +62,7 @@ public class UIScrollableVerticalLayout : UIAbstractTouchableContainer
 
 	#region ITouchable
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		// increment deltaTouch so we can pass on the touch if necessary
 		_deltaTouch += touch.deltaPosition.y;

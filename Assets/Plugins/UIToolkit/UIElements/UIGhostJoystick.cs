@@ -163,7 +163,7 @@ public class UIGhostJoystick : UITouchableSprite
 	}
 	
 
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		if (currentTouchId != -1)
 			return;
@@ -185,7 +185,7 @@ public class UIGhostJoystick : UITouchableSprite
 	}
 	
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		if (touch.fingerId != currentTouchId)
 			return;
@@ -196,7 +196,7 @@ public class UIGhostJoystick : UITouchableSprite
 	}
 	
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		if (touch.fingerId != currentTouchId)
 			return;

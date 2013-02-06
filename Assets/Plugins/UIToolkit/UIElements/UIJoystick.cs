@@ -185,7 +185,7 @@ public class UIJoystick : UITouchableSprite
 	}
 	
 
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 		
@@ -197,13 +197,13 @@ public class UIJoystick : UITouchableSprite
 	}
 	
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		this.layoutJoystick( this.inverseTranformPoint( touchPos ) );
 	}
 	
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		// Set highlighted to avoid calling super
 		highlighted = false;

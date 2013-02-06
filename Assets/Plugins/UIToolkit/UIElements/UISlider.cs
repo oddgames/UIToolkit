@@ -185,8 +185,8 @@ public class UISlider : UITouchableSprite
 	}
 
 
-	// Touch handlers
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 
@@ -194,13 +194,13 @@ public class UISlider : UITouchableSprite
 	}
 
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		this.updateSliderKnobForTouchPosition( touchPos );
 	}
 	
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		if( touchCount == 0 )
 			highlighted = false;

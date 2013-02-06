@@ -126,8 +126,8 @@ public class UIToggleButton : UITouchableSprite
 	}
 
 
-	// Touch handlers
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	// UITouchWrapper handlers
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		highlighted = false;
 		

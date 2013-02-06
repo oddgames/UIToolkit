@@ -6,6 +6,9 @@ public class PanelManager : MonoBehaviour
 {
 	void Start()
 	{
+		
+		Debug.LogError("PanelManager.Start()");
+		
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
 		var playButton = UIButton.create( "playUp.png", "playDown.png", 0, 0 );
 

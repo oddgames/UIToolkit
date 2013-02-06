@@ -25,7 +25,7 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	
 	// touch handling helpers
 	protected float _deltaTouch;
-	protected Touch _lastTouch;
+	protected UITouchWrapper _lastTouch;
 	protected Vector2 _lastTouchPosition;
 	protected ITouchable _activeTouchable;
 	
@@ -392,8 +392,8 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	}
 	
 	
-	// Touch handlers.  Subclasses should override onTouchMoved
-	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers.  Subclasses should override onTouchMoved
+	public virtual void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		// sanity check in case we lost a touch (happens with Unity on occassion)
 		if( _activeTouchable != null )
@@ -412,13 +412,13 @@ public abstract class UIAbstractTouchableContainer : UIAbstractContainer, ITouch
 	}
 
 
-	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
+	public virtual void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 
 	}
 
 
-	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public virtual void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		_isDragging = false;
 

@@ -68,8 +68,8 @@ public class UIZoomButton : UIButton
 
 
 
-	// Touch handlers
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		base.onTouchBegan( touch, touchPos );
 		
@@ -79,7 +79,7 @@ public class UIZoomButton : UIButton
 
 
 
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		base.onTouchEnded( touch, touchPos, touchWasInsideTouchFrame );
 		

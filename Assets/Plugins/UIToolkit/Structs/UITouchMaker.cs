@@ -15,16 +15,16 @@ public enum UIMouseState
 
 
 /// <summary>
-/// this class now exists only to allow standalones/web players to create Touch objects
+/// this class now exists only to allow standalones/web players to create UITouchWrapper objects
 /// </summary>
 public struct UITouchMaker
 {
-	public static Touch createTouch( int finderId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase )
+	public static UITouchWrapper createTouch( int finderId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase )
 	{
-		var self = new Touch();
-		ValueType valueSelf = self;
-		var type = typeof( Touch );
-		
+		var self = new UITouchWrapper();
+		//ValueType valueSelf = self;
+		//var type = typeof( UITouchWrapper );
+		/*
 		type.GetField( "m_FingerId", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, finderId );
 		type.GetField( "m_TapCount", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, tapCount );
 		type.GetField( "m_Position", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, position );
@@ -32,41 +32,58 @@ public struct UITouchMaker
 		type.GetField( "m_TimeDelta", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, timeDelta );
 		type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, phase );
 		
-		return (Touch)valueSelf;
+		return (UITouchWrapper)valueSelf;
+		*/
+		
+		self.fingerId = finderId;
+		self.tapCount = tapCount;
+		self.position = position;
+		self.deltaPosition = deltaPos;
+		self.deltaTime = timeDelta;
+		self.phase = phase;
+		return self;
 	}
 	
 	
-	public static Touch createTouchFromInput( UIMouseState mouseState, ref Vector2? lastMousePosition )
+	public static UITouchWrapper createTouchFromInput( UIMouseState mouseState, ref Vector2? lastMousePosition )
 	{
-		var self = new Touch();
-		ValueType valueSelf = self;
-		var type = typeof( Touch );
+		//var self = new UITouchWrapper();
+		//ValueType valueSelf = self;
+		//var type = typeof( UITouchWrapper );
+		
+		var self = new UITouchWrapper();
 		
 		var currentMousePosition = new Vector2( Input.mousePosition.x, Input.mousePosition.y );
 		
+		if(lastMousePosition.HasValue)
 		// if we have a lastMousePosition use it to get a delta
-		if( lastMousePosition.HasValue )
-			type.GetField( "m_PositionDelta", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, currentMousePosition - lastMousePosition );
+		if( lastMousePosition.HasValue ) self.deltaPosition = currentMousePosition - (Vector2)lastMousePosition;
+			//type.GetField( "m_PositionDelta", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, currentMousePosition - lastMousePosition );
 		
 		if( mouseState == UIMouseState.DownThisFrame ) // equivalent to touchBegan
 		{
-			type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Began );
+			//type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Began );
+			self.phase = TouchPhase.Began;
 			lastMousePosition = Input.mousePosition;
 		}
 		else if( mouseState == UIMouseState.UpThisFrame ) // equivalent to touchEnded
 		{
-			type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Ended );
+			//type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Ended );
+			self.phase = TouchPhase.Ended;
 			lastMousePosition = null;
 		}
 		else // UIMouseState.HeldDown - equivalent to touchMoved/Stationary
 		{
-			type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Moved );
+			//type.GetField( "m_Phase", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, TouchPhase.Moved );
+			self.phase = TouchPhase.Moved;
 			lastMousePosition = Input.mousePosition;
 		}
 		
-		type.GetField( "m_Position", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, currentMousePosition );
+		//type.GetField( "m_Position", BindingFlags.Instance | BindingFlags.NonPublic ).SetValue( valueSelf, currentMousePosition );
+		self.position = currentMousePosition;
 		
-		return (Touch)valueSelf;
+		return self;
+		//return (UITouchWrapper)valueSelf;
 	}
 }
 #endif

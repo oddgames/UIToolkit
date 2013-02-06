@@ -53,8 +53,8 @@ public class UIColorPicker : UITouchableSprite
 	}
 
 
-	// Touch handlers
-	public override void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers
+	public override void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 		
@@ -67,7 +67,7 @@ public class UIColorPicker : UITouchableSprite
 	}
 
 
-	public override void onTouchMoved( Touch touch, Vector2 touchPos )
+	public override void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 		Color oldColor = colorPicked;
 		Vector2 textureCoord = getTouchTextureCoords(touchPos);	

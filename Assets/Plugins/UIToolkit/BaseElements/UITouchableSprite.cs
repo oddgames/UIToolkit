@@ -213,20 +213,20 @@ public abstract class UITouchableSprite : UISprite, ITouchable, IComparable
 
 	#region ITouchable
 	
-	// Touch handlers.  Subclasses should override these to get their specific behaviour
-	public virtual void onTouchBegan( Touch touch, Vector2 touchPos )
+	// UITouchWrapper handlers.  Subclasses should override these to get their specific behaviour
+	public virtual void onTouchBegan( UITouchWrapper touch, Vector2 touchPos )
 	{
 		highlighted = true;
 	}
 
 
-	public virtual void onTouchMoved( Touch touch, Vector2 touchPos )
+	public virtual void onTouchMoved( UITouchWrapper touch, Vector2 touchPos )
 	{
 
 	}
 	
 
-	public virtual void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public virtual void onTouchEnded( UITouchWrapper touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		highlighted = false;
 	}

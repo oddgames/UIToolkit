@@ -8,3 +8,4 @@ getluky provided UIText enhancements including bug fixes, vertical and horizonta
 Oliver provided the NoLayout and BackgroundLayout containers
 zentuit provided the UIStateButton
 yuriks provided a fix for Easing.exponential.easeOut
+David O'Donoghue (ODD Games) provided the UISlice9 class

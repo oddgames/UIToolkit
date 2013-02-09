@@ -3,9 +3,27 @@ using UnityEngine;
 
 public struct UIUVRect
 {
+	public struct IntRect
+	{
+		public int x;
+		public int y;
+		public int width;
+		public int height;
+
+
+		public IntRect( int x, int y, int width, int height )
+		{
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		}
+	}
+
 	public Vector2 lowerLeftUV;
 	public Vector2 uvDimensions;
 	public UIClippingPlane clippingPlane; // used internally for clipping
+	public IntRect frame;
 	
 	private Vector2 _originalCoordinates; // used internally for clipping
 	private int _originalWidth; // used internally for clipping
@@ -29,6 +47,8 @@ public struct UIUVRect
 		lowerLeftUV = new Vector2( x / textureSize.x, 1.0f - ( ( y + height ) / textureSize.y ) );
 		uvDimensions = new Vector2( width / textureSize.x, height / textureSize.y );
 		clippingPlane = UIClippingPlane.None;
+
+		frame = new IntRect( x, y, width, height );
 	}
 
 	

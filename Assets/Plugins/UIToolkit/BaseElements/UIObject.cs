@@ -42,7 +42,6 @@ public class UIObject : System.Object, IPositionable
 		UIElement uie = _client.AddComponent<UIElement>();
 		uie.UIObject = this;
 		
-
 		// Cache the clientTransform
 		clientTransform = _client.transform;
 		

@@ -274,7 +274,7 @@ public class UISlice9 : UITouchableSprite
 		manager.addSprite( spriteSlices[3] );		
 		
 		// Middle Middle
-		spriteSlices[4] = new UISprite( new Rect( frame.x + sLT, frame.y + sTP, stretchedWidth, stretchedHeight ), depth, new UIUVRect( uvFrame.frame.x + sLT, uvFrame.frame.y + sTP, uvFrame.frame.height - ( sTP + sBT ), (int)frame.width - ( sLT + sRT ), manager.textureSize ) );
+		spriteSlices[4] = new UISprite( new Rect( frame.x + sLT, frame.y + sTP, stretchedWidth, stretchedHeight ), depth, new UIUVRect( uvFrame.frame.x + sLT, uvFrame.frame.y + sTP, uvFrame.frame.width - ( sLT + sRT ), uvFrame.frame.height - ( sBT + sTP ), manager.textureSize ) );
 		spriteSlices[4].client.transform.parent = this.client.transform;
 		manager.addSprite( spriteSlices[4] );		
 		

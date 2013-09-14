@@ -68,13 +68,6 @@ public class UISpriteManager : MonoBehaviour
 	{
 		_meshFilter = gameObject.AddComponent<MeshFilter>();
 		_meshRenderer = gameObject.AddComponent<MeshRenderer>();
-		
-		// Duplicate the standard material so that we're not changing the
-		// supplied one - it may be used by more than one UIToolkit object
-		Material duplicateMaterial = new Material (material.shader);
-		duplicateMaterial.CopyPropertiesFromMaterial(material);
-		material = duplicateMaterial;
-		
 		_meshRenderer.renderer.material = material;
 		_mesh = _meshFilter.mesh;
 
@@ -91,6 +84,12 @@ public class UISpriteManager : MonoBehaviour
 
 	public void loadTextureAndPrepareForUse()
 	{
+		// Duplicate the standard material so that we're not changing the
+		// supplied one - it may be used by more than one UIToolkit object
+		Material duplicateMaterial = new Material (material.shader);
+		duplicateMaterial.CopyPropertiesFromMaterial(material);
+		material = duplicateMaterial;
+		
 		// load our texture, at 2x if necessary
 		if( UI.isHD )
 			texturePackerConfigName = texturePackerConfigName + UI.instance.hdExtension;

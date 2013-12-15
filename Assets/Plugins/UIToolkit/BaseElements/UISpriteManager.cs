@@ -98,6 +98,8 @@ public class UISpriteManager : MonoBehaviour
 		if( texture == null )
 			Debug.Log( "UI texture is being autoloaded and it doesn't exist.  Cannot find texturePackerConfigName: " + texturePackerConfigName );
 		material.mainTexture = texture;
+		// assign the duplicate material to the mesh renderer
+		_meshRenderer.renderer.material = material;
 
 		// Cache our texture size
 		var t = material.mainTexture;

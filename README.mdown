@@ -8,6 +8,7 @@ Coming Soon as of (12/03/2014):
 - Simplified pivot/anchoring system (you can directly modify these properties and have your control update immediately)
 - AlpbaBlending with correct & automatic Z-Sorting
 - zPos on all elements
+- Updated demo's
 
 
 UIToolkit for Unity

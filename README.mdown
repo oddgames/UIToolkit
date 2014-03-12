@@ -6,7 +6,7 @@ Here at ODD Games we are working on some really awesome UI tools for Unity and i
 Coming Soon as of (12/03/2014):
 - TexturePacker 'Rotatation' support
 - Simplified pivot/anchoring system (you can directly modify these properties and have your control update immediately)
-- AlphaBlending with automatic Z-Sorting
+- AlphaBlending with automatic Z-Sorting (this replaces the AlphaTesting)
 - zPos on all elements
 - Updated demo's
 

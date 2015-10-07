@@ -43,15 +43,15 @@ any Apple app on your iPhone with a button in it and touch your finger on it tha
 * **UISlider**: slider that works in both the horizontal and vertical direction
 * **UIKnob**: rotating knob control
 * **UIText and UITextInstance**: reads in a .fnt file and displays text including line breaks (base code courtesy of Eskema: http://eskemagames.blogspot.com/)
-* **UIJoystick**: joystick control with configureable dead zone and background image
+* **UIJoystick**: joystick control with configurable dead zone and background image
 * **UISwipeDetector**: control that is capable of detecting swipes in any combination of directions (up, down, left, right)
 
 
 Included UI Components
 -----
 
-* **UIHorizontalLayout**: lays out any children added to it horizontally.  Spacing between the elements is configureable.
-* **UIVerticalLayout**: lays out any children added to it vertically.  Spacing between the elements is configureable.
+* **UIHorizontalLayout**: lays out any children added to it horizontally.  Spacing between the elements is configurable.
+* **UIVerticalLayout**: lays out any children added to it vertically.  Spacing between the elements is configurable.
 
 
 License

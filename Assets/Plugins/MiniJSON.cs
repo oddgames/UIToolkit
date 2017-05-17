@@ -385,7 +385,7 @@ s += Char.ConvertFromUtf32((int)codePoint);
 	protected static void eatWhitespace( char[] json, ref int index )
 	{
 		for( ; index < json.Length; index++ )
-			if( " \t\n\r".IndexOf( json[index] ) == -1 )
+			if( " \t\n\r\u200B\uFEFF".IndexOf( json[index] ) == -1 )
 			{
 				break;
 			}

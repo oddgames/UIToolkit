@@ -327,10 +327,37 @@ public class MiniJSON
 						s += "&#x" + new string( unicodeCharArray ) + ";";
 
 						/*
-uint codePoint = UInt32.Parse(new string(unicodeCharArray), NumberStyles.HexNumber);
-// convert the integer codepoint to a unicode char and add to string
-s += Char.ConvertFromUtf32((int)codePoint);
-*/
+						uint codePoint = UInt32.Parse(new string(unicodeCharArray), NumberStyles.HexNumber);
+						// convert the integer codepoint to a unicode char and add to string
+						try
+						{
+							s += Char.ConvertFromUtf32((int)codePoint);
+							// skip 4 chars
+							index += 4;
+						}
+						catch (ArgumentOutOfRangeException ex)
+						{
+							if (remainingLength >= 10)
+							{
+								try
+								{
+									char[] highSurrogateCharArray = unicodeCharArray;
+									char[] lowSurrogateCharArray = new char[4];
+									// skip highSurrogateCharArray and \u, like E1EC\u total 6 char = 4 HEX chars + \u
+									Array.Copy(json, index + 6, lowSurrogateCharArray, 0, 4);
+									int highSurrogateCharCodePoint = Int32.Parse(new string(highSurrogateCharArray), NumberStyles.HexNumber);
+									int lowSurrogateCharCodePoint = Int32.Parse(new string(lowSurrogateCharArray), NumberStyles.HexNumber);
+									s += ("" + Convert.ToChar(highSurrogateCharCodePoint) + Convert.ToChar(lowSurrogateCharCodePoint));
+									// skip a unicode char array like \uE1EC , total 6 char = \u + 4 HEX chars
+									index += (4 + 6);
+								}
+								catch(Exception e)
+								{
+									index += 4;
+								}
+							}
+						}
+						*/
 
 						// skip 4 chars
 						index += 4;
@@ -385,7 +412,7 @@ s += Char.ConvertFromUtf32((int)codePoint);
 	protected static void eatWhitespace( char[] json, ref int index )
 	{
 		for( ; index < json.Length; index++ )
-			if( " \t\n\r".IndexOf( json[index] ) == -1 )
+			if( " \t\n\r\u200B\uFEFF".IndexOf( json[index] ) == -1 )
 			{
 				break;
 			}

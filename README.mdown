@@ -1,5 +1,12 @@
+# DEPRECATION NOTICE
+
+This package has nothing to do with Unity's official UI Toolkit at https://docs.unity3d.com/2020.1/Documentation/Manual/UIElements.html
+
+
 ODD Games & UIToolkit
 =======
+
+
 
 Here at ODD Games we are working on some really awesome UI tools for Unity and it's all built on top of the UIToolkit code base. 
 
